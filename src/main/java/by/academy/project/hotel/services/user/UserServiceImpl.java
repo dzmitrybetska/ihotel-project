@@ -1,12 +1,7 @@
 package by.academy.project.hotel.services.user;
 
-import by.academy.project.hotel.entities.user.Country;
-import by.academy.project.hotel.entities.user.Passport;
-import by.academy.project.hotel.entities.user.Role;
 import by.academy.project.hotel.entities.user.User;
 import by.academy.project.hotel.exceptions.NotFoundUserException;
-import by.academy.project.hotel.mappers.user.UserMapper;
-import by.academy.project.hotel.mappers.user.UserMapperExt;
 import by.academy.project.hotel.repositories.user.UserRepository;
 import by.academy.project.hotel.repositories.user.UserRepositoryImpl;
 
@@ -21,12 +16,6 @@ public final class UserServiceImpl implements UserService {
 
     private UserServiceImpl(){
         userRepository = new UserRepositoryImpl();
-        UserMapper userMapper = UserMapperExt.getInstance();
-        createUser(userMapper.buildUserByAdmin("Dzmitry", "Betska", "baxset", "19668891",
-                new Passport("MP", "1332348", Country.ALGERIA), "d.betska@gmail.com", "375291913373", Role.ADMIN));
-
-        createUser(userMapper.buildUserByAdmin("Julia", "Wong", "baxset2", "wertyq123",
-                new Passport("FQ", "4356217", Country.CHINA), "julia@gmail.com", "75347654367", Role.MANAGER));
     }
 
     public static UserServiceImpl getInstance(){
