@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Create new room</title>
+  <title>Create new room</title>
 </head>
 <body>
 <table>
@@ -26,8 +26,8 @@
     <tr>
       <td><input type="text" name="number" placeholder="put room number"></td>
       <td><input type="text" name="price" placeholder="put price of room"></td>
-      <td><input type="text" name="roomCategories" placeholder="put room type"></td>
-      <td><input type="text" name="status" placeholder="put status"></td>
+      <td><input type="text" name="roomCategory" placeholder="put room type"></td>
+      <td><input type="text" name="roomStatus" placeholder="put status"></td>
       <td><input type="submit" value="CREATE"></td>
     </tr>
   </form>

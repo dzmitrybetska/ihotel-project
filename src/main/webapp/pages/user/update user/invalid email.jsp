@@ -1,20 +1,19 @@
 <%--
   Created by IntelliJ IDEA.
   User: User
-  Date: 18.06.2023
-  Time: 19:52
+  Date: 02.07.2023
+  Time: 21:16
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<a href="/index.jsp" class="c">Go to home page</a>
 <head>
-    <title>Successful guest creation</title>
+  <title>Invalid email</title>
 </head>
 <body>
-<dev>Registration completed successfully</dev>
+<dev>Invalid email</dev>
 <form action="/user/account" method="post">
-    <td><input type="submit" value="My account"></td>
+  <td><input type="submit" value="My account"></td>
 </form>
 </body>
 </html>

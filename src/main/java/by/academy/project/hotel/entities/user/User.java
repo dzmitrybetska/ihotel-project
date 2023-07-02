@@ -16,7 +16,6 @@ public class User {
     private String phone;
     private Role role;
 
-
     public User setName(String name) {
         this.name = name;
         return this;
@@ -56,5 +55,4 @@ public class User {
         this.role = role;
         return this;
     }
-
 }

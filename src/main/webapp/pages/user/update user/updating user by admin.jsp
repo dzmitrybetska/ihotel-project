@@ -17,7 +17,6 @@
         <th>id</th>
         <th>new name</th>
         <th>new surname</th>
-        <th>new login</th>
         <th>new password</th>
         <th>new passport series</th>
         <th>new passport ID</th>
@@ -34,7 +33,6 @@
             <td><input type="text" name="id" placeholder="put id user"></td>
             <td><input type="text" name="name" placeholder="put new name"></td>
             <td><input type="text" name="surname" placeholder="put new surname"></td>
-            <td><input type="text" name="login" placeholder="put new login"></td>
             <td><input type="text" name="password" placeholder="put new password"></td>
             <td><input type="text" name="passportSeries" placeholder="put new passport series"></td>
             <td><input type="text" name="passportID" placeholder="put new passport ID"></td>

@@ -10,7 +10,16 @@ import by.academy.project.hotel.entities.user.User;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UserMapperDtoExt extends UserMapperDto {
+public final class UserMapperDtoExt extends UserMapperDto {
+    private static UserMapperDtoExt instance;
+    private UserMapperDtoExt(){}
+
+    public static UserMapperDtoExt getInstance() {
+        if (instance == null){
+            instance = new UserMapperDtoExt();
+        }
+        return instance;
+    }
 
     @Override
     public DataUserForGuest buildDataUserForGuest(User user){
@@ -64,5 +73,4 @@ public class UserMapperDtoExt extends UserMapperDto {
                 .map(this::buildDataUserForAdmin)
                 .collect(Collectors.toList());
     }
-
 }

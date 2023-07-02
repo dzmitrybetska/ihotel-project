@@ -25,12 +25,12 @@
     </tr>
     </thead>
     <tbody>
-    <c:forEach var="room" items="${Rooms}">
+    <c:forEach var="room" items="${rooms}">
         <tr>
             <td>${room.id}</td>
             <td>${room.number}</td>
             <td>${room.price}</td>
-            <td>${room.roomCategories}</td>
+            <td>${room.roomCategory}</td>
             <td>${room.isBooked}</td>
             <td>${room.roomStatus}</td>
         </tr>

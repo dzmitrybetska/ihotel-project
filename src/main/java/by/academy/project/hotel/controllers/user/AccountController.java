@@ -13,14 +13,13 @@ import java.io.IOException;
 
 import static by.academy.project.hotel.util.configuration.Constants.*;
 
-
 @WebServlet(urlPatterns = "/user/account")
 public class AccountController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
-        User user = (User) session.getAttribute("user");
+        User user = (User) session.getAttribute(USER);
         if (user.getRole() == Role.MANAGER){
             req.getRequestDispatcher(MANAGER_ACCOUNT).forward(req, resp);
         } else if (user.getRole() == Role.ADMIN) {

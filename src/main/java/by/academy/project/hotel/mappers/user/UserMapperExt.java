@@ -7,7 +7,16 @@ import by.academy.project.hotel.entities.user.User;
 
 import java.util.UUID;
 
-public class UserMapperExt extends UserMapper {
+public final class UserMapperExt extends UserMapper {
+    private static UserMapperExt instance;
+    private UserMapperExt(){}
+
+    public static UserMapperExt getInstance() {
+        if (instance == null){
+            instance = new UserMapperExt();
+        }
+        return instance;
+    }
     @Override
     public User buildUserByGuest(String name, String surname, String login, String password, String email, String phone){
         return User.builder()

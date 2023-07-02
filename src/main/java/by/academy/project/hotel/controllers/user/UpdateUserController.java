@@ -4,10 +4,10 @@ import by.academy.project.hotel.entities.user.Country;
 import by.academy.project.hotel.entities.user.Passport;
 import by.academy.project.hotel.entities.user.Role;
 import by.academy.project.hotel.entities.user.User;
-import by.academy.project.hotel.mappers.user.UserMapper;
+import by.academy.project.hotel.exceptions.NotFoundUserException;
 import by.academy.project.hotel.services.user.UserService;
+import by.academy.project.hotel.services.user.UserServiceImpl;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,8 +20,7 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebServlet(urlPatterns = "/user/update")
 public class UpdateUserController extends HttpServlet {
-    private UserMapper mapper;
-    private UserService userService;
+    private final UserService userService = UserServiceImpl.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -31,68 +30,58 @@ public class UpdateUserController extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
-        User userSession = (User) session.getAttribute("user");
-        User user = null;
+        User userSession = (User) session.getAttribute(USER);
 
-        if (userSession.getRole() == Role.GUEST){
-            user = userService.updateUser(userSession.getId(), createUserByGuest(req));
-            session.setAttribute("user", user);
-        } else if (userSession.getRole() == Role.MANAGER) {
-            user = userService.updateUser(req.getParameter("id"), createUserByManager(req));
-        }else if (userSession.getRole() == Role.ADMIN) {
-            user = userService.updateUser(req.getParameter("id"),createUserByAdmin(req));
-        }else {
-            req.getRequestDispatcher(ACCESS_IS_DENIED).forward(req, resp);
-        }
-
-        if (user != null){
-                req.getRequestDispatcher(SUCCESSFUL_UPDATE).forward(req, resp);
+        try {
+            if (userSession.getRole() == Role.GUEST) {
+                userService.updateUser(userSession.getId(), createUserForUpdateByGuest(req));
+            } else if (userSession.getRole() == Role.MANAGER) {
+                userService.updateUser(req.getParameter(USER_ID), createUserForUpdateByManager(req));
+            } else if (userSession.getRole() == Role.ADMIN) {
+                userService.updateUser(req.getParameter(USER_ID), createUserForUpdateByAdmin(req));
             } else {
-                req.getRequestDispatcher(UNSUCCESSFUL_UPDATE).forward(req, resp);
+                req.getRequestDispatcher(ACCESS_IS_DENIED).forward(req, resp);
             }
+            req.getRequestDispatcher(SUCCESSFUL_UPDATE).forward(req, resp);
+        }catch (NotFoundUserException ex){
+            req.setAttribute(ERROR, ex.getMessage());
+            req.getRequestDispatcher(UNSUCCESSFUL_UPDATE).forward(req, resp);
+        }
     }
 
-    private User createUserByGuest(HttpServletRequest req){
-        return mapper.buildUserByGuest(
-                req.getParameter("name"),
-                req.getParameter("surname"),
-                req.getParameter("login"),
-                req.getParameter("password"),
-                req.getParameter("email"),
-                req.getParameter("phone")
-        );
+    private User createUserForUpdateByGuest(HttpServletRequest req){
+        return User.builder()
+                .name(req.getParameter(NAME))
+                .surname(req.getParameter(SURNAME))
+                .password(req.getParameter(PASSWORD))
+                .email(req.getParameter(EMAIL))
+                .phone(req.getParameter(PHONE))
+                .role(Role.GUEST)
+                .build();
     }
-
-
-    private User createUserByManager(HttpServletRequest req){
-        return mapper.buildUserByManager(
-                req.getParameter("name"),
-                req.getParameter("surname"),
-                new Passport(req.getParameter("passportSeries"),
-                        req.getParameter("passportID"),
-                        Country.valueOf(req.getParameter("country").toUpperCase())),
-                req.getParameter("email"),
-                req.getParameter("phone")
-        );
+    private User createUserForUpdateByManager(HttpServletRequest req){
+        return User.builder()
+                .name(req.getParameter(NAME))
+                .surname(req.getParameter(SURNAME))
+                .passport(new Passport(req.getParameter(PASSPORT_SERIES),
+                        req.getParameter(PASSPORT_ID),
+                        Country.valueOf(req.getParameter(COUNTRY).toUpperCase())))
+                .email(req.getParameter(EMAIL))
+                .phone(req.getParameter(PHONE))
+                .role(Role.GUEST)
+                .build();
     }
-    private User createUserByAdmin(HttpServletRequest req){
-        return mapper.buildUserByAdmin(
-                req.getParameter("name"),
-                req.getParameter("surname"),
-                req.getParameter("login"),
-                req.getParameter("password"),
-                new Passport(req.getParameter("passportSeries"),
-                        req.getParameter("passportID"),
-                        Country.valueOf(req.getParameter("country").toUpperCase())),
-                req.getParameter("email"),
-                req.getParameter("phone"),
-                Role.valueOf(req.getParameter("userRole").toUpperCase())
-        );
-    }
-
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        userService = (UserService) config.getServletContext().getAttribute("userService");
-        mapper = (UserMapper) config.getServletContext().getAttribute("mapper");
+    private User createUserForUpdateByAdmin(HttpServletRequest req){
+        return User.builder()
+                .name(req.getParameter(NAME))
+                .surname(req.getParameter(SURNAME))
+                .password(req.getParameter(PASSWORD))
+                .passport(new Passport(req.getParameter(PASSPORT_SERIES),
+                        req.getParameter(PASSPORT_ID),
+                        Country.valueOf(req.getParameter(COUNTRY).toUpperCase())))
+                .email(req.getParameter(EMAIL))
+                .phone(req.getParameter(PHONE))
+                .role(Role.valueOf(req.getParameter(ROLE).toUpperCase()))
+                .build();
     }
 }

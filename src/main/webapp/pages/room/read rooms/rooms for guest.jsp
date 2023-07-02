@@ -9,7 +9,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>Rooms</title>
+  <title>Rooms</title>
   <a href="/index.jsp" class="c">Go to home page</a>
 </head>
 <body>
@@ -22,11 +22,11 @@
   </tr>
   </thead>
   <tbody>
-  <c:forEach var="room" items="${Rooms}">
+  <c:forEach var="room" items="${rooms}">
     <tr>
       <td>${room.number}</td>
       <td>${room.price}</td>
-      <td>${room.roomCategories}</td>
+      <td>${room.roomCategory}</td>
     </tr>
   </c:forEach>
   </tbody>

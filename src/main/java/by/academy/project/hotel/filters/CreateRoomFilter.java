@@ -1,7 +1,7 @@
 package by.academy.project.hotel.filters;
 
 
-import by.academy.project.hotel.entities.room.RoomCategories;
+import by.academy.project.hotel.entities.room.RoomCategory;
 import by.academy.project.hotel.entities.room.RoomStatus;
 import by.academy.project.hotel.services.room.RoomService;
 import by.academy.project.hotel.services.room.RoomServiceImpl;
@@ -22,31 +22,36 @@ public class CreateRoomFilter extends HttpFilter {
     private final RoomService roomService = RoomServiceImpl.getInstance();
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
-        if (checkRoomByNumber(req.getParameter("number"))){
+        if (checkRoomByNumber(req.getParameter(NUMBER))){
             req.getRequestDispatcher(FAILED_CREATION_DUE_TO_NUMBER).forward(req, res);
+        } else if (!checkRoomCategories(req.getParameter(ROOM_CATEGORY))) {
+            req.getRequestDispatcher(FAILED_CREATION_DUE_TO_ROOM_TYPE).forward(req, res);
+        } else if (!checkRoomStatus(req.getParameter(ROOM_STATUS))) {
+            req.getRequestDispatcher(FAILED_CREATION_DUE_TO_STATUS).forward(req, res);
+        }else {
+            chain.doFilter(req, res);
         }
-        roomTypeCheck(req.getParameter("roomCategories"), req, res);
-        roomStatusCheck(req.getParameter("status"), req, res);
-        chain.doFilter(req, res);
     }
 
     private boolean checkRoomByNumber(String number){
         return roomService.findRoomByNumber(number).isPresent();
     }
 
-    private void roomTypeCheck(String roomType, HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    private boolean checkRoomCategories(String roomCategory){
         try{
-            RoomCategories.valueOf(roomType.toUpperCase());
+            RoomCategory.valueOf(roomCategory.toUpperCase());
+            return true;
         } catch (IllegalArgumentException ex){
-            req.getRequestDispatcher(FAILED_CREATION_DUE_TO_ROOM_TYPE).forward(req, res);
+            return false;
         }
     }
 
-    private void roomStatusCheck(String roomStatus, HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    private boolean checkRoomStatus(String roomStatus){
         try{
             RoomStatus.valueOf(roomStatus.toUpperCase());
+            return true;
         } catch (IllegalArgumentException ex){
-            req.getRequestDispatcher(FAILED_CREATION_DUE_TO_STATUS).forward(req, res);
+            return false;
         }
     }
 }

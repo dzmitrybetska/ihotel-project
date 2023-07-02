@@ -24,14 +24,14 @@
     </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>${userDto.name}</td>
-            <td>${userDto.surname}</td>
-            <td>${userDto.login}</td>
-            <td>${userDto.password}</td>
-            <td>${userDto.email}</td>
-            <td>${userDto.phone}</td>
-        </tr>
+    <tr>
+        <td>${userDto.name}</td>
+        <td>${userDto.surname}</td>
+        <td>${userDto.login}</td>
+        <td>${userDto.password}</td>
+        <td>${userDto.email}</td>
+        <td>${userDto.phone}</td>
+    </tr>
     </tbody>
 </table>
 <a href="/pages/user/update%20user/guest%20himself%20update.jsp" class="c">Change my details</a>

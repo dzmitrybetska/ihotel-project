@@ -9,7 +9,7 @@
 <html>
 <head>
     <title>Failed creation</title>
-  <a href="/index.jsp" class="c">Go to home page</a>
+    <a href="/index.jsp" class="c">Go to home page</a>
 </head>
 <body>
 <dev>Wrong room type</dev>

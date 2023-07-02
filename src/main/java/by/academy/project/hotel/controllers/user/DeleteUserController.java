@@ -2,9 +2,10 @@ package by.academy.project.hotel.controllers.user;
 
 import by.academy.project.hotel.entities.user.Role;
 import by.academy.project.hotel.entities.user.User;
+import by.academy.project.hotel.exceptions.NotFoundUserException;
 import by.academy.project.hotel.services.user.UserService;
+import by.academy.project.hotel.services.user.UserServiceImpl;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,17 +19,20 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebServlet(urlPatterns = "/user/delete")
 public class DeleteUserController extends HttpServlet {
-    private UserService userService;
+    private final UserService userService = UserServiceImpl.getInstance();
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
-        User userFromSession = (User) session.getAttribute("user");
+        User userFromSession = (User) session.getAttribute(USER);
         if (userFromSession.getRole() == Role.ADMIN){
-            if (userService.deleteUser(req.getParameter("id")) != null){
+            try {
+                userService.deleteUser(req.getParameter(USER_ID));
                 req.getRequestDispatcher(SUCCESSFUL_REMOVAL).forward(req, resp);
+            }catch (NotFoundUserException ex){
+                req.setAttribute(ERROR, ex.getMessage());
+                req.getRequestDispatcher(UNSUCCESSFUL_REMOVAL).forward(req, resp);
             }
-            req.getRequestDispatcher(UNSUCCESSFUL_REMOVAL).forward(req, resp);
         }else {
             req.getRequestDispatcher(ACCESS_IS_DENIED).forward(req, resp);
         }
@@ -37,10 +41,5 @@ public class DeleteUserController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doDelete(req, resp);
-    }
-
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        userService = (UserService) config.getServletContext().getAttribute("userService");
     }
 }

@@ -1,11 +1,11 @@
 package by.academy.project.hotel.entities.room;
 
-public enum RoomCategories {
+public enum RoomCategory {
     STANDART("standart"), SUPERIOR("superior"), DELUX("delux"), SUITE("suite");
 
     private final String title;
 
-    RoomCategories(String title){
+    RoomCategory(String title){
         this.title = title;
     }
 

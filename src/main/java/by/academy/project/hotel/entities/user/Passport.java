@@ -28,5 +28,4 @@ public class Passport {
         this.country = country;
         return this;
     }
-
 }

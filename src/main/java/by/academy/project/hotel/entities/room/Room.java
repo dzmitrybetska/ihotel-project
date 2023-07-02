@@ -9,7 +9,7 @@ public class Room{
     private final String id;
     private String number;
     private double price;
-    private RoomCategories roomCategories;
+    private RoomCategory roomCategory;
     private Boolean isBooked;
     private RoomStatus roomStatus;
 
@@ -23,8 +23,8 @@ public class Room{
         return this;
     }
 
-    public Room setRoomCategories(RoomCategories roomCategories) {
-        this.roomCategories = roomCategories;
+    public Room setRoomCategory(RoomCategory roomCategory) {
+        this.roomCategory= roomCategory;
         return this;
     }
 

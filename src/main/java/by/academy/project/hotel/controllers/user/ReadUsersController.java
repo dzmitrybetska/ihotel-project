@@ -5,8 +5,8 @@ import by.academy.project.hotel.entities.user.User;
 import by.academy.project.hotel.mappers.userdto.UserMapperDto;
 import by.academy.project.hotel.mappers.userdto.UserMapperDtoExt;
 import by.academy.project.hotel.services.user.UserService;
+import by.academy.project.hotel.services.user.UserServiceImpl;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,19 +20,19 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebServlet(urlPatterns = "/users/read")
 public class ReadUsersController extends HttpServlet {
-    private UserService userService;
-    private final UserMapperDto mapperDto = new UserMapperDtoExt();
+    private final UserService userService = UserServiceImpl.getInstance();
+    private final UserMapperDto mapperDto = UserMapperDtoExt.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
-        User userSession = (User) session.getAttribute("user");
+        User userSession = (User) session.getAttribute(USER);
         List<User> users = userService.readUsers();
         if (userSession.getRole() == Role.MANAGER){
-            req.setAttribute("users", mapperDto.readDataUsersForManager(users));
+            req.setAttribute(USERS, mapperDto.readDataUsersForManager(users));
             req.getRequestDispatcher(USERS_PAGE_FOR_MANAGER).forward(req, resp);
         } else if (userSession.getRole() == Role.ADMIN) {
-            req.setAttribute("users", mapperDto.readDataUsersForAdmin(users));
+            req.setAttribute(USERS, mapperDto.readDataUsersForAdmin(users));
             req.getRequestDispatcher(USERS_PAGE_FOR_ADMIN).forward(req, resp);
         } else {
             req.getRequestDispatcher(ACCESS_IS_DENIED).forward(req, resp);
@@ -42,10 +42,5 @@ public class ReadUsersController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doGet(req, resp);
-    }
-
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        userService = (UserService) config.getServletContext().getAttribute("userService");
     }
 }

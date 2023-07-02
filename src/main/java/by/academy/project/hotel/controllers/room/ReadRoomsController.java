@@ -12,7 +12,6 @@ import by.academy.project.hotel.mappers.roomdto.RoomMapperDtoExt;
 import by.academy.project.hotel.services.room.RoomService;
 import by.academy.project.hotel.services.room.RoomServiceImpl;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,35 +25,35 @@ import java.util.stream.Collectors;
 import static by.academy.project.hotel.util.configuration.Constants.*;
 
 
-@WebServlet(urlPatterns = "/rooms/read", loadOnStartup = 0)
+@WebServlet(urlPatterns = "/rooms/read")
 public class ReadRoomsController extends HttpServlet {
-    private RoomService roomService;
-    private final RoomMapperDto mapperDto = new RoomMapperDtoExt();
+    private final RoomService roomService = RoomServiceImpl.getInstance();
+    private final RoomMapperDto mapperDto = RoomMapperDtoExt.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Room> rooms = roomService.readRooms();
         HttpSession session = req.getSession();
-        User user = (User) session.getAttribute("user");
+        User user = (User) session.getAttribute(USER);
 
         if (user == null || user.getRole() == Role.GUEST){
             List<DataRoomForGuest> roomsForGuest = rooms.stream()
                     .filter(room -> room.getRoomStatus() == RoomStatus.SERVICED)
                     .map(mapperDto::buildDataRoomForGuest)
                     .collect(Collectors.toList());
-            req.setAttribute("Rooms", roomsForGuest);
+            req.setAttribute(ROOMS, roomsForGuest);
             req.getRequestDispatcher(ROOMS_PAGE_FOR_GUEST).forward(req, resp);
         } else if (user.getRole() == Role.MANAGER){
             List<DataRoomForManager> roomsForManager = rooms.stream()
                     .map(mapperDto::buildDataRoomForManager)
                     .collect(Collectors.toList());
-            req.setAttribute("Rooms", roomsForManager);
+            req.setAttribute(ROOMS, roomsForManager);
             req.getRequestDispatcher(ROOMS_PAGE_FOR_MANAGER).forward(req, resp);
         } else if (user.getRole() == Role.ADMIN) {
             List<DataRoomForAdmin> roomsForAdmin = rooms.stream()
                     .map(mapperDto::buildDataRoomForAdmin)
                     .collect(Collectors.toList());
-            req.setAttribute("Rooms", roomsForAdmin);
+            req.setAttribute(ROOMS, roomsForAdmin);
             req.getRequestDispatcher(ROOMS_PAGE_FOR_ADMIN).forward(req, resp);
         }
     }
@@ -62,11 +61,5 @@ public class ReadRoomsController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doGet(req, resp);
-    }
-
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        roomService = RoomServiceImpl.getInstance();
-        config.getServletContext().setAttribute("roomService", roomService);
     }
 }

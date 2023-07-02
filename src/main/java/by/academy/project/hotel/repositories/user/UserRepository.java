@@ -8,8 +8,8 @@ import java.util.Optional;
 public interface UserRepository {
     User createUser(User user);
     List<User> readUsers();
-    User updateUser(String id, User user);
-    User deleteUser(String id);
+    Optional<User> updateUser(String id, User user);
+    Optional<User> deleteUser(String id);
     Optional<User> getUserByLogin(String login);
     List<User> findUser(String name, String surname);
 }

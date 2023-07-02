@@ -7,7 +7,6 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-
 <head>
     <title>Failed creation</title>
     <a href="/index.jsp" class="c">Go to home page</a>
@@ -19,5 +18,4 @@
     <td><input type="submit" value="My account"></td>
 </form>
 </body>
-
 </html>

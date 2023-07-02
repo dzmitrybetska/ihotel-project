@@ -16,7 +16,7 @@
     <tr>
         <th>new name</th>
         <th>new surname</th>
-        <th>new login</th>
+        <th>login</th>
         <th>new password</th>
         <th>new email</th>
         <th>new phone</th>
@@ -28,7 +28,7 @@
         <tr>
             <td><input type="text" name="name" value="${user.name}"></td>
             <td><input type="text" name="surname" value="${user.surname}"></td>
-            <td><input type="text" name="login" value="${user.login}"></td>
+            <td>${userDto.login}</td>
             <td><input type="text" name="password" value="${user.password}"></td>
             <td><input type="text" name="email" value="${user.email}"></td>
             <td><input type="text" name="phone" value="${user.phone}"></td>

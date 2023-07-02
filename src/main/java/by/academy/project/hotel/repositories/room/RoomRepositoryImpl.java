@@ -2,7 +2,7 @@ package by.academy.project.hotel.repositories.room;
 
 
 import by.academy.project.hotel.entities.room.Room;
-import by.academy.project.hotel.entities.room.RoomCategories;
+import by.academy.project.hotel.entities.room.RoomCategory;
 import by.academy.project.hotel.entities.room.RoomStatus;
 
 import java.util.ArrayList;
@@ -26,36 +26,33 @@ public class RoomRepositoryImpl implements RoomRepository{
     }
 
     @Override
-    public Room updateRoom(String id, Room room) {
+    public Optional<Room> updateRoom(String id, Room room) {
         Optional<Room> optionalRoom = getRoomByRoomID(id);
         if (optionalRoom.isPresent()){
             Room foundRoom = optionalRoom.get();
-           return foundRoom.setNumber(room.getNumber())
+            foundRoom.setNumber(room.getNumber())
                     .setPrice(room.getPrice())
-                    .setRoomCategories(room.getRoomCategories())
+                    .setRoomCategory(room.getRoomCategory())
                     .setRoomStatus(room.getRoomStatus());
         }
-        return null;
+        return optionalRoom;
     }
 
     @Override
-    public Room updateRoomStatus(String id, RoomStatus status){
+    public Optional<Room> updateRoomStatus(String id, RoomStatus status){
         Optional<Room> foundRoom = getRoomByRoomID(id);
         if (foundRoom.isPresent()){
             Room room = foundRoom.get();
-            return room.setRoomStatus(status);
+            room.setRoomStatus(status);
         }
-        return null;
+        return foundRoom;
     }
 
     @Override
-    public Room deleteRoom(String id) {
+    public Optional<Room> deleteRoom(String id) {
         Optional<Room> foundRoom = getRoomByRoomID(id);
-        if (foundRoom.isPresent()){
-            int index = rooms.indexOf(foundRoom.get());
-            return rooms.remove(index);
-        }
-        return null;
+        foundRoom.ifPresent(rooms::remove);
+        return foundRoom;
     }
 
     @Override
@@ -73,9 +70,9 @@ public class RoomRepositoryImpl implements RoomRepository{
     }
 
     @Override
-    public List<Room> roomSearchByCategory(RoomCategories category) {
+    public List<Room> roomSearchByCategory(RoomCategory category) {
         return rooms.stream()
-                .filter(room -> room.getRoomCategories() == category)
+                .filter(room -> room.getRoomCategory() == category)
                 .collect(Collectors.toList());
     }
 

@@ -1,10 +1,7 @@
 package by.academy.project.hotel.filters;
 
-
 import by.academy.project.hotel.entities.user.Role;
 import by.academy.project.hotel.entities.user.User;
-import by.academy.project.hotel.services.user.UserService;
-import by.academy.project.hotel.services.user.UserServiceImpl;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -19,44 +16,29 @@ import java.util.regex.Pattern;
 
 import static by.academy.project.hotel.util.configuration.Constants.*;
 
-
-@WebFilter(urlPatterns = "/user/create")
-public class CreateUserFilter extends HttpFilter {
-    private final UserService userService = UserServiceImpl.getInstance();
-
+@WebFilter(urlPatterns = "/user/update")
+public class UpdateFilter extends HttpFilter {
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
-        String login = req.getParameter(LOGIN);
         String password = req.getParameter(PASSWORD);
         String email = req.getParameter(EMAIL);
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute(USER);
-
-        if (user == null || user.getRole() == Role.ADMIN) {
-            if (!validLogin(login)) {
-                req.getRequestDispatcher(INVALID_LOGIN_ON_CREATE).forward(req, res);
-            } else if (!validPassword(password)) {
-                req.getRequestDispatcher(INVALID_PASSWORD_ON_CREATE).forward(req, res);
-            } else if (userService.getUserByLogin(login) != null) {
-                req.getRequestDispatcher(LOGIN_EXISTS).forward(req, res);
+        if (user.getRole() == Role.MANAGER){
+            if (validEmail(email)){
+                chain.doFilter(req, res);
+            }else {
+                req.getRequestDispatcher(INVALID_EMAIL_ON_UPDATE).forward(req, res);
+            }
+        } else if (user.getRole() == Role.GUEST || user.getRole() == Role.ADMIN) {
+            if (!validPassword(password)){
+                req.getRequestDispatcher(INVALID_PASSWORD_ON_UPDATE).forward(req, res);
             } else if (!validEmail(email)) {
-                req.getRequestDispatcher(INVALID_EMAIL).forward(req, res);
+                req.getRequestDispatcher(INVALID_EMAIL_ON_UPDATE).forward(req, res);
             }else {
                 chain.doFilter(req, res);
             }
-        }else if (user.getRole() == Role.MANAGER) {
-            if (validEmail(email)) {
-                chain.doFilter(req, res);
-            } else {
-                req.getRequestDispatcher(INVALID_EMAIL).forward(req, res);
-            }
         }
-    }
-
-    private boolean validLogin (String login){
-        Pattern pattern = Pattern.compile(REGEX_LOGIN);
-        Matcher matcher = pattern.matcher(login);
-        return matcher.matches();
     }
 
     private boolean validPassword(String password){
