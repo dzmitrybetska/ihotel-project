@@ -1,7 +1,5 @@
 package by.academy.project.hotel.controllers.user;
 
-import by.academy.project.hotel.entities.user.Role;
-import by.academy.project.hotel.entities.user.User;
 import by.academy.project.hotel.exceptions.NotFoundUserException;
 import by.academy.project.hotel.services.user.UserService;
 import by.academy.project.hotel.services.user.UserServiceImpl;
@@ -11,7 +9,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 import static by.academy.project.hotel.util.configuration.Constants.*;

@@ -3,8 +3,6 @@ package by.academy.project.hotel.controllers.room;
 import by.academy.project.hotel.entities.room.Room;
 import by.academy.project.hotel.entities.room.RoomCategory;
 import by.academy.project.hotel.entities.room.RoomStatus;
-import by.academy.project.hotel.entities.user.Role;
-import by.academy.project.hotel.entities.user.User;
 import by.academy.project.hotel.exceptions.NotFoundRoomException;
 import by.academy.project.hotel.mappers.room.RoomMapper;
 import by.academy.project.hotel.mappers.room.RoomMapperExt;
@@ -16,7 +14,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 import static by.academy.project.hotel.util.configuration.Constants.*;
