@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 public class UserRepositoryImpl implements UserRepository {
     private final List<User> users = new ArrayList<>();
 

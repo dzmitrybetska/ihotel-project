@@ -28,20 +28,15 @@ public class UpdateRoomController extends HttpServlet {
     private final RoomMapper mapper = RoomMapperExt.getInstance();
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        User user = (User) session.getAttribute(USER);
-        if (user.getRole() == Role.ADMIN) {
-            try{
-                roomService.updateRoom(req.getParameter(ROOM_ID), createRoomForUpdateByAdmin(req));
-                req.getRequestDispatcher(SUCCESSFUL_UPDATE_ROOM).forward(req, resp);
-            }catch (NotFoundRoomException ex){
-                req.setAttribute(ERROR, ex.getMessage());
-                req.getRequestDispatcher(UNSUCCESSFUL_UPDATE_ROOM).forward(req, resp);
-            }
-        }else {
-            req.getRequestDispatcher(ACCESS_IS_DENIED).forward(req, resp);
+        try{
+            roomService.updateRoom(req.getParameter(ROOM_ID), createRoomForUpdateByAdmin(req));
+            req.getRequestDispatcher(SUCCESSFUL_UPDATE_ROOM).forward(req, resp);
+        }catch (NotFoundRoomException ex){
+            req.setAttribute(ERROR, ex.getMessage());
+            req.getRequestDispatcher(UNSUCCESSFUL_UPDATE_ROOM).forward(req, resp);
         }
     }
+
     private Room createRoomForUpdateByAdmin(HttpServletRequest req){
         return mapper.buildRoom(req.getParameter(NUMBER),
                 Double.parseDouble(req.getParameter(PRICE)),

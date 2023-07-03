@@ -37,7 +37,7 @@ public class CreateUserFilter extends HttpFilter {
                 req.getRequestDispatcher(INVALID_LOGIN_ON_CREATE).forward(req, res);
             } else if (!validPassword(password)) {
                 req.getRequestDispatcher(INVALID_PASSWORD_ON_CREATE).forward(req, res);
-            } else if (userService.getUserByLogin(login) != null) {
+            } else if (userService.getUserByLogin(login).isPresent()) {
                 req.getRequestDispatcher(LOGIN_EXISTS).forward(req, res);
             } else if (!validEmail(email)) {
                 req.getRequestDispatcher(INVALID_EMAIL).forward(req, res);

@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.util.Optional;
 
 import static by.academy.project.hotel.util.configuration.Constants.*;
 
@@ -18,9 +19,11 @@ public class AuthorizationController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String login = req.getParameter(LOGIN);
-        User user = userService.getUserByLogin(login);
+        Optional<User> user = userService.getUserByLogin(login);
         HttpSession session = req.getSession();
-        session.setAttribute(USER, user);
-        req.getRequestDispatcher(ACCOUNT_CONTROLLER).forward(req, resp);
+        if (user.isPresent()){
+            session.setAttribute(USER, user.get());
+            req.getRequestDispatcher(ACCOUNT_CONTROLLER).forward(req, resp);
+        }
     }
 }

@@ -24,5 +24,8 @@
 <a href="/pages/room/update room/room update.jsp" class="c">Update room</a>
 <a href="/pages/room/delete room/delete%20room.jsp" class="c">Delete room</a>
 <a href="/rooms/read" class="c">All rooms</a>
+<form action="/exit" method="post">
+    <a href="/exit" class="c">Exit</a>
+</form>
 </body>
 </html>

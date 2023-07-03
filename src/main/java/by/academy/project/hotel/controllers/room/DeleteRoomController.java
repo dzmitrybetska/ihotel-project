@@ -22,18 +22,12 @@ public class DeleteRoomController extends HttpServlet {
     private final RoomService roomService = RoomServiceImpl.getInstance();
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        User user = (User) session.getAttribute(USER);
-        if (user.getRole() == Role.ADMIN){
-            try{
-                roomService.deleteRoom(req.getParameter(ROOM_ID));
-                req.getRequestDispatcher(SUCCESSFUL_REMOVAL_ROOM).forward(req, resp);
-            } catch (NotFoundRoomException ex) {
-                req.setAttribute(ERROR, ex.getMessage());
-                req.getRequestDispatcher(UNSUCCESSFUL_REMOVAL_ROOM).forward(req, resp);
-            }
-        }else {
-            req.getRequestDispatcher(ACCESS_IS_DENIED).forward(req, resp);
+        try{
+            roomService.deleteRoom(req.getParameter(ROOM_ID));
+            req.getRequestDispatcher(SUCCESSFUL_REMOVAL_ROOM).forward(req, resp);
+        } catch (NotFoundRoomException ex) {
+            req.setAttribute(ERROR, ex.getMessage());
+            req.getRequestDispatcher(UNSUCCESSFUL_REMOVAL_ROOM).forward(req, resp);
         }
     }
 

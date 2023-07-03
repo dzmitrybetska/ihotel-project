@@ -23,6 +23,7 @@ public final class Constants {
     public static final String USERS_PAGE_FOR_ADMIN = "/pages/user/read users/users for admin.jsp";
     public static final String SUCCESSFUL_UPDATE = "/pages/user/update user/successful update.jsp";
     public static final String UNSUCCESSFUL_UPDATE = "/pages/user/update user/unsuccessful update.jsp";
+    public static final String START_PAGE = "/index.jsp";
 
     /**Room controllers*/
     public static final String SUCCESSFUL_ROOM_CREATION = "/pages/room/create room/successful room creation.jsp";
@@ -87,4 +88,8 @@ public final class Constants {
     /**error message*/
     public static final String ERROR_MESSAGE_BY_USER = "User is not found!";
     public static final String ERROR_MESSAGE_BY_ROOM = "Room is not found!";
+
+    /**sql request*/
+    public final static String CREATE_USER = "\"INSERT INTO user (access, login, password, \" +\n" +
+            "            \"first_name, email, date_birthday, date_created, salt) VALUES (?,?,?,?,?,?,?,?)\";";
 }

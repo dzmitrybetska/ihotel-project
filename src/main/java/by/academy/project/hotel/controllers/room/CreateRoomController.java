@@ -28,19 +28,13 @@ public class CreateRoomController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        User user = (User) session.getAttribute(USER);
-        if (user.getRole() == Role.ADMIN) {
-            Room room = roomMapper
-                    .buildRoom(
-                            req.getParameter(NUMBER),
-                            Double.parseDouble(req.getParameter(PRICE)),
-                            RoomCategory.valueOf(req.getParameter(ROOM_CATEGORY).toUpperCase()),
-                            RoomStatus.valueOf(req.getParameter(ROOM_STATUS).toUpperCase()));
-            roomService.createRoom(room);
-            req.getRequestDispatcher(SUCCESSFUL_ROOM_CREATION).forward(req, resp);
-        }else {
-            req.getRequestDispatcher(ACCESS_IS_DENIED).forward(req, resp);
-        }
+        Room room = roomMapper
+                .buildRoom(
+                        req.getParameter(NUMBER),
+                        Double.parseDouble(req.getParameter(PRICE)),
+                        RoomCategory.valueOf(req.getParameter(ROOM_CATEGORY).toUpperCase()),
+                        RoomStatus.valueOf(req.getParameter(ROOM_STATUS).toUpperCase()));
+        roomService.createRoom(room);
+        req.getRequestDispatcher(SUCCESSFUL_ROOM_CREATION).forward(req, resp);
     }
 }

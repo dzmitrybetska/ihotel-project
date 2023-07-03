@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebFilter(urlPatterns = "/user/update")
-public class UpdateFilter extends HttpFilter {
+public class UpdateUserFilter extends HttpFilter {
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
         String password = req.getParameter(PASSWORD);

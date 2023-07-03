@@ -23,18 +23,12 @@ public class DeleteUserController extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        User userFromSession = (User) session.getAttribute(USER);
-        if (userFromSession.getRole() == Role.ADMIN){
-            try {
-                userService.deleteUser(req.getParameter(USER_ID));
-                req.getRequestDispatcher(SUCCESSFUL_REMOVAL).forward(req, resp);
-            }catch (NotFoundUserException ex){
-                req.setAttribute(ERROR, ex.getMessage());
-                req.getRequestDispatcher(UNSUCCESSFUL_REMOVAL).forward(req, resp);
-            }
-        }else {
-            req.getRequestDispatcher(ACCESS_IS_DENIED).forward(req, resp);
+        try {
+            userService.deleteUser(req.getParameter(USER_ID));
+            req.getRequestDispatcher(SUCCESSFUL_REMOVAL).forward(req, resp);
+        }catch (NotFoundUserException ex){
+            req.setAttribute(ERROR, ex.getMessage());
+            req.getRequestDispatcher(UNSUCCESSFUL_REMOVAL).forward(req, resp);
         }
     }
 

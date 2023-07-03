@@ -62,10 +62,8 @@ public final class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByLogin(String login) {
-        Optional<User> optional = userRepository.getUserByLogin(login);
-        return optional.orElse(null);
+    public Optional<User> getUserByLogin(String login) {
+        return userRepository.getUserByLogin(login);
     }
-
 }
 
