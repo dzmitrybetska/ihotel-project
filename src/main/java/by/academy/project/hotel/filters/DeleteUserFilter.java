@@ -5,6 +5,7 @@ import by.academy.project.hotel.entities.user.User;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +16,7 @@ import java.io.IOException;
 import static by.academy.project.hotel.util.configuration.Constants.ACCESS_IS_DENIED;
 import static by.academy.project.hotel.util.configuration.Constants.USER;
 
-@WebServlet(urlPatterns = "/user/delete")
+@WebFilter(urlPatterns = "/user/delete")
 public class DeleteUserFilter extends HttpFilter {
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
