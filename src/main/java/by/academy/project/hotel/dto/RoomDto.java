@@ -1,16 +1,24 @@
-package by.academy.project.hotel.dto.dataroom;
+package by.academy.project.hotel.dto;
 
 import by.academy.project.hotel.entities.room.RoomCategory;
 import by.academy.project.hotel.entities.room.RoomStatus;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
+
+import java.math.BigDecimal;
 
 @Builder
 @Data
-public class DataRoomForAdmin {
-    private final String id;
+@Accessors(chain = true)
+@NoArgsConstructor
+@AllArgsConstructor
+public class RoomDto {
+    private Long id;
     private String number;
-    private double price;
+    private BigDecimal price;
     private RoomCategory roomCategory;
     private Boolean isBooked;
     private RoomStatus roomStatus;

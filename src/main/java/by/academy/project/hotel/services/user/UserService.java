@@ -1,17 +1,24 @@
 package by.academy.project.hotel.services.user;
 
 
-import by.academy.project.hotel.entities.user.User;
+import by.academy.project.hotel.dto.UserDto;
 import by.academy.project.hotel.exceptions.NotFoundUserException;
+import by.academy.project.hotel.exceptions.UserNotCreatedException;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
-    User createUser(User user);
-    List<User> readUsers();
-    User updateUser(String id, User user) throws NotFoundUserException;
-    User deleteUser(String id) throws NotFoundUserException;
-    Optional<User> getUserByLogin(String login);
-    List<User> findUsers(String name, String surname);
+    UserDto create(UserDto userDto) throws UserNotCreatedException;
+
+    List<UserDto> read();
+
+    UserDto update(UserDto userDto) throws NotFoundUserException;
+
+    boolean delete(Long id);
+
+    UserDto getByID(Long id) throws NotFoundUserException;
+
+    UserDto getUserByLogin(String login) throws NotFoundUserException;
+
+    List<UserDto> findUser(String name, String surname);
 }

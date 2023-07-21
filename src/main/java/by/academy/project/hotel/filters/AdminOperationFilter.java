@@ -1,7 +1,7 @@
 package by.academy.project.hotel.filters;
 
+import by.academy.project.hotel.dto.UserDto;
 import by.academy.project.hotel.entities.user.Role;
-import by.academy.project.hotel.entities.user.User;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -16,14 +16,14 @@ import static by.academy.project.hotel.util.configuration.Constants.ACCESS_IS_DE
 import static by.academy.project.hotel.util.configuration.Constants.USER;
 
 @WebFilter(urlPatterns = {"/room/update", "/room/delete", "/room/create"})
-public class CreateUpdateDeleteRoomFilter extends HttpFilter {
+public class AdminOperationFilter extends HttpFilter {
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpSession session = req.getSession();
-        User user = (User) session.getAttribute(USER);
-        if (user.getRole() == Role.ADMIN){
+        UserDto userFromSession = (UserDto) session.getAttribute(USER);
+        if (userFromSession.getRole() == Role.ADMIN) {
             chain.doFilter(req, res);
-        }else {
+        } else {
             req.getRequestDispatcher(ACCESS_IS_DENIED).forward(req, res);
         }
     }

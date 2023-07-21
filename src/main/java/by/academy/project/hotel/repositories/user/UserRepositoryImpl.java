@@ -1,72 +1,115 @@
 package by.academy.project.hotel.repositories.user;
 
 
+import by.academy.project.hotel.dto.UserDto;
 import by.academy.project.hotel.entities.user.User;
+import by.academy.project.hotel.mappers.UserMapper;
+import by.academy.project.hotel.util.JPAUtil;
 
-import java.util.ArrayList;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 public class UserRepositoryImpl implements UserRepository {
-    private final List<User> users = new ArrayList<>();
+
+    private final UserMapper mapper = UserMapper.getInstance();
+    private EntityManager entityManager;
 
     @Override
-    public User createUser(User user) {
-        users.add(user);
-        return user;
+    public Optional<User> add(UserDto userDto) {
+        entityManager = JPAUtil.getInstance().getEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+        User user = mapper.buildUser(userDto);
+        entityManager.persist(user);
+        transaction.commit();
+        entityManager.close();
+        JPAUtil.getInstance().deleteEntityManager();
+        return Optional.ofNullable(user);
     }
 
     @Override
-    public List<User> readUsers() {
+    public List<User> read() {
+        entityManager = JPAUtil.getInstance().getEntityManager();
+        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM by.academy.project.hotel.entities.user.User u", User.class);
+        List<User> users = query.getResultList();
+        entityManager.close();
+        JPAUtil.getInstance().deleteEntityManager();
         return users;
     }
+
     @Override
-    public Optional<User> updateUser(String id, User user) {
-        Optional<User> optional = getUserByUserID(id);
-        if (optional.isPresent()){
-            User userFound = optional.get();
-            userFound.setName(user.getName())
-                    .setSurname(user.getSurname())
-                    .setEmail(user.getEmail())
-                    .setPhone(user.getPhone())
-                    .setRole(user.getRole());
-            if(user.getPassword() != null){
-                userFound.setPassword(user.getPassword());
-            }
-            if (user.getPassport() !=null){
-                userFound.setPassport(user.getPassport());
-            }
+    public Optional<User> update(UserDto userDto) {
+        entityManager = JPAUtil.getInstance().getEntityManager();
+        try {
+            EntityTransaction entityTransaction = entityManager.getTransaction();
+            entityTransaction.begin();
+            User user = entityManager.find(User.class, userDto.getId());
+            mapper.updateUser(user, userDto);
+            entityTransaction.commit();
+            return Optional.of(user);
+        } catch (NullPointerException e) {
+            return Optional.empty();
+        } finally {
+            entityManager.close();
+            JPAUtil.getInstance().deleteEntityManager();
         }
-        return optional;
     }
 
     @Override
-    public Optional<User> deleteUser(String id) {
-        Optional<User> optional = getUserByUserID(id);
-        optional.ifPresent(users::remove);
-        return optional;
+    public Optional<User> delete(Long id) {
+        entityManager = JPAUtil.getInstance().getEntityManager();
+        try {
+            EntityTransaction transaction = entityManager.getTransaction();
+            transaction.begin();
+            User user = entityManager.find(User.class, id);
+            entityManager.remove(user);
+            transaction.commit();
+            return Optional.of(user);
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        } finally {
+            entityManager.close();
+            JPAUtil.getInstance().deleteEntityManager();
+        }
     }
 
-    private Optional<User> getUserByUserID(String id){
-        return users.stream()
-                .filter(user -> Objects.equals(user.getId(), id))
-                .findAny();
+    @Override
+    public Optional<User> getByID(Long id) {
+        entityManager = JPAUtil.getInstance().getEntityManager();
+        User user = entityManager.find(User.class, id);
+        entityManager.close();
+        JPAUtil.getInstance().deleteEntityManager();
+        return Optional.ofNullable(user);
     }
 
     @Override
     public Optional<User> getUserByLogin(String login) {
-        return users.stream()
-                .filter(user -> user.getLogin().equals(login))
-                .findAny();
+        entityManager = JPAUtil.getInstance().getEntityManager();
+        try {
+            TypedQuery<User> query = entityManager.createQuery("SELECT u FROM " + User.class.getName() + " u WHERE u.login = ?1", User.class);
+            User user = query.setParameter(1, login).getSingleResult();
+            return Optional.of(user);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        } finally {
+            entityManager.close();
+            JPAUtil.getInstance().deleteEntityManager();
+        }
     }
 
     @Override
-    public List<User> findUser(String name, String surname){
-        return users.stream()
-                .filter(user -> user.getName().equals(name) && user.getSurname().equals(surname))
-                .collect(Collectors.toList());
+    public List<User> findUser(String name, String surname) {
+        entityManager = JPAUtil.getInstance().getEntityManager();
+        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM " + User.class.getName() +
+                " u WHERE u.name = ?1 and u.surname = ?2", User.class);
+        List<User> users = query.setParameter(1, name).setParameter(2, surname).getResultList();
+        entityManager.close();
+        JPAUtil.getInstance().deleteEntityManager();
+        return users;
     }
 }

@@ -3,6 +3,7 @@ package by.academy.project.hotel.filters;
 
 import by.academy.project.hotel.entities.room.RoomCategory;
 import by.academy.project.hotel.entities.room.RoomStatus;
+import by.academy.project.hotel.exceptions.NotFoundRoomException;
 import by.academy.project.hotel.services.room.RoomService;
 import by.academy.project.hotel.services.room.RoomServiceImpl;
 
@@ -20,37 +21,43 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 @WebFilter(urlPatterns = "/room/create")
 public class CreateRoomFilter extends HttpFilter {
     private final RoomService roomService = RoomServiceImpl.getInstance();
+
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
-        if (checkRoomByNumber(req.getParameter(NUMBER))){
+        if (checkRoomByNumber(req.getParameter(NUMBER))) {
             req.getRequestDispatcher(FAILED_CREATION_DUE_TO_NUMBER).forward(req, res);
         } else if (!checkRoomCategories(req.getParameter(ROOM_CATEGORY))) {
             req.getRequestDispatcher(FAILED_CREATION_DUE_TO_ROOM_TYPE).forward(req, res);
         } else if (!checkRoomStatus(req.getParameter(ROOM_STATUS))) {
             req.getRequestDispatcher(FAILED_CREATION_DUE_TO_STATUS).forward(req, res);
-        }else {
+        } else {
             chain.doFilter(req, res);
         }
     }
 
-    private boolean checkRoomByNumber(String number){
-        return roomService.findRoomByNumber(number).isPresent();
-    }
-
-    private boolean checkRoomCategories(String roomCategory){
-        try{
-            RoomCategory.valueOf(roomCategory.toUpperCase());
+    private boolean checkRoomByNumber(String number) {
+        try {
+            roomService.getRoomByNumber(number);
             return true;
-        } catch (IllegalArgumentException ex){
+        } catch (NotFoundRoomException ex) {
             return false;
         }
     }
 
-    private boolean checkRoomStatus(String roomStatus){
-        try{
+    private boolean checkRoomCategories(String roomCategory) {
+        try {
+            RoomCategory.valueOf(roomCategory.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
+    private boolean checkRoomStatus(String roomStatus) {
+        try {
             RoomStatus.valueOf(roomStatus.toUpperCase());
             return true;
-        } catch (IllegalArgumentException ex){
+        } catch (IllegalArgumentException ex) {
             return false;
         }
     }
