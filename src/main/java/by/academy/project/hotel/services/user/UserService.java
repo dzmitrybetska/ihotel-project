@@ -20,5 +20,5 @@ public interface UserService {
 
     UserDto getUserByLogin(String login) throws NotFoundUserException;
 
-    List<UserDto> findUser(String name, String surname);
+    List<UserDto> findUser(String name, String surname) throws NotFoundUserException;
 }

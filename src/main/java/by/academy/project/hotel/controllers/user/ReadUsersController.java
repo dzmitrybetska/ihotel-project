@@ -19,7 +19,7 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebServlet(urlPatterns = "/users/read")
 public class ReadUsersController extends HttpServlet {
-    private final UserService userService = UserServiceImpl.getInstance();
+    private final UserService userService = new UserServiceImpl();
     private final UserMapper mapper = UserMapper.getInstance();
 
     @Override

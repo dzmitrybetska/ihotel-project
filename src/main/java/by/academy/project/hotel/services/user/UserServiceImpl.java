@@ -14,20 +14,16 @@ import java.util.Optional;
 import static by.academy.project.hotel.util.configuration.Constants.ERROR_MESSAGE_BY_USER;
 import static by.academy.project.hotel.util.configuration.Constants.USER_CREATION_ERROR_MESSAGE;
 
-public final class UserServiceImpl implements UserService {
-    private static UserServiceImpl instance;
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper mapper = UserMapper.getInstance();
 
-    private UserServiceImpl() {
-        userRepository = new UserRepositoryImpl();
+    public UserServiceImpl() {
+        userRepository = UserRepositoryImpl.getInstance();
     }
 
-    public static UserServiceImpl getInstance() {
-        if (instance == null) {
-            instance = new UserServiceImpl();
-        }
-        return instance;
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -89,9 +85,13 @@ public final class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findUser(String name, String surname) {
+    public List<UserDto> findUser(String name, String surname) throws NotFoundUserException {
         List<User> users = userRepository.findUser(name, surname);
-        return mapper.buildUsersDto(users);
+        if (users.size() != 0) {
+            return mapper.buildUsersDto(users);
+        } else {
+            throw new NotFoundUserException(ERROR_MESSAGE_BY_USER);
+        }
     }
 
 }

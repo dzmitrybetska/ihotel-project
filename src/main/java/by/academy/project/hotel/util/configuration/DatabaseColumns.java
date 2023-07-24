@@ -30,5 +30,4 @@ public final class DatabaseColumns {
     public final static String PASSPORT_SERIES = "PASSPORT_SERIES";
     public final static String PASSPORT_ID = "PASSPORT_ID";
     public final static String COUNTRY = "COUNTRY";
-
 }

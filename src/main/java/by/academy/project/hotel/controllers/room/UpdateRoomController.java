@@ -19,8 +19,7 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebServlet(urlPatterns = "/room/update")
 public class UpdateRoomController extends HttpServlet {
-    private final RoomService roomService = RoomServiceImpl.getInstance();
-
+    private final RoomService roomService = new RoomServiceImpl();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

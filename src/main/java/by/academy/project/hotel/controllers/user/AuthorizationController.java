@@ -17,7 +17,7 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebServlet(urlPatterns = "/user/authorization")
 public class AuthorizationController extends HttpServlet {
-    private final UserService userService = UserServiceImpl.getInstance();
+    private final UserService userService = new UserServiceImpl();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

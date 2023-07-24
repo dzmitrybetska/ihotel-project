@@ -17,21 +17,18 @@ import static by.academy.project.hotel.util.configuration.Constants.ERROR_MESSAG
 import static by.academy.project.hotel.util.configuration.Constants.ERROR_MESSAGE_BY_ROOM;
 
 
-public final class RoomServiceImpl implements RoomService {
-    private static RoomServiceImpl instance;
+public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
     private final RoomMapper mapper = RoomMapper.getInstance();
 
-    private RoomServiceImpl() {
-        roomRepository = new RoomRepositoryImpl();
+    public RoomServiceImpl() {
+        roomRepository = RoomRepositoryImpl.getInstance();
     }
 
-    public static RoomServiceImpl getInstance() {
-        if (instance == null) {
-            instance = new RoomServiceImpl();
-        }
-        return instance;
+    public RoomServiceImpl(RoomRepository roomRepository) {
+        this.roomRepository = roomRepository;
     }
+
 
     @Override
     public RoomDto add(RoomDto room) throws RoomNotAddedException {
@@ -85,7 +82,12 @@ public final class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<RoomDto> searchRoomsByCategory(RoomCategory category) {
-        return mapper.buildRoomsDto(roomRepository.searchRoomsByCategory(category));
+    public List<RoomDto> searchRoomsByCategory(RoomCategory category) throws NotFoundRoomException {
+        List<Room> rooms = roomRepository.searchRoomsByCategory(category);
+        if (rooms.size() != 0) {
+            return mapper.buildRoomsDto(rooms);
+        } else {
+            throw new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM);
+        }
     }
 }

@@ -21,7 +21,7 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebServlet(urlPatterns = "/room/create")
 public class CreateRoomController extends HttpServlet {
-    private final RoomService roomService = RoomServiceImpl.getInstance();
+    private final RoomService roomService = new RoomServiceImpl();
     private final RoomMapper roomMapper = RoomMapper.getInstance();
 
     @Override

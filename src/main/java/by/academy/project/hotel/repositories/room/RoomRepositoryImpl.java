@@ -14,9 +14,20 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
-public class RoomRepositoryImpl implements RoomRepository {
+public final class RoomRepositoryImpl implements RoomRepository {
+    private static RoomRepositoryImpl instance;
     private final RoomMapper mapper = RoomMapper.getInstance();
     private EntityManager em;
+
+    private RoomRepositoryImpl() {
+    }
+
+    public static RoomRepositoryImpl getInstance() {
+        if (instance == null) {
+            instance = new RoomRepositoryImpl();
+        }
+        return instance;
+    }
 
     @Override
     public Optional<Room> add(RoomDto roomDto) {

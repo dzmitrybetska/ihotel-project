@@ -21,5 +21,5 @@ public interface RoomService {
 
     RoomDto getRoomByNumber(String number) throws NotFoundRoomException;
 
-    List<RoomDto> searchRoomsByCategory(RoomCategory category);
+    List<RoomDto> searchRoomsByCategory(RoomCategory category) throws NotFoundRoomException;
 }

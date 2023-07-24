@@ -15,7 +15,7 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebServlet(urlPatterns = "/room/delete")
 public class DeleteRoomController extends HttpServlet {
-    private final RoomService roomService = RoomServiceImpl.getInstance();
+    private final RoomService roomService = new RoomServiceImpl();
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

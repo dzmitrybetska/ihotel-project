@@ -20,7 +20,7 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebFilter(urlPatterns = "/room/create")
 public class CreateRoomFilter extends HttpFilter {
-    private final RoomService roomService = RoomServiceImpl.getInstance();
+    private final RoomService roomService = new RoomServiceImpl();
 
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {

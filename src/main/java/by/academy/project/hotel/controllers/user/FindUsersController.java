@@ -2,6 +2,7 @@ package by.academy.project.hotel.controllers.user;
 
 import by.academy.project.hotel.dto.UserDto;
 import by.academy.project.hotel.entities.user.Role;
+import by.academy.project.hotel.exceptions.NotFoundUserException;
 import by.academy.project.hotel.mappers.UserMapper;
 import by.academy.project.hotel.services.user.UserService;
 import by.academy.project.hotel.services.user.UserServiceImpl;
@@ -19,17 +20,17 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebServlet(urlPatterns = "/user/find")
 public class FindUsersController extends HttpServlet {
-    private final UserService userService = UserServiceImpl.getInstance();
+    private final UserService userService = new UserServiceImpl();
     private final UserMapper mapper = UserMapper.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
         UserDto userDto = (UserDto) session.getAttribute(USER);
-        List<UserDto> foundUsers = userService.findUser(req.getParameter(NAME), req.getParameter(SURNAME));
-        if (foundUsers.size() != 0) {
+        try {
+            List<UserDto> foundUsers = userService.findUser(req.getParameter(NAME), req.getParameter(SURNAME));
             createUsersDto(userDto.getRole(), foundUsers, session, req, resp);
-        } else {
+        } catch (NotFoundUserException e) {
             req.getRequestDispatcher(USER_NOT_FOUND).forward(req, resp);
         }
     }

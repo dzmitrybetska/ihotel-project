@@ -15,7 +15,7 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebServlet(urlPatterns = "/user/delete")
 public class DeleteUserController extends HttpServlet {
-    private final UserService userService = UserServiceImpl.getInstance();
+    private final UserService userService = new UserServiceImpl();
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

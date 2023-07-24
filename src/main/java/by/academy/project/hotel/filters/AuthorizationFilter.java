@@ -17,7 +17,7 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebFilter(urlPatterns = "/user/authorization")
 public class AuthorizationFilter extends HttpFilter {
-    private final UserService userService = UserServiceImpl.getInstance();
+    private final UserService userService = new UserServiceImpl();
 
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {

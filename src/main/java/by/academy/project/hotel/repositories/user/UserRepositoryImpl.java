@@ -14,10 +14,20 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class UserRepositoryImpl implements UserRepository {
-
+public final class UserRepositoryImpl implements UserRepository {
+    private static UserRepositoryImpl instance = getInstance();
     private final UserMapper mapper = UserMapper.getInstance();
     private EntityManager entityManager;
+
+    private UserRepositoryImpl() {
+    }
+
+    public static UserRepositoryImpl getInstance() {
+        if (instance == null) {
+            instance = new UserRepositoryImpl();
+        }
+        return instance;
+    }
 
     @Override
     public Optional<User> add(UserDto userDto) {

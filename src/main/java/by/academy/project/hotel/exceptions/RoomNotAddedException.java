@@ -1,6 +1,6 @@
 package by.academy.project.hotel.exceptions;
 
-public class RoomNotAddedException extends Exception{
+public class RoomNotAddedException extends Exception {
     private final String message;
 
     public RoomNotAddedException(String message) {

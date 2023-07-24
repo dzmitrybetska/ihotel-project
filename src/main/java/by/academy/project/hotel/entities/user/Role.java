@@ -22,7 +22,7 @@ public enum Role {
 
         @Override
         public UserDto createUserDto(Long id) throws NotFoundUserException {
-            return UserMapper.getInstance().buildUserDtoForGuest(UserServiceImpl.getInstance().getByID(id));
+            return UserMapper.getInstance().buildUserDtoForGuest(new UserServiceImpl().getByID(id));
         }
 
         @Override
@@ -37,7 +37,7 @@ public enum Role {
 
         @Override
         public List<RoomDto> readRoomsDto() {
-            return RoomMapper.getInstance().filterRoomsDto(RoomServiceImpl.getInstance().read());
+            return RoomMapper.getInstance().filterRoomsDto(new RoomServiceImpl().read());
         }
     }, MANAGER {
         @Override
@@ -47,7 +47,7 @@ public enum Role {
 
         @Override
         public UserDto createUserDto(Long id) throws NotFoundUserException {
-            return UserMapper.getInstance().buildUserDtoForManager(UserServiceImpl.getInstance().getByID(id));
+            return UserMapper.getInstance().buildUserDtoForManager(new UserServiceImpl().getByID(id));
         }
 
         @Override
@@ -65,7 +65,7 @@ public enum Role {
 
         @Override
         public List<RoomDto> readRoomsDto() {
-            return RoomServiceImpl.getInstance().read();
+            return new RoomServiceImpl().read();
         }
     }, ADMIN {
         @Override
@@ -75,7 +75,7 @@ public enum Role {
 
         @Override
         public UserDto createUserDto(Long id) throws NotFoundUserException {
-            return UserServiceImpl.getInstance().getByID(id);
+            return new UserServiceImpl().getByID(id);
         }
 
         @Override
@@ -95,7 +95,7 @@ public enum Role {
 
         @Override
         public List<RoomDto> readRoomsDto() {
-            return RoomServiceImpl.getInstance().read();
+            return new RoomServiceImpl().read();
         }
     };
 
