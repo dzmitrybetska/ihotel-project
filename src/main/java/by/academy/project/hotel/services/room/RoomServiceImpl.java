@@ -33,11 +33,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomDto add(RoomDto room) throws RoomNotAddedException {
         Optional<Room> optional = roomRepository.add(room);
-        if (optional.isPresent()) {
-            return mapper.buildRoomDto(optional.get());
-        } else {
-            throw new RoomNotAddedException(ERROR_MESSAGE_ADDING_ROOM);
-        }
+        return optional.map(mapper::buildRoomDto).orElseThrow(() -> new RoomNotAddedException(ERROR_MESSAGE_ADDING_ROOM));
     }
 
     @Override
@@ -48,11 +44,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomDto update(RoomDto roomDto) throws NotFoundRoomException {
         Optional<Room> optional = roomRepository.update(roomDto);
-        if (optional.isPresent()) {
-            return mapper.buildRoomDto(optional.get());
-        } else {
-            throw new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM);
-        }
+        return optional.map(mapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
     }
 
     @Override
@@ -64,21 +56,13 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomDto getByID(Long id) throws NotFoundRoomException {
         Optional<Room> optional = roomRepository.getByID(id);
-        if (optional.isPresent()) {
-            return mapper.buildRoomDto(optional.get());
-        } else {
-            throw new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM);
-        }
+        return optional.map(mapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
     }
 
     @Override
     public RoomDto getRoomByNumber(String number) throws NotFoundRoomException {
         Optional<Room> optional = roomRepository.getRoomByNumber(number);
-        if (optional.isPresent()) {
-            return mapper.buildRoomDto(optional.get());
-        } else {
-            throw new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM);
-        }
+        return optional.map(mapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
     }
 
     @Override

@@ -1,30 +1,33 @@
 package by.academy.project.hotel.entities.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 
 import static by.academy.project.hotel.util.configuration.DatabaseColumns.*;
+import static javax.persistence.EnumType.STRING;
 
 @Builder
 @Data
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Embeddable
+@Entity
+@Table(name = PASSPORTS)
 public class Passport {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = ID)
+    private Long id;
+    @OneToOne(mappedBy = PASSPORT)
+    @ToString.Exclude
+    private User user;
     @Column(name = PASSPORT_SERIES)
     private String passportSeries;
     @Column(name = PASSPORT_ID)
     private String passportID;
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @Column(name = COUNTRY)
     private Country country;
 }

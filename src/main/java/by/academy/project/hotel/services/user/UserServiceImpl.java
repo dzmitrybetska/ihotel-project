@@ -29,13 +29,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto create(UserDto userDto) throws UserNotCreatedException {
         Optional<User> optional = userRepository.add(userDto);
-        UserDto newUserDto;
-        if (optional.isPresent()) {
-            newUserDto = mapper.buildUserDto(optional.get());
-        } else {
-            throw new UserNotCreatedException(USER_CREATION_ERROR_MESSAGE);
-        }
-        return newUserDto;
+        return optional.map(mapper::buildUserDto).orElseThrow(() -> new UserNotCreatedException(USER_CREATION_ERROR_MESSAGE));
     }
 
     @Override
@@ -47,11 +41,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto update(UserDto userDto) throws NotFoundUserException {
         Optional<User> optional = userRepository.update(userDto);
-        if (optional.isPresent()) {
-            return mapper.buildUserDto(optional.get());
-        } else {
-            throw new NotFoundUserException(ERROR_MESSAGE_BY_USER);
-        }
+        return optional.map(mapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
     }
 
     @Override
@@ -63,25 +53,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getByID(Long id) throws NotFoundUserException {
         Optional<User> optional = userRepository.getByID(id);
-        UserDto userDto;
-        if (optional.isPresent()) {
-            userDto = mapper.buildUserDto(optional.get());
-        } else {
-            throw new NotFoundUserException(ERROR_MESSAGE_BY_USER);
-        }
-        return userDto;
+        return optional.map(mapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
     }
 
     @Override
     public UserDto getUserByLogin(String login) throws NotFoundUserException {
         Optional<User> optional = userRepository.getUserByLogin(login);
-        UserDto userDto;
-        if (optional.isPresent()) {
-            userDto = mapper.buildUserDto(optional.get());
-        } else {
-            throw new NotFoundUserException(ERROR_MESSAGE_BY_USER);
-        }
-        return userDto;
+        return optional.map(mapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
     }
 
     @Override
@@ -93,5 +71,4 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundUserException(ERROR_MESSAGE_BY_USER);
         }
     }
-
 }

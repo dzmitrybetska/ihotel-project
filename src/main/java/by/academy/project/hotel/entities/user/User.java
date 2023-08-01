@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 
 import static by.academy.project.hotel.util.configuration.DatabaseColumns.*;
+import static javax.persistence.EnumType.STRING;
 
 @Builder
 @Data
@@ -22,21 +23,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = USER_ID)
     private Long id;
-    @Column(name = NAME)
+    @Column(name = NAME, nullable = false, length = 32)
     private String name;
-    @Column(name = SURNAME)
+    @Column(name = SURNAME, nullable = false, length = 32)
     private String surname;
     @Column(name = LOGIN)
     private String login;
     @Column(name = PASSWORD)
     private String password;
-    @Embedded()
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = ID_PASSPORT, unique = true)
     private Passport passport;
     @Column(name = EMAIL)
     private String email;
     @Column(name = PHONE)
     private String phone;
-    @Enumerated(EnumType.STRING)
-    @Column(name = ROLE)
+    @Enumerated(STRING)
+    @Column(name = ROLE, nullable = false)
     private Role role;
 }

@@ -55,55 +55,44 @@ public final class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> update(UserDto userDto) {
         entityManager = JPAUtil.getInstance().getEntityManager();
-        try {
-            EntityTransaction entityTransaction = entityManager.getTransaction();
-            entityTransaction.begin();
-            User user = entityManager.find(User.class, userDto.getId());
-            mapper.updateUser(user, userDto);
-            entityTransaction.commit();
-            return Optional.of(user);
-        } catch (NullPointerException e) {
-            return Optional.empty();
-        } finally {
-            entityManager.close();
-            JPAUtil.getInstance().deleteEntityManager();
-        }
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+        entityTransaction.begin();
+        Optional<User> optional = Optional.ofNullable(entityManager.find(User.class, userDto.getId()));
+        optional.ifPresent(user -> mapper.updateUser(user, userDto));
+        entityTransaction.commit();
+        entityManager.close();
+        JPAUtil.getInstance().deleteEntityManager();
+        return optional;
     }
 
     @Override
     public Optional<User> delete(Long id) {
         entityManager = JPAUtil.getInstance().getEntityManager();
-        try {
-            EntityTransaction transaction = entityManager.getTransaction();
-            transaction.begin();
-            User user = entityManager.find(User.class, id);
-            entityManager.remove(user);
-            transaction.commit();
-            return Optional.of(user);
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        } finally {
-            entityManager.close();
-            JPAUtil.getInstance().deleteEntityManager();
-        }
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+        Optional<User> optional = Optional.ofNullable(entityManager.find(User.class, id));
+        optional.ifPresent(entityManager::remove);
+        transaction.commit();
+        entityManager.close();
+        JPAUtil.getInstance().deleteEntityManager();
+        return optional;
     }
 
     @Override
     public Optional<User> getByID(Long id) {
         entityManager = JPAUtil.getInstance().getEntityManager();
-        User user = entityManager.find(User.class, id);
+        Optional<User> optional = Optional.ofNullable(entityManager.find(User.class, id));
         entityManager.close();
         JPAUtil.getInstance().deleteEntityManager();
-        return Optional.ofNullable(user);
+        return optional;
     }
 
     @Override
     public Optional<User> getUserByLogin(String login) {
-        entityManager = JPAUtil.getInstance().getEntityManager();
         try {
+            entityManager = JPAUtil.getInstance().getEntityManager();
             TypedQuery<User> query = entityManager.createQuery("SELECT u FROM " + User.class.getName() + " u WHERE u.login = ?1", User.class);
-            User user = query.setParameter(1, login).getSingleResult();
-            return Optional.of(user);
+            return Optional.ofNullable(query.setParameter(1, login).getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();
         } finally {

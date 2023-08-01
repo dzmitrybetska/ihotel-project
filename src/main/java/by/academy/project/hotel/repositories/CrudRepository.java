@@ -9,8 +9,6 @@ public interface CrudRepository<K extends Number, R, V> {
 
     List<V> read();
 
-    Optional<V> getByID(K k);
-
     Optional<V> update(R r);
 
     Optional<V> delete(K k);

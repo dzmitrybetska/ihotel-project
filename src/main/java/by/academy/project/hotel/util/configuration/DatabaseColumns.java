@@ -28,6 +28,10 @@ public final class DatabaseColumns {
     public final static String PHONE = "PHONE";
     public final static String ROLE = "ROLE";
     public final static String PASSPORT_SERIES = "PASSPORT_SERIES";
+    public final static String ID_PASSPORT = "ID_PASSPORT";
+    public final static String PASSPORT = "passport";
+    public final static String PASSPORTS = "PASSPORTS";
+    public final static String ID = "ID";
     public final static String PASSPORT_ID = "PASSPORT_ID";
     public final static String COUNTRY = "COUNTRY";
 }

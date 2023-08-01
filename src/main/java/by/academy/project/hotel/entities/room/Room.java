@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 import static by.academy.project.hotel.util.configuration.DatabaseColumns.*;
+import static javax.persistence.EnumType.STRING;
 
 @Builder
 @Data
@@ -27,12 +28,12 @@ public class Room {
     private String number;
     @Column(name = PRICE)
     private BigDecimal price;
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @Column(name = ROOM_CATEGORY)
     private RoomCategory roomCategory;
     @Column(name = IS_BOOKED)
     private Boolean isBooked;
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @Column(name = ROOM_STATUS)
     private RoomStatus roomStatus;
 }
