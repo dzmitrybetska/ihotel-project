@@ -6,11 +6,14 @@ import by.academy.project.hotel.entities.room.RoomCategory;
 import by.academy.project.hotel.entities.room.RoomStatus;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class RoomMapper {
     private static RoomMapper instance;
+    private static final BookingMapper bookingMapper = BookingMapper.getInstance();
 
     private RoomMapper() {
     }
@@ -61,6 +64,23 @@ public final class RoomMapper {
     }
 
     public RoomDto buildRoomDto(Room room) {
+        return room.getBookings() != null ? buildRoomDtoWithBookings(room) : buildRoomDtoWithoutBookings(room);
+    }
+
+    public List<RoomDto> filterRoomsDto(List<RoomDto> rooms) {
+        return rooms.stream()
+                .filter(room -> room.getRoomStatus() == RoomStatus.SERVICED)
+                .map(this::buildRoomDtoForGuest)
+                .collect(Collectors.toList());
+    }
+
+    public List<RoomDto> buildRoomsDto(Collection<Room> rooms) {
+        return rooms.stream()
+                .map(this::buildRoomDto)
+                .collect(Collectors.toList());
+    }
+
+    public RoomDto buildRoomDtoWithoutBookings(Room room) {
         return RoomDto.builder()
                 .id(room.getId())
                 .number(room.getNumber())
@@ -71,17 +91,40 @@ public final class RoomMapper {
                 .build();
     }
 
-    public List<RoomDto> filterRoomsDto(List<RoomDto> rooms) {
-        return rooms.stream()
-                .filter(room -> room.getRoomStatus() == RoomStatus.SERVICED)
-                .map(this::buildRoomDtoForGuest)
-                .collect(Collectors.toList());
+    public Room buildRoomForBooking(RoomDto room) {
+        return Room.builder()
+                .id(room.getId())
+                .number(room.getNumber())
+                .price(room.getPrice())
+                .roomCategory(room.getRoomCategory())
+                .isBooked(room.getIsBooked())
+                .roomStatus(room.getRoomStatus())
+                .build();
     }
 
-    public List<RoomDto> buildRoomsDto(List<Room> rooms) {
+    public Set<RoomDto> buildRoomsDtoForBooking(Set<Room> rooms) {
         return rooms.stream()
-                .map(this::buildRoomDto)
-                .collect(Collectors.toList());
+                .map(this::buildRoomDtoWithoutBookings)
+                .collect(Collectors.toSet());
     }
+
+    public Set<Room> buildRoomsForBooking(Set<RoomDto> rooms) {
+        return rooms.stream()
+                .map(this::buildRoomForBooking)
+                .collect(Collectors.toSet());
+    }
+
+    private RoomDto buildRoomDtoWithBookings(Room room) {
+        return RoomDto.builder()
+                .id(room.getId())
+                .number(room.getNumber())
+                .price(room.getPrice())
+                .roomCategory(room.getRoomCategory())
+                .isBooked(room.getIsBooked())
+                .roomStatus(room.getRoomStatus())
+                .bookings(bookingMapper.buildBookingsDtoForRoom(room.getBookings()))
+                .build();
+    }
+
 }
 

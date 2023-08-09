@@ -6,17 +6,24 @@ import by.academy.project.hotel.entities.room.Room;
 import by.academy.project.hotel.entities.room.RoomCategory;
 import by.academy.project.hotel.mappers.RoomMapper;
 import by.academy.project.hotel.util.JPAUtil;
+import org.hibernate.Hibernate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static by.academy.project.hotel.util.configuration.Constants.NUMBER;
+import static by.academy.project.hotel.util.configuration.Constants.ROOM_CATEGORY;
 
 public final class RoomRepositoryImpl implements RoomRepository {
     private static RoomRepositoryImpl instance;
-    private final RoomMapper mapper = RoomMapper.getInstance();
+    private final RoomMapper roomMapper = RoomMapper.getInstance();
     private EntityManager entityManager;
 
     private RoomRepositoryImpl() {
@@ -31,83 +38,109 @@ public final class RoomRepositoryImpl implements RoomRepository {
 
     @Override
     public Optional<Room> add(RoomDto roomDto) {
-        entityManager = JPAUtil.getInstance().getEntityManager();
+        entityManager = JPAUtil.getEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
-        Room room = mapper.buildRoom(roomDto);
-        entityManager.persist(room);
+        Optional<Room> optionalRoom = Optional.ofNullable(roomMapper.buildRoom(roomDto));
+        optionalRoom.ifPresent(entityManager::persist);
         transaction.commit();
         entityManager.close();
-        JPAUtil.getInstance().deleteEntityManager();
-        return Optional.ofNullable(room);
+        return optionalRoom;
     }
 
     @Override
     public List<Room> read() {
-        entityManager = JPAUtil.getInstance().getEntityManager();
-        TypedQuery<Room> query = entityManager.createQuery("SELECT r FROM by.academy.project.hotel.entities.room.Room r ", Room.class);
-        List<Room> rooms = query.getResultList();
-        JPAUtil.getInstance().deleteEntityManager();
+        entityManager = JPAUtil.getEntityManager();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Room> roomCriteriaQuery = criteriaBuilder.createQuery(Room.class);
+        Root<Room> roomRoot = roomCriteriaQuery.from(Room.class);
+        roomCriteriaQuery.select(roomRoot);
+        List<Room> rooms = entityManager.createQuery(roomCriteriaQuery).getResultList();
+        initRooms(rooms);
+        entityManager.close();
         return rooms;
     }
 
     @Override
     public Optional<Room> update(RoomDto roomDto) {
-        entityManager = JPAUtil.getInstance().getEntityManager();
+        entityManager = JPAUtil.getEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
-        Optional<Room> optional = Optional.ofNullable(entityManager.find(Room.class, roomDto.getId()));
-        optional.ifPresent(room -> mapper.updateRoom(room, roomDto));
+        Optional<Room> optionalRoom = Optional.ofNullable(entityManager.find(Room.class, roomDto.getId()));
+        optionalRoom.ifPresent(room -> roomMapper.updateRoom(room, roomDto));
+        optionalRoom.ifPresent(this::initRoom);
         transaction.commit();
         entityManager.close();
-        JPAUtil.getInstance().deleteEntityManager();
-        return optional;
+        return optionalRoom;
     }
 
     @Override
     public Optional<Room> delete(Long id) {
-        entityManager = JPAUtil.getInstance().getEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
-        Optional<Room> optional = Optional.ofNullable(entityManager.find(Room.class, id));
-        optional.ifPresent(entityManager::remove);
-        transaction.commit();
-        entityManager.close();
-        JPAUtil.getInstance().deleteEntityManager();
-        return optional;
+        try {
+            entityManager = JPAUtil.getEntityManager();
+            EntityTransaction transaction = entityManager.getTransaction();
+            transaction.begin();
+            Optional<Room> optionalRoom = Optional.ofNullable(entityManager.find(Room.class, id));
+            optionalRoom.ifPresent(entityManager::remove);
+            optionalRoom.ifPresent(this::initRoom);
+            transaction.commit();
+            return optionalRoom;
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
     public Optional<Room> getByID(Long id) {
-        entityManager = JPAUtil.getInstance().getEntityManager();
-        Optional<Room> optional = Optional.ofNullable(entityManager.find(Room.class, id));
+        entityManager = JPAUtil.getEntityManager();
+        Optional<Room> optionalRoom = Optional.ofNullable(entityManager.find(Room.class, id));
+        optionalRoom.ifPresent(this::initRoom);
         entityManager.close();
-        JPAUtil.getInstance().deleteEntityManager();
-        return optional;
+        return optionalRoom;
     }
 
     @Override
     public Optional<Room> getRoomByNumber(String number) {
         try {
-            entityManager = JPAUtil.getInstance().getEntityManager();
-            TypedQuery<Room> query = entityManager.createQuery("SELECT r FROM " + Room.class.getName() + " r WHERE r.number = ?1", Room.class);
-            return Optional.ofNullable(query.setParameter(1, number).getSingleResult());
+            entityManager = JPAUtil.getEntityManager();
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Room> roomCriteriaQuery = criteriaBuilder.createQuery(Room.class);
+            Root<Room> roomRoot = roomCriteriaQuery.from(Room.class);
+            roomCriteriaQuery.select(roomRoot).where(criteriaBuilder.equal(roomRoot.get(NUMBER), number));
+            Optional<Room> optionalRoom = Optional.ofNullable(entityManager.createQuery(roomCriteriaQuery).getSingleResult());
+            optionalRoom.ifPresent(this::initRoom);
+            return optionalRoom;
         } catch (NoResultException e) {
             return Optional.empty();
         } finally {
             entityManager.close();
-            JPAUtil.getInstance().deleteEntityManager();
         }
     }
 
     @Override
     public List<Room> searchRoomsByCategory(RoomCategory category) {
-        entityManager = JPAUtil.getInstance().getEntityManager();
-        TypedQuery<Room> query = entityManager.createQuery("SELECT r FROM " + Room.class.getName() + " r WHERE r.roomCategory = ?1", Room.class);
-        List<Room> rooms = query.setParameter(1, category).getResultList();
+        entityManager = JPAUtil.getEntityManager();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Room> roomCriteriaQuery = criteriaBuilder.createQuery(Room.class);
+        Root<Room> roomRoot = roomCriteriaQuery.from(Room.class);
+        roomCriteriaQuery.select(roomRoot).where(criteriaBuilder.equal(roomRoot.get(ROOM_CATEGORY), category));
+        List<Room> rooms = entityManager.createQuery(roomCriteriaQuery).getResultList();
+        initRooms(rooms);
         entityManager.close();
-        JPAUtil.getInstance().deleteEntityManager();
         return rooms;
     }
 
+    private void initRoom(Room room) {
+        Hibernate.initialize(room.getBookings().stream()
+                .map(booking -> booking.getUser().getAddresses())
+                .collect(Collectors.toSet()));
+    }
+
+    private void initRooms(List<Room> rooms) {
+        Hibernate.initialize(rooms.stream()
+                .map(room -> room.getBookings().stream()
+                        .map(booking -> booking.getUser().getAddresses())
+                        .collect(Collectors.toSet()))
+                .collect(Collectors.toSet()));
+    }
 }

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Builder
 @Data
@@ -22,4 +23,5 @@ public class RoomDto {
     private RoomCategory roomCategory;
     private Boolean isBooked;
     private RoomStatus roomStatus;
+    private Set<BookingDto> bookings;
 }

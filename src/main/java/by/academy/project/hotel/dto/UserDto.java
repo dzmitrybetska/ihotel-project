@@ -1,5 +1,6 @@
 package by.academy.project.hotel.dto;
 
+import by.academy.project.hotel.entities.user.Address;
 import by.academy.project.hotel.entities.user.Passport;
 import by.academy.project.hotel.entities.user.Role;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+
+import java.util.Set;
 
 @Builder
 @Data
@@ -23,4 +26,6 @@ public class UserDto {
     private String email;
     private String phone;
     private Role role;
+    private Set<Address> addresses;
+    private Set<BookingDto> bookings;
 }

@@ -13,6 +13,8 @@ import by.academy.project.hotel.services.room.RoomServiceImpl;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -26,6 +28,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
+/**надо разобраться*/
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RoomServiceTest {
     @Mock
     private RoomRepository roomRepository;

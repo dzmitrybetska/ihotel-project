@@ -14,6 +14,7 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 public final class UserMapper {
     private static UserMapper instance;
+    private final BookingMapper bookingMapper = BookingMapper.getInstance();
 
     private UserMapper() {
     }
@@ -36,6 +37,7 @@ public final class UserMapper {
                 .email(userDto.getEmail())
                 .phone(userDto.getPhone())
                 .role(userDto.getRole())
+                .addresses(userDto.getAddresses())
                 .build();
     }
 
@@ -43,10 +45,14 @@ public final class UserMapper {
         user.setName(userDto.getName())
                 .setSurname(userDto.getSurname())
                 .setPassword(userDto.getPassword())
-                .setPassport(userDto.getPassport())
                 .setEmail(userDto.getEmail())
                 .setPhone(userDto.getPhone())
-                .setRole(userDto.getRole());
+                .setRole(userDto.getRole())
+                .setAddresses(userDto.getAddresses())
+                .getPassport()
+                .setPassportSeries(userDto.getPassport().getPassportSeries())
+                .setPassportID(userDto.getPassport().getPassportID())
+                .setCountry(userDto.getPassport().getCountry());
     }
 
     public Passport buildPassport(String passportSeries, String passportID, Country country) {
@@ -83,17 +89,7 @@ public final class UserMapper {
     }
 
     public UserDto buildUserDto(User user) {
-        return UserDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .surname(user.getSurname())
-                .login(user.getLogin())
-                .password(user.getPassword())
-                .passport(user.getPassport())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .role(user.getRole())
-                .build();
+        return user.getBookings() != null ? buildUserDtoWithBookings(user) : buildUserDtoWithoutBookings(user);
     }
 
     public UserDto buildUserDtoForGuest(HttpServletRequest req) {
@@ -141,6 +137,21 @@ public final class UserMapper {
                 .build();
     }
 
+    public UserDto buildUserDtoWithoutBookings(User user) {
+        return UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .login(user.getLogin())
+                .password(user.getPassword())
+                .passport(user.getPassport())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .role(user.getRole())
+                .addresses(user.getAddresses())
+                .build();
+    }
+
     public List<UserDto> filterUsersDto(List<UserDto> users) {
         return users.stream()
                 .filter(user -> user.getRole() == Role.GUEST)
@@ -152,6 +163,22 @@ public final class UserMapper {
         return users.stream()
                 .map(this::buildUserDto)
                 .collect(Collectors.toList());
+    }
+
+    private UserDto buildUserDtoWithBookings(User user) {
+        return UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .login(user.getLogin())
+                .password(user.getPassword())
+                .passport(user.getPassport())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .role(user.getRole())
+                .addresses(user.getAddresses())
+                .bookings(bookingMapper.buildBookingsDtoForUser(user.getBookings()))
+                .build();
     }
 }
 

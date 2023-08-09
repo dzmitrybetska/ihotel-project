@@ -104,5 +104,7 @@ public final class Constants {
     public static final String ERROR_MESSAGE_BY_ROOM = "Room is not found!";
     public static final String USER_CREATION_ERROR_MESSAGE = "User not created!";
     public static final String ERROR_MESSAGE_ADDING_ROOM = "Room not added!";
+    public static final String ERROR_MESSAGE_CREATING_BOOKING = "Booking not created!";
+    public static final String ERROR_MESSAGE_SEARCHING_BOOKING = "Booking is not found!";
 
 }

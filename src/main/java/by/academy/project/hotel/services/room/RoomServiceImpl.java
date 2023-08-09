@@ -19,7 +19,7 @@ import static by.academy.project.hotel.util.configuration.Constants.ERROR_MESSAG
 
 public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
-    private final RoomMapper mapper = RoomMapper.getInstance();
+    private final RoomMapper roomMapper = RoomMapper.getInstance();
 
     public RoomServiceImpl() {
         roomRepository = RoomRepositoryImpl.getInstance();
@@ -32,44 +32,44 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomDto add(RoomDto room) throws RoomNotAddedException {
-        Optional<Room> optional = roomRepository.add(room);
-        return optional.map(mapper::buildRoomDto).orElseThrow(() -> new RoomNotAddedException(ERROR_MESSAGE_ADDING_ROOM));
+        Optional<Room> optionalRoom = roomRepository.add(room);
+        return optionalRoom.map(roomMapper::buildRoomDto).orElseThrow(() -> new RoomNotAddedException(ERROR_MESSAGE_ADDING_ROOM));
     }
 
     @Override
     public List<RoomDto> read() {
-        return mapper.buildRoomsDto(roomRepository.read());
+        return roomMapper.buildRoomsDto(roomRepository.read());
     }
 
     @Override
     public RoomDto update(RoomDto roomDto) throws NotFoundRoomException {
-        Optional<Room> optional = roomRepository.update(roomDto);
-        return optional.map(mapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
+        Optional<Room> optionalRoom = roomRepository.update(roomDto);
+        return optionalRoom.map(roomMapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
     }
 
     @Override
     public boolean delete(Long id) {
-        Optional<Room> optional = roomRepository.delete(id);
-        return optional.isPresent();
+        Optional<Room> optionalRoom = roomRepository.delete(id);
+        return optionalRoom.isPresent();
     }
 
     @Override
     public RoomDto getByID(Long id) throws NotFoundRoomException {
-        Optional<Room> optional = roomRepository.getByID(id);
-        return optional.map(mapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
+        Optional<Room> optionalRoom = roomRepository.getByID(id);
+        return optionalRoom.map(roomMapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
     }
 
     @Override
     public RoomDto getRoomByNumber(String number) throws NotFoundRoomException {
-        Optional<Room> optional = roomRepository.getRoomByNumber(number);
-        return optional.map(mapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
+        Optional<Room> optionalRoom = roomRepository.getRoomByNumber(number);
+        return optionalRoom.map(roomMapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
     }
 
     @Override
     public List<RoomDto> searchRoomsByCategory(RoomCategory category) throws NotFoundRoomException {
         List<Room> rooms = roomRepository.searchRoomsByCategory(category);
         if (rooms.size() != 0) {
-            return mapper.buildRoomsDto(rooms);
+            return roomMapper.buildRoomsDto(rooms);
         } else {
             throw new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM);
         }

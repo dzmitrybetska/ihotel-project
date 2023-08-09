@@ -16,7 +16,7 @@ import static by.academy.project.hotel.util.configuration.Constants.USER_CREATIO
 
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final UserMapper mapper = UserMapper.getInstance();
+    private final UserMapper userMapper = UserMapper.getInstance();
 
     public UserServiceImpl() {
         userRepository = UserRepositoryImpl.getInstance();
@@ -28,45 +28,45 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) throws UserNotCreatedException {
-        Optional<User> optional = userRepository.add(userDto);
-        return optional.map(mapper::buildUserDto).orElseThrow(() -> new UserNotCreatedException(USER_CREATION_ERROR_MESSAGE));
+        Optional<User> optionalUser = userRepository.add(userDto);
+        return optionalUser.map(userMapper::buildUserDto).orElseThrow(() -> new UserNotCreatedException(USER_CREATION_ERROR_MESSAGE));
     }
 
     @Override
     public List<UserDto> read() {
         List<User> users = userRepository.read();
-        return mapper.buildUsersDto(users);
+        return userMapper.buildUsersDto(users);
     }
 
     @Override
     public UserDto update(UserDto userDto) throws NotFoundUserException {
-        Optional<User> optional = userRepository.update(userDto);
-        return optional.map(mapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
+        Optional<User> optionalUser = userRepository.update(userDto);
+        return optionalUser.map(userMapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
     }
 
     @Override
     public boolean delete(Long id) {
-        Optional<User> optional = userRepository.delete(id);
-        return optional.isPresent();
+        Optional<User> optionalUser = userRepository.delete(id);
+        return optionalUser.isPresent();
     }
 
     @Override
     public UserDto getByID(Long id) throws NotFoundUserException {
-        Optional<User> optional = userRepository.getByID(id);
-        return optional.map(mapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
+        Optional<User> optionalUser = userRepository.getByID(id);
+        return optionalUser.map(userMapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
     }
 
     @Override
     public UserDto getUserByLogin(String login) throws NotFoundUserException {
-        Optional<User> optional = userRepository.getUserByLogin(login);
-        return optional.map(mapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
+        Optional<User> optionalUser = userRepository.getUserByLogin(login);
+        return optionalUser.map(userMapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
     }
 
     @Override
     public List<UserDto> findUser(String name, String surname) throws NotFoundUserException {
         List<User> users = userRepository.findUser(name, surname);
         if (users.size() != 0) {
-            return mapper.buildUsersDto(users);
+            return userMapper.buildUsersDto(users);
         } else {
             throw new NotFoundUserException(ERROR_MESSAGE_BY_USER);
         }
