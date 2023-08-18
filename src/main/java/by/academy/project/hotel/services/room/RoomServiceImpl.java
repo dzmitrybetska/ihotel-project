@@ -1,85 +1,78 @@
 package by.academy.project.hotel.services.room;
 
 
+import by.academy.project.hotel.dto.RoomDto;
 import by.academy.project.hotel.entities.room.Room;
 import by.academy.project.hotel.entities.room.RoomCategory;
-import by.academy.project.hotel.entities.room.RoomStatus;
 import by.academy.project.hotel.exceptions.NotFoundRoomException;
+import by.academy.project.hotel.exceptions.RoomNotAddedException;
+import by.academy.project.hotel.mappers.RoomMapper;
 import by.academy.project.hotel.repositories.room.RoomRepository;
 import by.academy.project.hotel.repositories.room.RoomRepositoryImpl;
 
 import java.util.List;
 import java.util.Optional;
 
+import static by.academy.project.hotel.util.configuration.Constants.ERROR_MESSAGE_ADDING_ROOM;
 import static by.academy.project.hotel.util.configuration.Constants.ERROR_MESSAGE_BY_ROOM;
 
-public final class RoomServiceImpl implements RoomService{
-    private static RoomServiceImpl instance;
+
+public class RoomServiceImpl implements RoomService {
+
     private final RoomRepository roomRepository;
+    private final RoomMapper roomMapper = RoomMapper.getInstance();
 
-    private RoomServiceImpl(){
-        roomRepository = new RoomRepositoryImpl();
+    public RoomServiceImpl() {
+        roomRepository = RoomRepositoryImpl.getInstance();
     }
 
-    public static RoomServiceImpl getInstance(){
-        if (instance == null){
-            instance = new RoomServiceImpl();
-        }
-        return instance;
+    public RoomServiceImpl(RoomRepository roomRepository) {
+        this.roomRepository = roomRepository;
     }
-    @Override
-    public Room createRoom(Room room) {
-        roomRepository.createRoom(room);
-        return room;
-    }
+
 
     @Override
-    public List<Room> readRooms() {
-        return roomRepository.readRooms();
+    public RoomDto add(RoomDto room) {
+        Optional<Room> optionalRoom = roomRepository.add(room);
+        return optionalRoom.map(roomMapper::buildRoomDto).orElseThrow(() -> new RoomNotAddedException(ERROR_MESSAGE_ADDING_ROOM));
     }
 
     @Override
-    public Room updateRoom(String id, Room room) throws NotFoundRoomException {
-        Optional<Room> optional = roomRepository.updateRoom(id, room);
-        if (optional.isPresent()){
-            return optional.get();
-        }else {
+    public List<RoomDto> read() {
+        return roomMapper.buildRoomsDto(roomRepository.read());
+    }
+
+    @Override
+    public RoomDto update(RoomDto roomDto) {
+        Optional<Room> optionalRoom = roomRepository.update(roomDto);
+        return optionalRoom.map(roomMapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
+    }
+
+    @Override
+    public boolean delete(Long id) {
+        Optional<Room> optionalRoom = roomRepository.delete(id);
+        return optionalRoom.isPresent();
+    }
+
+    @Override
+    public RoomDto getByID(Long id) {
+        Optional<Room> optionalRoom = roomRepository.getByID(id);
+        return optionalRoom.map(roomMapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
+    }
+
+    @Override
+    public RoomDto getRoomByNumber(String number) {
+        Optional<Room> optionalRoom = roomRepository.getRoomByNumber(number);
+        return optionalRoom.map(roomMapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
+    }
+
+    @Override
+    public List<RoomDto> searchRoomsByCategory(RoomCategory category) {
+        List<Room> rooms = roomRepository.searchRoomsByCategory(category);
+        if (rooms.size() != 0) {
+            return roomMapper.buildRoomsDto(rooms);
+        } else {
             throw new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM);
         }
-    }
-
-    @Override
-    public Room updateRoomStatus(String id, RoomStatus status) throws NotFoundRoomException {
-        Optional<Room> optional = roomRepository.updateRoomStatus(id, status);
-        if (optional.isPresent()){
-            return optional.get();
-        }else {
-            throw new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM);
-        }
-    }
-
-    @Override
-    public Room deleteRoom(String id) throws NotFoundRoomException {
-        Optional<Room> optional = roomRepository.deleteRoom(id);
-        if (optional.isPresent()){
-            return optional.get();
-        }else{
-            throw new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM);
-        }
-    }
-
-    @Override
-    public Optional<Room> getRoomByRoomID(String id) {
-        return roomRepository.getRoomByRoomID(id);
-    }
-
-    @Override
-    public Optional<Room> findRoomByNumber(String number){
-        return roomRepository.findRoomByNumber(number);
-    }
-
-    @Override
-    public List<Room> roomSearchByCategory(RoomCategory category) {
-        return roomRepository.roomSearchByCategory(category);
     }
 }

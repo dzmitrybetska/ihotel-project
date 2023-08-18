@@ -1,6 +1,5 @@
 package by.academy.project.hotel.controllers.user;
 
-import by.academy.project.hotel.exceptions.NotFoundUserException;
 import by.academy.project.hotel.services.user.UserService;
 import by.academy.project.hotel.services.user.UserServiceImpl;
 
@@ -16,15 +15,13 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebServlet(urlPatterns = "/user/delete")
 public class DeleteUserController extends HttpServlet {
-    private final UserService userService = UserServiceImpl.getInstance();
+    private final UserService userService = new UserServiceImpl();
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            userService.deleteUser(req.getParameter(USER_ID));
+        if (userService.delete(Long.parseLong(req.getParameter(USER_ID)))) {
             req.getRequestDispatcher(SUCCESSFUL_REMOVAL).forward(req, resp);
-        }catch (NotFoundUserException ex){
-            req.setAttribute(ERROR, ex.getMessage());
+        } else {
             req.getRequestDispatcher(UNSUCCESSFUL_REMOVAL).forward(req, resp);
         }
     }

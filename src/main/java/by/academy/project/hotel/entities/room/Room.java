@@ -1,40 +1,50 @@
 package by.academy.project.hotel.entities.room;
 
+import by.academy.project.hotel.entities.booking.Booking;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
+
+import static by.academy.project.hotel.util.configuration.DatabaseColumns.*;
+import static javax.persistence.EnumType.STRING;
 
 @Builder
 @Data
-public class Room{
-    private final String id;
+@Accessors(chain = true)
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = ROOMS)
+public class Room {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = ROOM_ID)
+    private Long id;
+
+    @Column(name = NUMBER, nullable = false, unique = true)
     private String number;
-    private double price;
+
+    @Column(name = PRICE, nullable = false)
+    private BigDecimal price;
+
+    @Enumerated(STRING)
+    @Column(name = ROOM_CATEGORY, nullable = false)
     private RoomCategory roomCategory;
+
+    @Column(name = IS_BOOKED, nullable = false)
     private Boolean isBooked;
+
+    @Enumerated(STRING)
+    @Column(name = ROOM_STATUS, nullable = false)
     private RoomStatus roomStatus;
 
-    public Room setNumber(String number) {
-        this.number = number;
-        return this;
-    }
-
-    public Room setPrice(double price) {
-        this.price = price;
-        return this;
-    }
-
-    public Room setRoomCategory(RoomCategory roomCategory) {
-        this.roomCategory= roomCategory;
-        return this;
-    }
-
-    public Room setBooked(boolean booked) {
-        isBooked = booked;
-        return this;
-    }
-
-    public Room setRoomStatus(RoomStatus roomStatus) {
-        this.roomStatus = roomStatus;
-        return this;
-    }
+    @ManyToMany(mappedBy = ROOMS_FOR_MANY)
+    private Set<Booking> bookings;
 }

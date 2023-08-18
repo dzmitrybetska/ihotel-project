@@ -1,72 +1,152 @@
 package by.academy.project.hotel.repositories.user;
 
 
+import by.academy.project.hotel.dto.UserDto;
+import by.academy.project.hotel.entities.booking.Booking;
 import by.academy.project.hotel.entities.user.User;
+import by.academy.project.hotel.mappers.UserMapper;
+import by.academy.project.hotel.util.JPAUtil;
+import org.hibernate.Hibernate;
 
-import java.util.ArrayList;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-public class UserRepositoryImpl implements UserRepository {
-    private final List<User> users = new ArrayList<>();
+public final class UserRepositoryImpl implements UserRepository {
 
-    @Override
-    public User createUser(User user) {
-        users.add(user);
-        return user;
+    private static UserRepositoryImpl instance = getInstance();
+    private final UserMapper mapper = UserMapper.getInstance();
+    private EntityManager entityManager;
+
+    private UserRepositoryImpl() {
+    }
+
+    public static UserRepositoryImpl getInstance() {
+        if (instance == null) {
+            instance = new UserRepositoryImpl();
+        }
+        return instance;
     }
 
     @Override
-    public List<User> readUsers() {
+    public Optional<User> add(UserDto userDto) {
+        entityManager = JPAUtil.getEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+        Optional<User> optionalUser = Optional.ofNullable(mapper.buildUser(userDto));
+        optionalUser.ifPresent(entityManager::persist);
+        transaction.commit();
+        entityManager.close();
+        return optionalUser;
+    }
+
+    @Override
+    public List<User> read() {
+        entityManager = JPAUtil.getEntityManager();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> userCriteriaQuery = criteriaBuilder.createQuery(User.class);
+        Root<User> userRoot = userCriteriaQuery.from(User.class);
+        userCriteriaQuery.select(userRoot);
+        List<User> users = entityManager.createQuery(userCriteriaQuery).getResultList();
+        enrichUsers(users);
+        entityManager.close();
         return users;
     }
+
     @Override
-    public Optional<User> updateUser(String id, User user) {
-        Optional<User> optional = getUserByUserID(id);
-        if (optional.isPresent()){
-            User userFound = optional.get();
-            userFound.setName(user.getName())
-                    .setSurname(user.getSurname())
-                    .setEmail(user.getEmail())
-                    .setPhone(user.getPhone())
-                    .setRole(user.getRole());
-            if(user.getPassword() != null){
-                userFound.setPassword(user.getPassword());
-            }
-            if (user.getPassport() !=null){
-                userFound.setPassport(user.getPassport());
-            }
+    public Optional<User> update(UserDto userDto) {
+        entityManager = JPAUtil.getEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+        entityTransaction.begin();
+        Optional<User> optionalUser = Optional.ofNullable(entityManager.find(User.class, userDto.getId()));
+        optionalUser.ifPresent(user -> mapper.updateUser(user, userDto));
+        optionalUser.ifPresent(this::enrichUser);
+        entityTransaction.commit();
+        entityManager.close();
+        return optionalUser;
+    }
+
+    @Override
+    public Optional<User> delete(Long id) {
+        try {
+            entityManager = JPAUtil.getEntityManager();
+            EntityTransaction transaction = entityManager.getTransaction();
+            transaction.begin();
+            Optional<User> optionalUser = Optional.ofNullable(entityManager.find(User.class, id));
+            optionalUser.ifPresent(entityManager::remove);
+            optionalUser.ifPresent(this::enrichUser);
+            transaction.commit();
+            return optionalUser;
+        } finally {
+            entityManager.close();
         }
-        return optional;
     }
 
     @Override
-    public Optional<User> deleteUser(String id) {
-        Optional<User> optional = getUserByUserID(id);
-        optional.ifPresent(users::remove);
-        return optional;
-    }
-
-    private Optional<User> getUserByUserID(String id){
-        return users.stream()
-                .filter(user -> Objects.equals(user.getId(), id))
-                .findAny();
+    public Optional<User> getByID(Long id) {
+        entityManager = JPAUtil.getEntityManager();
+        Optional<User> optionalUser = Optional.ofNullable(entityManager.find(User.class, id));
+        optionalUser.ifPresent(this::enrichUser);
+        entityManager.close();
+        return optionalUser;
     }
 
     @Override
     public Optional<User> getUserByLogin(String login) {
-        return users.stream()
-                .filter(user -> user.getLogin().equals(login))
-                .findAny();
+        try {
+            entityManager = JPAUtil.getEntityManager();
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<User> userCriteriaQuery = criteriaBuilder.createQuery(User.class);
+            Root<User> userRoot = userCriteriaQuery.from(User.class);
+            userCriteriaQuery.select(userRoot).where(criteriaBuilder.equal(userRoot.get("login"), login));
+            Optional<User> optionalUser = Optional.ofNullable(entityManager.createQuery(userCriteriaQuery).getSingleResult());
+            optionalUser.ifPresent(this::enrichUser);
+            return optionalUser;
+        } catch (NoResultException e) {
+            return Optional.empty();
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
-    public List<User> findUser(String name, String surname){
-        return users.stream()
-                .filter(user -> user.getName().equals(name) && user.getSurname().equals(surname))
-                .collect(Collectors.toList());
+    public List<User> findUser(String name, String surname) {
+        entityManager = JPAUtil.getEntityManager();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> userCriteriaQuery = criteriaBuilder.createQuery(User.class);
+        Root<User> userRoot = userCriteriaQuery.from(User.class);
+        userCriteriaQuery.select(userRoot).where(
+                criteriaBuilder.equal(userRoot.get("name"), name),
+                criteriaBuilder.equal(userRoot.get("surname"), surname)
+        );
+        List<User> users = entityManager.createQuery(userCriteriaQuery).getResultList();
+        enrichUsers(users);
+        entityManager.close();
+        return users;
+    }
+
+    private void enrichUser(User user) {
+        Hibernate.initialize(user.getBookings().stream()
+                .map(Booking::getRooms)
+                .collect(Collectors.toSet()));
+        Hibernate.initialize(user.getAddresses());
+    }
+
+    private void enrichUsers(List<User> users) {
+        Hibernate.initialize(users.stream()
+                .map(user -> user.getBookings().stream()
+                        .map(Booking::getRooms)
+                        .collect(Collectors.toSet()))
+                .collect(Collectors.toSet()));
+        Hibernate.initialize(users.stream()
+                .map(User::getAddresses)
+                .collect(Collectors.toSet()));
     }
 }

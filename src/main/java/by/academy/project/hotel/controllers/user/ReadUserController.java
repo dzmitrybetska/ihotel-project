@@ -1,9 +1,8 @@
 package by.academy.project.hotel.controllers.user;
 
+import by.academy.project.hotel.dto.UserDto;
 import by.academy.project.hotel.entities.user.Role;
-import by.academy.project.hotel.entities.user.User;
-import by.academy.project.hotel.mappers.userdto.UserMapperDto;
-import by.academy.project.hotel.mappers.userdto.UserMapperDtoExt;
+import by.academy.project.hotel.exceptions.NotFoundUserException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,20 +17,26 @@ import static by.academy.project.hotel.util.configuration.Constants.*;
 
 @WebServlet(urlPatterns = "/user/read")
 public class ReadUserController extends HttpServlet {
-    private final UserMapperDto mapperDto = UserMapperDtoExt.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
-        User userFromSession = (User) session.getAttribute(USER);
-        if (userFromSession.getRole() == Role.GUEST){
-            session.setAttribute(USER_DTO, mapperDto.buildDataUserForGuest(userFromSession));
+        UserDto userDtoFromSession = (UserDto) session.getAttribute(USER);
+        try {
+            UserDto userDto = userDtoFromSession.getRole().createUserDto(userDtoFromSession.getId());
+            session.setAttribute(USER_DTO, userDto);
+            redirectToPage(userDto.getRole(), req, resp);
+        } catch (NotFoundUserException e) {
+            req.getRequestDispatcher(USER_IS_NOT_FOUND).forward(req, resp);
+        }
+    }
+
+    private void redirectToPage(Role role, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (role == Role.GUEST) {
             req.getRequestDispatcher(GUEST_DETAILS_PAGE).forward(req, resp);
-        } else if (userFromSession.getRole() == Role.MANAGER) {
-            session.setAttribute(USER_DTO, mapperDto.buildDataUserForManager(userFromSession));
+        } else if (role == Role.MANAGER) {
             req.getRequestDispatcher(MANAGER_DETAILS_PAGE).forward(req, resp);
-        } else if (userFromSession.getRole() == Role.ADMIN) {
-            session.setAttribute(USER_DTO, mapperDto.buildDataUserForAdmin(userFromSession));
+        } else if (role == Role.ADMIN) {
             req.getRequestDispatcher(ADMIN_DETAILS_PAGE).forward(req, resp);
         } else {
             req.getRequestDispatcher(ACCESS_IS_DENIED).forward(req, resp);
