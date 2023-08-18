@@ -22,6 +22,7 @@ import static javax.persistence.EnumType.STRING;
 @Entity
 @Table(name = USERS)
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = USER_ID)

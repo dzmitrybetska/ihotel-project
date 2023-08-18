@@ -19,6 +19,7 @@ import static javax.persistence.EnumType.STRING;
 @Entity
 @Table(name = PASSPORTS)
 public class Passport {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = ID)

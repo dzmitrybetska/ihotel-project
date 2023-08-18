@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookingRepository {
+
     Optional<Booking> add(BookingDto bookingDto, Long userId, List<Long> roomsId);
 
     List<Booking> read();

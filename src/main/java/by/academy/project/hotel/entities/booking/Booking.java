@@ -26,6 +26,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 @Table(name = BOOKINGS)
 public class Booking {
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = BOOKING_ID)

@@ -1,6 +1,7 @@
 package by.academy.project.hotel.util.configuration;
 
 public final class Constants {
+
     private Constants() {
     }
 

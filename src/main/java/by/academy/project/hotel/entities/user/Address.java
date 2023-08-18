@@ -20,6 +20,7 @@ import static javax.persistence.EnumType.STRING;
 @NoArgsConstructor
 @Embeddable
 public class Address {
+
     @Column(name = ZIPCODE, length = 6)
     private String zipcode;
 

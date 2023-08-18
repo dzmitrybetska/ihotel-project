@@ -1,6 +1,7 @@
 package by.academy.project.hotel.util.configuration;
 
 public final class DatabaseColumns {
+
     private DatabaseColumns() {
     }
 
@@ -37,7 +38,9 @@ public final class DatabaseColumns {
     public final static String PASSPORT_ID = "PASSPORT_ID";
     public final static String COUNTRY = "COUNTRY";
 
-    /***Booking columns and table*/
+    /**
+     * Booking columns and table
+     */
     public final static String BOOKINGS = "BOOKINGS";
     public final static String BOOKING_ID = "ID";
     public final static String USER_ID_FOR_JOIN_COLUMN = "USER_ID";
@@ -48,7 +51,9 @@ public final class DatabaseColumns {
     public final static String ARRIVAL = "ARRIVAL";
     public final static String DEPARTURE = "DEPARTURE";
 
-    /***Address columns and table*/
+    /**
+     * Address columns and table
+     */
     public final static String ADDRESS = "ADDRESS";
     public final static String ADDRESSES = "ADDRESSES";
     public final static String ZIPCODE = "ZIPCODE";

@@ -15,11 +15,12 @@ import static by.academy.project.hotel.util.configuration.Constants.ERROR_MESSAG
 import static by.academy.project.hotel.util.configuration.Constants.ERROR_MESSAGE_SEARCHING_BOOKING;
 
 public class BookingServiceImpl implements BookingService {
+
     private final BookingRepository bookingRepository = BookingRepositoryImpl.getInstance();
     private final BookingMapper bookingMapper = BookingMapper.getInstance();
 
     @Override
-    public BookingDto create(BookingDto bookingDto, Long userId, List<Long> roomsId) throws BookingNotCreatedException {
+    public BookingDto create(BookingDto bookingDto, Long userId, List<Long> roomsId) {
         Optional<Booking> optionalBooking = bookingRepository.add(bookingDto, userId, roomsId);
         return optionalBooking.map(bookingMapper::buildBookingDto).orElseThrow(() -> new BookingNotCreatedException(ERROR_MESSAGE_CREATING_BOOKING));
     }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CrudRepository<K extends Number, R, V> {
+
     Optional<V> add(R r);
 
     List<V> read();

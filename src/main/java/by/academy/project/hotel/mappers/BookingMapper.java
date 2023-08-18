@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BookingMapper {
+
     private static BookingMapper instance;
 
     private BookingMapper() {

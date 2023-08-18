@@ -22,6 +22,7 @@ import static by.academy.project.hotel.util.configuration.Constants.NUMBER;
 import static by.academy.project.hotel.util.configuration.Constants.ROOM_CATEGORY;
 
 public final class RoomRepositoryImpl implements RoomRepository {
+
     private static RoomRepositoryImpl instance;
     private final RoomMapper roomMapper = RoomMapper.getInstance();
     private EntityManager entityManager;
@@ -56,7 +57,7 @@ public final class RoomRepositoryImpl implements RoomRepository {
         Root<Room> roomRoot = roomCriteriaQuery.from(Room.class);
         roomCriteriaQuery.select(roomRoot);
         List<Room> rooms = entityManager.createQuery(roomCriteriaQuery).getResultList();
-        initRooms(rooms);
+        enrichRooms(rooms);
         entityManager.close();
         return rooms;
     }
@@ -68,7 +69,7 @@ public final class RoomRepositoryImpl implements RoomRepository {
         transaction.begin();
         Optional<Room> optionalRoom = Optional.ofNullable(entityManager.find(Room.class, roomDto.getId()));
         optionalRoom.ifPresent(room -> roomMapper.updateRoom(room, roomDto));
-        optionalRoom.ifPresent(this::initRoom);
+        optionalRoom.ifPresent(this::enrichRoom);
         transaction.commit();
         entityManager.close();
         return optionalRoom;
@@ -82,7 +83,7 @@ public final class RoomRepositoryImpl implements RoomRepository {
             transaction.begin();
             Optional<Room> optionalRoom = Optional.ofNullable(entityManager.find(Room.class, id));
             optionalRoom.ifPresent(entityManager::remove);
-            optionalRoom.ifPresent(this::initRoom);
+            optionalRoom.ifPresent(this::enrichRoom);
             transaction.commit();
             return optionalRoom;
         } finally {
@@ -94,7 +95,7 @@ public final class RoomRepositoryImpl implements RoomRepository {
     public Optional<Room> getByID(Long id) {
         entityManager = JPAUtil.getEntityManager();
         Optional<Room> optionalRoom = Optional.ofNullable(entityManager.find(Room.class, id));
-        optionalRoom.ifPresent(this::initRoom);
+        optionalRoom.ifPresent(this::enrichRoom);
         entityManager.close();
         return optionalRoom;
     }
@@ -108,7 +109,7 @@ public final class RoomRepositoryImpl implements RoomRepository {
             Root<Room> roomRoot = roomCriteriaQuery.from(Room.class);
             roomCriteriaQuery.select(roomRoot).where(criteriaBuilder.equal(roomRoot.get(NUMBER), number));
             Optional<Room> optionalRoom = Optional.ofNullable(entityManager.createQuery(roomCriteriaQuery).getSingleResult());
-            optionalRoom.ifPresent(this::initRoom);
+            optionalRoom.ifPresent(this::enrichRoom);
             return optionalRoom;
         } catch (NoResultException e) {
             return Optional.empty();
@@ -125,18 +126,18 @@ public final class RoomRepositoryImpl implements RoomRepository {
         Root<Room> roomRoot = roomCriteriaQuery.from(Room.class);
         roomCriteriaQuery.select(roomRoot).where(criteriaBuilder.equal(roomRoot.get(ROOM_CATEGORY), category));
         List<Room> rooms = entityManager.createQuery(roomCriteriaQuery).getResultList();
-        initRooms(rooms);
+        enrichRooms(rooms);
         entityManager.close();
         return rooms;
     }
 
-    private void initRoom(Room room) {
+    private void enrichRoom(Room room) {
         Hibernate.initialize(room.getBookings().stream()
                 .map(booking -> booking.getUser().getAddresses())
                 .collect(Collectors.toSet()));
     }
 
-    private void initRooms(List<Room> rooms) {
+    private void enrichRooms(List<Room> rooms) {
         Hibernate.initialize(rooms.stream()
                 .map(room -> room.getBookings().stream()
                         .map(booking -> booking.getUser().getAddresses())

@@ -17,6 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoomDto {
+
     private Long id;
     private String number;
     private BigDecimal price;

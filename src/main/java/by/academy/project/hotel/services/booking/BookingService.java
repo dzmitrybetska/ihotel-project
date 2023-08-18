@@ -1,17 +1,16 @@
 package by.academy.project.hotel.services.booking;
 
 import by.academy.project.hotel.dto.BookingDto;
-import by.academy.project.hotel.exceptions.BookingNotCreatedException;
-import by.academy.project.hotel.exceptions.NotFoundBookingException;
 
 import java.util.List;
 
 public interface BookingService {
-    BookingDto create(BookingDto bookingDto, Long userId, List<Long> roomsId) throws BookingNotCreatedException;
+
+    BookingDto create(BookingDto bookingDto, Long userId, List<Long> roomsId);
 
     List<BookingDto> read();
 
-    BookingDto update(BookingDto bookingDto) throws NotFoundBookingException;
+    BookingDto update(BookingDto bookingDto);
 
     boolean delete(Long id);
 }

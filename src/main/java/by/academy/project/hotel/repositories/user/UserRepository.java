@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends CrudRepository<Long, UserDto, User> {
+
     Optional<User> getByID(Long id);
 
     Optional<User> getUserByLogin(String login);

@@ -15,6 +15,7 @@ import static by.academy.project.hotel.util.configuration.Constants.ERROR_MESSAG
 import static by.academy.project.hotel.util.configuration.Constants.USER_CREATION_ERROR_MESSAGE;
 
 public class UserServiceImpl implements UserService {
+
     private final UserRepository userRepository;
     private final UserMapper userMapper = UserMapper.getInstance();
 
@@ -27,7 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto create(UserDto userDto) throws UserNotCreatedException {
+    public UserDto create(UserDto userDto) {
         Optional<User> optionalUser = userRepository.add(userDto);
         return optionalUser.map(userMapper::buildUserDto).orElseThrow(() -> new UserNotCreatedException(USER_CREATION_ERROR_MESSAGE));
     }
@@ -39,7 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto update(UserDto userDto) throws NotFoundUserException {
+    public UserDto update(UserDto userDto) {
         Optional<User> optionalUser = userRepository.update(userDto);
         return optionalUser.map(userMapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
     }
@@ -51,19 +52,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getByID(Long id) throws NotFoundUserException {
+    public UserDto getByID(Long id) {
         Optional<User> optionalUser = userRepository.getByID(id);
         return optionalUser.map(userMapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
     }
 
     @Override
-    public UserDto getUserByLogin(String login) throws NotFoundUserException {
+    public UserDto getUserByLogin(String login) {
         Optional<User> optionalUser = userRepository.getUserByLogin(login);
         return optionalUser.map(userMapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
     }
 
     @Override
-    public List<UserDto> findUser(String name, String surname) throws NotFoundUserException {
+    public List<UserDto> findUser(String name, String surname) {
         List<User> users = userRepository.findUser(name, surname);
         if (users.size() != 0) {
             return userMapper.buildUsersDto(users);

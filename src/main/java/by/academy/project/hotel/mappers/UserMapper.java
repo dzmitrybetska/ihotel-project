@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import static by.academy.project.hotel.util.configuration.Constants.*;
 
 public final class UserMapper {
+
     private static UserMapper instance;
     private final BookingMapper bookingMapper = BookingMapper.getInstance();
 

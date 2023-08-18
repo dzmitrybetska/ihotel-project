@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class RoomMapper {
+
     private static RoomMapper instance;
     private static final BookingMapper bookingMapper = BookingMapper.getInstance();
 

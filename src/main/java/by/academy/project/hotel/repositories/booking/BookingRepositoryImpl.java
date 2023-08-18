@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 public final class BookingRepositoryImpl implements BookingRepository {
 
     private static BookingRepositoryImpl instance;
-
     private final BookingMapper bookingMapper = BookingMapper.getInstance();
     private EntityManager entityManager;
 
@@ -48,7 +47,7 @@ public final class BookingRepositoryImpl implements BookingRepository {
                     .collect(Collectors.toSet());
             if (optionalBooking.isPresent() && optionalUser.isPresent() && rooms.size() != 0) {
                 entityManager.persist(optionalBooking.get().setUser(optionalUser.get()).setRooms(rooms));
-                optionalBooking.ifPresent(this::initBooking);
+                optionalBooking.ifPresent(this::enrichBooking);
                 transaction.commit();
                 return optionalBooking;
             } else {
@@ -67,7 +66,7 @@ public final class BookingRepositoryImpl implements BookingRepository {
         Root<Booking> bookingRoot = bookingCriteriaQuery.from(Booking.class);
         bookingCriteriaQuery.select(bookingRoot);
         List<Booking> bookings = entityManager.createQuery(bookingCriteriaQuery).getResultList();
-        initBookings(bookings);
+        enrichBookings(bookings);
         entityManager.close();
         return bookings;
     }
@@ -79,7 +78,7 @@ public final class BookingRepositoryImpl implements BookingRepository {
         transaction.begin();
         Optional<Booking> optionalBooking = Optional.ofNullable(entityManager.find(Booking.class, bookingDto.getId()));
         optionalBooking.ifPresent(booking -> bookingMapper.updateBooking(booking, bookingDto));
-        optionalBooking.ifPresent(this::initBooking);
+        optionalBooking.ifPresent(this::enrichBooking);
         transaction.commit();
         entityManager.close();
         return optionalBooking;
@@ -93,7 +92,7 @@ public final class BookingRepositoryImpl implements BookingRepository {
             transaction.begin();
             Optional<Booking> optionalBooking = Optional.ofNullable(entityManager.find(Booking.class, id));
             optionalBooking.ifPresent(entityManager::remove);
-            optionalBooking.ifPresent(this::initBooking);
+            optionalBooking.ifPresent(this::enrichBooking);
             transaction.commit();
             return optionalBooking;
         } finally {
@@ -101,12 +100,12 @@ public final class BookingRepositoryImpl implements BookingRepository {
         }
     }
 
-    private void initBooking(Booking booking) {
+    private void enrichBooking(Booking booking) {
         Hibernate.initialize(booking.getUser().getAddresses());
         Hibernate.initialize(booking.getRooms());
     }
 
-    private void initBookings(List<Booking> bookings) {
+    private void enrichBookings(List<Booking> bookings) {
         Hibernate.initialize(bookings.stream()
                 .map(booking -> booking.getUser().getAddresses())
                 .collect(Collectors.toSet()));

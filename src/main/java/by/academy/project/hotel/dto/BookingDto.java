@@ -16,6 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingDto {
+
     private Long id;
     private UserDto userDto;
     private Set<RoomDto> rooms;

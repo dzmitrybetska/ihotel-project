@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 
 public final class UserRepositoryImpl implements UserRepository {
+
     private static UserRepositoryImpl instance = getInstance();
     private final UserMapper mapper = UserMapper.getInstance();
     private EntityManager entityManager;
@@ -54,7 +55,7 @@ public final class UserRepositoryImpl implements UserRepository {
         Root<User> userRoot = userCriteriaQuery.from(User.class);
         userCriteriaQuery.select(userRoot);
         List<User> users = entityManager.createQuery(userCriteriaQuery).getResultList();
-        initUsers(users);
+        enrichUsers(users);
         entityManager.close();
         return users;
     }
@@ -66,7 +67,7 @@ public final class UserRepositoryImpl implements UserRepository {
         entityTransaction.begin();
         Optional<User> optionalUser = Optional.ofNullable(entityManager.find(User.class, userDto.getId()));
         optionalUser.ifPresent(user -> mapper.updateUser(user, userDto));
-        optionalUser.ifPresent(this::initUser);
+        optionalUser.ifPresent(this::enrichUser);
         entityTransaction.commit();
         entityManager.close();
         return optionalUser;
@@ -80,7 +81,7 @@ public final class UserRepositoryImpl implements UserRepository {
             transaction.begin();
             Optional<User> optionalUser = Optional.ofNullable(entityManager.find(User.class, id));
             optionalUser.ifPresent(entityManager::remove);
-            optionalUser.ifPresent(this::initUser);
+            optionalUser.ifPresent(this::enrichUser);
             transaction.commit();
             return optionalUser;
         } finally {
@@ -92,7 +93,7 @@ public final class UserRepositoryImpl implements UserRepository {
     public Optional<User> getByID(Long id) {
         entityManager = JPAUtil.getEntityManager();
         Optional<User> optionalUser = Optional.ofNullable(entityManager.find(User.class, id));
-        optionalUser.ifPresent(this::initUser);
+        optionalUser.ifPresent(this::enrichUser);
         entityManager.close();
         return optionalUser;
     }
@@ -106,7 +107,7 @@ public final class UserRepositoryImpl implements UserRepository {
             Root<User> userRoot = userCriteriaQuery.from(User.class);
             userCriteriaQuery.select(userRoot).where(criteriaBuilder.equal(userRoot.get("login"), login));
             Optional<User> optionalUser = Optional.ofNullable(entityManager.createQuery(userCriteriaQuery).getSingleResult());
-            optionalUser.ifPresent(this::initUser);
+            optionalUser.ifPresent(this::enrichUser);
             return optionalUser;
         } catch (NoResultException e) {
             return Optional.empty();
@@ -126,19 +127,19 @@ public final class UserRepositoryImpl implements UserRepository {
                 criteriaBuilder.equal(userRoot.get("surname"), surname)
         );
         List<User> users = entityManager.createQuery(userCriteriaQuery).getResultList();
-        initUsers(users);
+        enrichUsers(users);
         entityManager.close();
         return users;
     }
 
-    private void initUser(User user) {
+    private void enrichUser(User user) {
         Hibernate.initialize(user.getBookings().stream()
                 .map(Booking::getRooms)
                 .collect(Collectors.toSet()));
         Hibernate.initialize(user.getAddresses());
     }
 
-    private void initUsers(List<User> users) {
+    private void enrichUsers(List<User> users) {
         Hibernate.initialize(users.stream()
                 .map(user -> user.getBookings().stream()
                         .map(Booking::getRooms)

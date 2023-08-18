@@ -18,6 +18,7 @@ import static by.academy.project.hotel.util.configuration.Constants.ERROR_MESSAG
 
 
 public class RoomServiceImpl implements RoomService {
+
     private final RoomRepository roomRepository;
     private final RoomMapper roomMapper = RoomMapper.getInstance();
 
@@ -31,7 +32,7 @@ public class RoomServiceImpl implements RoomService {
 
 
     @Override
-    public RoomDto add(RoomDto room) throws RoomNotAddedException {
+    public RoomDto add(RoomDto room) {
         Optional<Room> optionalRoom = roomRepository.add(room);
         return optionalRoom.map(roomMapper::buildRoomDto).orElseThrow(() -> new RoomNotAddedException(ERROR_MESSAGE_ADDING_ROOM));
     }
@@ -42,7 +43,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomDto update(RoomDto roomDto) throws NotFoundRoomException {
+    public RoomDto update(RoomDto roomDto) {
         Optional<Room> optionalRoom = roomRepository.update(roomDto);
         return optionalRoom.map(roomMapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
     }
@@ -54,19 +55,19 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomDto getByID(Long id) throws NotFoundRoomException {
+    public RoomDto getByID(Long id) {
         Optional<Room> optionalRoom = roomRepository.getByID(id);
         return optionalRoom.map(roomMapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
     }
 
     @Override
-    public RoomDto getRoomByNumber(String number) throws NotFoundRoomException {
+    public RoomDto getRoomByNumber(String number) {
         Optional<Room> optionalRoom = roomRepository.getRoomByNumber(number);
         return optionalRoom.map(roomMapper::buildRoomDto).orElseThrow(() -> new NotFoundRoomException(ERROR_MESSAGE_BY_ROOM));
     }
 
     @Override
-    public List<RoomDto> searchRoomsByCategory(RoomCategory category) throws NotFoundRoomException {
+    public List<RoomDto> searchRoomsByCategory(RoomCategory category) {
         List<Room> rooms = roomRepository.searchRoomsByCategory(category);
         if (rooms.size() != 0) {
             return roomMapper.buildRoomsDto(rooms);

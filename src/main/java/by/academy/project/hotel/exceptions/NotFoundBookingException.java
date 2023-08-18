@@ -1,6 +1,7 @@
 package by.academy.project.hotel.exceptions;
 
-public class NotFoundBookingException extends Exception {
+public class NotFoundBookingException extends RuntimeException {
+
     private final String message;
 
     public NotFoundBookingException(String message) {

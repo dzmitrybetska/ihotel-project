@@ -5,6 +5,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 public final class JPAUtil {
+
     private JPAUtil() {
     }
 
