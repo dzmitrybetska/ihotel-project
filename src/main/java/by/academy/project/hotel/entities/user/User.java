@@ -1,18 +1,19 @@
 package by.academy.project.hotel.entities.user;
 
 import by.academy.project.hotel.entities.booking.Booking;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
-import static by.academy.project.hotel.util.configuration.DatabaseColumns.*;
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.EnumType.STRING;
+import static by.academy.project.hotel.util.DatabaseColumns.*;
+import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.EnumType.STRING;
 
 @Builder
 @Data
@@ -57,8 +58,8 @@ public class User {
     @Column(name = ADDRESS, nullable = false)
     @ElementCollection()
     @CollectionTable(name = ADDRESSES, joinColumns = @JoinColumn(name = USER_ID_FOR_JOIN_COLUMN))
-    private Set<Address> addresses;
+    private List<Address> addresses;
 
     @OneToMany(mappedBy = USER, cascade = ALL, orphanRemoval = true)
-    private Set<Booking> bookings;
+    private List<Booking> bookings;
 }

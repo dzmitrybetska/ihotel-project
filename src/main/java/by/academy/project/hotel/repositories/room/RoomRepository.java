@@ -1,19 +1,22 @@
 package by.academy.project.hotel.repositories.room;
 
 
-import by.academy.project.hotel.dto.RoomDto;
 import by.academy.project.hotel.entities.room.Room;
 import by.academy.project.hotel.entities.room.RoomCategory;
-import by.academy.project.hotel.repositories.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface RoomRepository extends CrudRepository<Long, RoomDto, Room> {
+public interface RoomRepository extends JpaRepository<Room, Long> {
 
-    Optional<Room> getByID(Long id);
+    Optional<Room> findRoomByNumber(String number);
 
-    Optional<Room> getRoomByNumber(String number);
+    List<Room> findRoomsByRoomCategory(RoomCategory roomCategory);
 
-    List<Room> searchRoomsByCategory(RoomCategory category);
+//    Optional<Room> getByID(Long id);
+//
+//    Optional<Room> getRoomByNumber(String number);
+//
+//    List<Room> searchRoomsByCategory(RoomCategory category);
 }

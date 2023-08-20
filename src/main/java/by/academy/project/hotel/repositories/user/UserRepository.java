@@ -1,17 +1,14 @@
 package by.academy.project.hotel.repositories.user;
 
-import by.academy.project.hotel.dto.UserDto;
 import by.academy.project.hotel.entities.user.User;
-import by.academy.project.hotel.repositories.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends CrudRepository<Long, UserDto, User> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> getByID(Long id);
+    Optional<User> findUserByLogin(String login);
 
-    Optional<User> getUserByLogin(String login);
-
-    List<User> findUser(String name, String surname);
+    List<User> findUsersByNameAndSurname(String name, String surname);
 }

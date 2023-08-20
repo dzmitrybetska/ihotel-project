@@ -1,84 +1,79 @@
 package by.academy.project.hotel.mappers;
 
-import by.academy.project.hotel.dto.BookingDto;
+import by.academy.project.hotel.dto.BookingRequest;
+import by.academy.project.hotel.dto.BookingResponse;
 import by.academy.project.hotel.entities.booking.Booking;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
+@Component
+@RequiredArgsConstructor
 public class BookingMapper {
 
-    private static BookingMapper instance;
+    private final UserMapper userMapper;
+    private final RoomMapper roomMapper;
 
-    private BookingMapper() {
-    }
-
-    public static BookingMapper getInstance() {
-        if (instance == null) {
-            instance = new BookingMapper();
-        }
-        return instance;
-    }
-
-    public Booking buildBooking(BookingDto bookingDto) {
+    public Booking buildBooking(BookingRequest bookingRequest) {
         return Booking.builder()
-                .id(bookingDto.getId())
-                .rate(bookingDto.getRate())
-                .arrival(bookingDto.getArrival())
-                .departure(bookingDto.getDeparture())
+                .rate(bookingRequest.getRate())
+                .arrival(bookingRequest.getArrival())
+                .departure(bookingRequest.getDeparture())
                 .build();
     }
 
-    public void updateBooking(Booking booking, BookingDto bookingDto) {
-        booking.setRate(bookingDto.getRate())
-                .setArrival(bookingDto.getArrival())
-                .setDeparture(bookingDto.getDeparture());
+    public Booking updateBooking(Booking booking, BookingRequest bookingRequest) {
+        booking.setRate(bookingRequest.getRate())
+                .setArrival(bookingRequest.getArrival())
+                .setDeparture(bookingRequest.getDeparture());
+        return booking;
     }
 
-    public BookingDto buildBookingDto(Booking booking) {
-        return BookingDto.builder()
+    public BookingResponse buildBookingResponse(Booking booking) {
+        return BookingResponse.builder()
                 .id(booking.getId())
-                .userDto(UserMapper.getInstance().buildUserDtoWithoutBookings(booking.getUser()))
-                .rooms(RoomMapper.getInstance().buildRoomsDtoForBooking(booking.getRooms()))
+                .userResponse(userMapper.buildUserDtoWithoutBookings(booking.getUser()))
+                .rooms(roomMapper.buildRoomsResponseForBooking(booking.getRooms()))
                 .rate(booking.getRate())
                 .arrival(booking.getArrival())
                 .departure(booking.getDeparture())
                 .build();
     }
 
-    public List<BookingDto> buildBookingsDto(List<Booking> bookings) {
+    public List<BookingResponse> buildBookingsResponse(List<Booking> bookings) {
         return bookings.stream()
-                .map(this::buildBookingDto)
+                .map(this::buildBookingResponse)
                 .collect(Collectors.toList());
     }
 
-    public Set<BookingDto> buildBookingsDtoForUser(Set<Booking> bookings) {
+    public List<BookingResponse> buildBookingsResponseForUser(List<Booking> bookings) {
         return bookings.stream()
-                .map(this::buildBookingDtoForUser)
-                .collect(Collectors.toSet());
+                .map(this::buildBookingResponseForUser)
+                .collect(Collectors.toList());
     }
 
-    public Set<BookingDto> buildBookingsDtoForRoom(Set<Booking> bookings) {
+    public List<BookingResponse> buildBookingsResponseForRoom(List<Booking> bookings) {
         return bookings.stream()
-                .map(this::buildBookingDtoForRoom)
-                .collect(Collectors.toSet());
+                .map(this::buildBookingResponseForRoom)
+                .collect(Collectors.toList());
     }
 
-    private BookingDto buildBookingDtoForUser(Booking booking) {
-        return BookingDto.builder()
+    private BookingResponse buildBookingResponseForUser(Booking booking) {
+        return BookingResponse.builder()
                 .id(booking.getId())
-                .rooms(RoomMapper.getInstance().buildRoomsDtoForBooking(booking.getRooms()))
+                .rooms(roomMapper.buildRoomsResponseForBooking(booking.getRooms()))
                 .rate(booking.getRate())
                 .arrival(booking.getArrival())
                 .departure(booking.getDeparture())
                 .build();
     }
 
-    private BookingDto buildBookingDtoForRoom(Booking booking) {
-        return BookingDto.builder()
+    private BookingResponse buildBookingResponseForRoom(Booking booking) {
+        return BookingResponse.builder()
                 .id(booking.getId())
-                .userDto(UserMapper.getInstance().buildUserDtoWithoutBookings(booking.getUser()))
+                .userResponse(userMapper.buildUserDtoWithoutBookings(booking.getUser()))
                 .rate(booking.getRate())
                 .arrival(booking.getArrival())
                 .departure(booking.getDeparture())

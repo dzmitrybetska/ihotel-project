@@ -1,59 +1,48 @@
 package by.academy.project.hotel.mappers;
 
-import by.academy.project.hotel.dto.UserDto;
+import by.academy.project.hotel.dto.UserRequest;
+import by.academy.project.hotel.dto.UserResponse;
 import by.academy.project.hotel.entities.user.Country;
 import by.academy.project.hotel.entities.user.Passport;
 import by.academy.project.hotel.entities.user.Role;
 import by.academy.project.hotel.entities.user.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static by.academy.project.hotel.util.configuration.Constants.*;
-
+@Component
+@RequiredArgsConstructor
 public final class UserMapper {
 
-    private static UserMapper instance;
-    private final BookingMapper bookingMapper = BookingMapper.getInstance();
-
-    private UserMapper() {
-    }
-
-    public static UserMapper getInstance() {
-        if (instance == null) {
-            instance = new UserMapper();
-        }
-        return instance;
-    }
-
-    public User buildUser(UserDto userDto) {
+    public User buildUser(UserRequest userRequest) {
         return User.builder()
-                .id(userDto.getId())
-                .name(userDto.getName())
-                .surname((userDto.getSurname()))
-                .login(userDto.getLogin())
-                .password(userDto.getPassword())
-                .passport(userDto.getPassport())
-                .email(userDto.getEmail())
-                .phone(userDto.getPhone())
-                .role(userDto.getRole())
-                .addresses(userDto.getAddresses())
+                .name(userRequest.getName())
+                .surname((userRequest.getSurname()))
+                .login(userRequest.getLogin())
+                .password(userRequest.getPassword())
+                .passport(userRequest.getPassport())
+                .email(userRequest.getEmail())
+                .phone(userRequest.getPhone())
+                .role(userRequest.getRole())
+                .addresses(userRequest.getAddresses())
                 .build();
     }
 
-    public void updateUser(User user, UserDto userDto) {
-        user.setName(userDto.getName())
-                .setSurname(userDto.getSurname())
-                .setPassword(userDto.getPassword())
-                .setEmail(userDto.getEmail())
-                .setPhone(userDto.getPhone())
-                .setRole(userDto.getRole())
-                .setAddresses(userDto.getAddresses())
+    public User updateUser(User user, UserRequest userRequest) {
+        user.setName(userRequest.getName())
+                .setSurname(userRequest.getSurname())
+                .setPassword(userRequest.getPassword())
+                .setEmail(userRequest.getEmail())
+                .setPhone(userRequest.getPhone())
+                .setRole(userRequest.getRole())
+                .setAddresses(userRequest.getAddresses())
                 .getPassport()
-                .setPassportSeries(userDto.getPassport().getPassportSeries())
-                .setPassportID(userDto.getPassport().getPassportID())
-                .setCountry(userDto.getPassport().getCountry());
+                .setPassportSeries(userRequest.getPassport().getPassportSeries())
+                .setPassportID(userRequest.getPassport().getPassportID())
+                .setCountry(userRequest.getPassport().getCountry());
+        return user;
     }
 
     public Passport buildPassport(String passportSeries, String passportID, Country country) {
@@ -64,82 +53,82 @@ public final class UserMapper {
                 .build();
     }
 
-    public UserDto buildUserDtoForGuest(UserDto userDto) {
-        return UserDto.builder()
-                .id(userDto.getId())
-                .name(userDto.getName())
-                .surname(userDto.getSurname())
-                .login(userDto.getLogin())
-                .password(userDto.getPassword())
-                .email(userDto.getEmail())
-                .phone(userDto.getPhone())
-                .role(userDto.getRole())
+    public UserResponse buildUserDtoForGuest(UserResponse userResponse) {
+        return UserResponse.builder()
+                .id(userResponse.getId())
+                .name(userResponse.getName())
+                .surname(userResponse.getSurname())
+                .login(userResponse.getLogin())
+                .password(userResponse.getPassword())
+                .email(userResponse.getEmail())
+                .phone(userResponse.getPhone())
+                .role(userResponse.getRole())
                 .build();
     }
 
-    public UserDto buildUserDtoForManager(UserDto userDto) {
-        return UserDto.builder()
-                .id(userDto.getId())
-                .name(userDto.getName())
-                .surname(userDto.getSurname())
-                .passport(userDto.getPassport())
-                .email(userDto.getEmail())
-                .phone(userDto.getPhone())
-                .role(userDto.getRole())
+    public UserResponse buildUserDtoForManager(UserResponse userResponse) {
+        return UserResponse.builder()
+                .id(userResponse.getId())
+                .name(userResponse.getName())
+                .surname(userResponse.getSurname())
+                .passport(userResponse.getPassport())
+                .email(userResponse.getEmail())
+                .phone(userResponse.getPhone())
+                .role(userResponse.getRole())
                 .build();
     }
 
-    public UserDto buildUserDto(User user) {
-        return user.getBookings() != null ? buildUserDtoWithBookings(user) : buildUserDtoWithoutBookings(user);
+    public UserResponse buildUserDto(User user, BookingMapper bookingMapper) {
+        return user.getBookings() != null ? buildUserDtoWithBookings(user, bookingMapper) : buildUserDtoWithoutBookings(user);
     }
 
-    public UserDto buildUserDtoForGuest(HttpServletRequest req) {
-        return UserDto.builder()
-                .name(req.getParameter(NAME))
-                .surname(req.getParameter(SURNAME))
-                .login(req.getParameter(LOGIN))
-                .password(req.getParameter(PASSWORD))
-                .passport(new Passport())
-                .email(req.getParameter(EMAIL))
-                .phone(req.getParameter(PHONE))
-                .role(Role.GUEST)
-                .build();
-    }
+//    public UserDto buildUserDtoForGuest(HttpServletRequest req) {
+//        return UserDto.builder()
+//                .name(req.getParameter(NAME))
+//                .surname(req.getParameter(SURNAME))
+//                .login(req.getParameter(LOGIN))
+//                .password(req.getParameter(PASSWORD))
+//                .passport(new Passport())
+//                .email(req.getParameter(EMAIL))
+//                .phone(req.getParameter(PHONE))
+//                .role(Role.GUEST)
+//                .build();
+//    }
+//
+//    public UserDto buildUserDtoForManager(HttpServletRequest req) {
+//        return UserDto.builder()
+//                .name(req.getParameter(NAME))
+//                .surname(req.getParameter(SURNAME))
+//                .passport(this.buildPassport(
+//                        req.getParameter(PASSPORT_SERIES),
+//                        req.getParameter(PASSPORT_ID),
+//                        Country.valueOf(req.getParameter(COUNTRY).toUpperCase()))
+//                )
+//                .email(req.getParameter(EMAIL))
+//                .phone(req.getParameter(PHONE))
+//                .role(Role.GUEST)
+//                .build();
+//    }
+//
+//    public UserDto buildUserDto(HttpServletRequest req) {
+//        return UserDto.builder()
+//                .name(req.getParameter(NAME))
+//                .surname(req.getParameter(SURNAME))
+//                .login(req.getParameter(LOGIN))
+//                .password(req.getParameter(PASSWORD))
+//                .passport(this.buildPassport(
+//                        req.getParameter(PASSPORT_SERIES),
+//                        req.getParameter(PASSPORT_ID),
+//                        Country.valueOf(req.getParameter(COUNTRY).toUpperCase()))
+//                )
+//                .email(req.getParameter(EMAIL))
+//                .phone(req.getParameter(PHONE))
+//                .role(Role.valueOf(req.getParameter(ROLE).toUpperCase()))
+//                .build();
+//    }
 
-    public UserDto buildUserDtoForManager(HttpServletRequest req) {
-        return UserDto.builder()
-                .name(req.getParameter(NAME))
-                .surname(req.getParameter(SURNAME))
-                .passport(this.buildPassport(
-                        req.getParameter(PASSPORT_SERIES),
-                        req.getParameter(PASSPORT_ID),
-                        Country.valueOf(req.getParameter(COUNTRY).toUpperCase()))
-                )
-                .email(req.getParameter(EMAIL))
-                .phone(req.getParameter(PHONE))
-                .role(Role.GUEST)
-                .build();
-    }
-
-    public UserDto buildUserDto(HttpServletRequest req) {
-        return UserDto.builder()
-                .name(req.getParameter(NAME))
-                .surname(req.getParameter(SURNAME))
-                .login(req.getParameter(LOGIN))
-                .password(req.getParameter(PASSWORD))
-                .passport(this.buildPassport(
-                        req.getParameter(PASSPORT_SERIES),
-                        req.getParameter(PASSPORT_ID),
-                        Country.valueOf(req.getParameter(COUNTRY).toUpperCase()))
-                )
-                .email(req.getParameter(EMAIL))
-                .phone(req.getParameter(PHONE))
-                .role(Role.valueOf(req.getParameter(ROLE).toUpperCase()))
-                .build();
-    }
-
-    public UserDto buildUserDtoWithoutBookings(User user) {
-        return UserDto.builder()
+    public UserResponse buildUserDtoWithoutBookings(User user) {
+        return UserResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .surname(user.getSurname())
@@ -153,21 +142,21 @@ public final class UserMapper {
                 .build();
     }
 
-    public List<UserDto> filterUsersDto(List<UserDto> users) {
+    public List<UserResponse> filterUsersDto(List<UserResponse> users) {
         return users.stream()
                 .filter(user -> user.getRole() == Role.GUEST)
                 .map(this::buildUserDtoForManager)
                 .collect(Collectors.toList());
     }
 
-    public List<UserDto> buildUsersDto(List<User> users) {
+    public List<UserResponse> buildUsersDto(List<User> users, BookingMapper bookingMapper) {
         return users.stream()
-                .map(this::buildUserDto)
+                .map(user -> buildUserDto(user, bookingMapper))
                 .collect(Collectors.toList());
     }
 
-    private UserDto buildUserDtoWithBookings(User user) {
-        return UserDto.builder()
+    private UserResponse buildUserDtoWithBookings(User user, BookingMapper bookingMapper){
+        return UserResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .surname(user.getSurname())
@@ -178,7 +167,7 @@ public final class UserMapper {
                 .phone(user.getPhone())
                 .role(user.getRole())
                 .addresses(user.getAddresses())
-                .bookings(bookingMapper.buildBookingsDtoForUser(user.getBookings()))
+                .bookings(bookingMapper.buildBookingsResponseForUser(user.getBookings()))
                 .build();
     }
 }
