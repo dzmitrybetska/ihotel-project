@@ -1,15 +1,15 @@
 package by.academy.project.hotel.services.booking;
 
-import by.academy.project.hotel.dto.BookingRequest;
-import by.academy.project.hotel.dto.BookingResponse;
+import by.academy.project.hotel.dto.requests.BookingRequest;
+import by.academy.project.hotel.dto.responces.BookingResponse;
 import by.academy.project.hotel.entities.booking.Booking;
 import by.academy.project.hotel.entities.room.Room;
 import by.academy.project.hotel.entities.user.User;
 import by.academy.project.hotel.exceptions.BookingNotCreatedException;
 import by.academy.project.hotel.mappers.BookingMapper;
 import by.academy.project.hotel.repositories.booking.BookingRepository;
-import by.academy.project.hotel.repositories.room.RoomRepository;
-import by.academy.project.hotel.repositories.user.UserRepository;
+import by.academy.project.hotel.services.room.RoomService;
+import by.academy.project.hotel.services.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,16 +25,16 @@ import static by.academy.project.hotel.util.Constants.ERROR_MESSAGE_SEARCHING_BO
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
-    private final UserRepository userRepository;
-    private final RoomRepository roomRepository;
     private final BookingMapper bookingMapper;
+    private final UserService userService;
+    private final RoomService roomService;
 
     @Override
-    public BookingResponse create(BookingRequest bookingRequest, Long userId, List<Long> roomsId) {
+    public BookingResponse create(BookingRequest bookingRequest) {
         Booking booking = bookingMapper.buildBooking(bookingRequest);
-        Optional<User> optionalUser = userRepository.findById(userId);
-        List<Room> rooms = roomRepository.findAllById(roomsId);
-        if (optionalUser.isPresent() && rooms.size() != 0) {
+        Optional<User> optionalUser = userService.findUserByIDForBooking(bookingRequest.getUserId());
+        List<Room> rooms = roomService.findRoomsByIdForBooking(bookingRequest.getIdsRooms());
+        if (optionalUser.isPresent() && !rooms.isEmpty()) {
             booking.setUser(optionalUser.get())
                     .setRooms(rooms);
             return bookingMapper.buildBookingResponse(bookingRepository.save(booking));
@@ -51,8 +51,10 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponse update(Long id, BookingRequest bookingRequest) {
         Optional<Booking> optionalBooking = bookingRepository.findById(id);
         return optionalBooking.map(booking -> bookingMapper.updateBooking(booking, bookingRequest))
+                .map(booking -> booking.setRooms(roomService.findRoomsByIdForBooking(bookingRequest.getIdsRooms())))
+                .map(bookingRepository::save)
                 .map(bookingMapper::buildBookingResponse)
-                .orElseThrow(()-> new EntityNotFoundException(ERROR_MESSAGE_SEARCHING_BOOKING));
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_SEARCHING_BOOKING + id));
     }
 
     @Override
@@ -60,5 +62,12 @@ public class BookingServiceImpl implements BookingService {
         Optional<Booking> optionalBooking = bookingRepository.findById(id);
         optionalBooking.ifPresent(bookingRepository::delete);
         return optionalBooking.isPresent();
+    }
+
+    @Override
+    public BookingResponse findBookingByID(Long id) {
+        Optional<Booking> optionalBooking = bookingRepository.findById(id);
+        return optionalBooking.map(bookingMapper::buildBookingResponse)
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_SEARCHING_BOOKING + id));
     }
 }

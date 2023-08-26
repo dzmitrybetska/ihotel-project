@@ -1,17 +1,11 @@
 spring:
   application:
     name: hotel
-  datasource:
-    url: jdbc:postgresql://localhost:5432/myhotel
-    driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: zhanna1966mama
-  jpa:
-    hibernate:
-      ddl-auto: update
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
   cloud:
     config:
-      enabled: false
+      enabled: true
+      uri: http://localhost:8888
+  profiles:
+    active:
 server:
   port: 8080

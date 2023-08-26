@@ -1,13 +1,12 @@
 package by.academy.project.hotel.mappers;
 
-import by.academy.project.hotel.dto.BookingRequest;
-import by.academy.project.hotel.dto.BookingResponse;
+import by.academy.project.hotel.dto.requests.BookingRequest;
+import by.academy.project.hotel.dto.responces.BookingResponse;
 import by.academy.project.hotel.entities.booking.Booking;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -25,10 +24,9 @@ public class BookingMapper {
     }
 
     public Booking updateBooking(Booking booking, BookingRequest bookingRequest) {
-        booking.setRate(bookingRequest.getRate())
+        return booking.setRate(bookingRequest.getRate())
                 .setArrival(bookingRequest.getArrival())
                 .setDeparture(bookingRequest.getDeparture());
-        return booking;
     }
 
     public BookingResponse buildBookingResponse(Booking booking) {
@@ -45,19 +43,19 @@ public class BookingMapper {
     public List<BookingResponse> buildBookingsResponse(List<Booking> bookings) {
         return bookings.stream()
                 .map(this::buildBookingResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<BookingResponse> buildBookingsResponseForUser(List<Booking> bookings) {
         return bookings.stream()
                 .map(this::buildBookingResponseForUser)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<BookingResponse> buildBookingsResponseForRoom(List<Booking> bookings) {
         return bookings.stream()
                 .map(this::buildBookingResponseForRoom)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private BookingResponse buildBookingResponseForUser(Booking booking) {

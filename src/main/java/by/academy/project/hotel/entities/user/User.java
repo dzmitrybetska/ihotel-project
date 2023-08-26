@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.List;
-import java.util.Set;
 
 import static by.academy.project.hotel.util.DatabaseColumns.*;
 import static jakarta.persistence.CascadeType.ALL;
@@ -35,10 +34,10 @@ public class User {
     @Column(name = SURNAME, nullable = false, length = 32)
     private String surname;
 
-    @Column(name = LOGIN, unique = true, length = 20)
+    @Column(name = LOGIN, nullable = false, unique = true, length = 8)
     private String login;
 
-    @Column(name = PASSWORD, length = 20)
+    @Column(name = PASSWORD, nullable = false, length = 20)
     private String password;
 
     @OneToOne(cascade = ALL)
@@ -48,7 +47,7 @@ public class User {
     @Column(name = EMAIL, nullable = false, unique = true, length = 20)
     private String email;
 
-    @Column(name = PHONE, nullable = false, length = 20)
+    @Column(name = PHONE, nullable = false, length = 15)
     private String phone;
 
     @Enumerated(STRING)

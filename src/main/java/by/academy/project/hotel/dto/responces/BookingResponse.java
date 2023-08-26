@@ -1,4 +1,4 @@
-package by.academy.project.hotel.dto;
+package by.academy.project.hotel.dto.responces;
 
 import by.academy.project.hotel.entities.booking.Rate;
 import lombok.AllArgsConstructor;

@@ -1,10 +1,8 @@
 package by.academy.project.hotel.services.user;
 
-import by.academy.project.hotel.dto.UserRequest;
-import by.academy.project.hotel.dto.UserResponse;
+import by.academy.project.hotel.dto.requests.UserRequest;
+import by.academy.project.hotel.dto.responces.UserResponse;
 import by.academy.project.hotel.entities.user.User;
-import by.academy.project.hotel.exceptions.NotFoundUserException;
-import by.academy.project.hotel.exceptions.UserNotCreatedException;
 import by.academy.project.hotel.mappers.BookingMapper;
 import by.academy.project.hotel.mappers.UserMapper;
 import by.academy.project.hotel.repositories.user.UserRepository;
@@ -16,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static by.academy.project.hotel.util.Constants.ERROR_MESSAGE_BY_USER;
-import static by.academy.project.hotel.util.Constants.USER_CREATION_ERROR_MESSAGE;
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +26,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse create(UserRequest userRequest) {
         User user = userMapper.buildUser(userRequest);
-        Optional<User> optionalUser = Optional.of(userRepository.save(user));
-        return optionalUser.map(user1 -> userMapper.buildUserDto(user1, bookingMapper))
-                .orElseThrow(() -> new UserNotCreatedException(USER_CREATION_ERROR_MESSAGE));
+        userRepository.save(user);
+        return userMapper.buildUserDto(user, bookingMapper);
     }
 
     @Override
@@ -44,8 +40,9 @@ public class UserServiceImpl implements UserService {
     public UserResponse update(Long id, UserRequest userRequest) {
         Optional<User> optionalUser = userRepository.findById(id);
         return optionalUser.map(user -> userMapper.updateUser(user, userRequest))
+                .map(userRepository::save)
                 .map(user -> userMapper.buildUserDto(user, bookingMapper))
-                .orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + id));
     }
 
     @Override
@@ -59,14 +56,19 @@ public class UserServiceImpl implements UserService {
     public UserResponse findUserByID(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         return optionalUser.map(user -> userMapper.buildUserDto(user, bookingMapper))
-                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER));
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + id));
+    }
+
+    @Override
+    public Optional<User> findUserByIDForBooking(Long id) {
+        return userRepository.findById(id);
     }
 
     @Override
     public UserResponse findUserByLogin(String login) {
         Optional<User> optionalUser = userRepository.findUserByLogin(login);
         return optionalUser.map(user -> userMapper.buildUserDto(user, bookingMapper))
-                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER));
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + login));
     }
 
     @Override
@@ -75,7 +77,7 @@ public class UserServiceImpl implements UserService {
         if (users.size() != 0) {
             return userMapper.buildUsersDto(users, bookingMapper);
         } else {
-            throw new EntityNotFoundException(ERROR_MESSAGE_BY_USER);
+            throw new EntityNotFoundException(ERROR_MESSAGE_BY_USER + name + " " + surname);
         }
     }
 }

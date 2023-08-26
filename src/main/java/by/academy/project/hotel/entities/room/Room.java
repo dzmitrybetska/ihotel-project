@@ -10,7 +10,6 @@ import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 import static by.academy.project.hotel.util.DatabaseColumns.*;
 import static jakarta.persistence.EnumType.STRING;

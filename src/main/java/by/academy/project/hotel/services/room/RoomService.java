@@ -1,8 +1,9 @@
 package by.academy.project.hotel.services.room;
 
 
-import by.academy.project.hotel.dto.RoomRequest;
-import by.academy.project.hotel.dto.RoomResponse;
+import by.academy.project.hotel.dto.requests.RoomRequest;
+import by.academy.project.hotel.dto.responces.RoomResponse;
+import by.academy.project.hotel.entities.room.Room;
 import by.academy.project.hotel.entities.room.RoomCategory;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public interface RoomService {
     boolean delete(Long id);
 
     RoomResponse findRoomByID(Long id);
+
+    List<Room> findRoomsByIdForBooking(List<Long> list);
 
     RoomResponse findRoomByNumber(String number);
 

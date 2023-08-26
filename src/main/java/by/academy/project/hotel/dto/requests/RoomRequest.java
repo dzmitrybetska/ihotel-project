@@ -1,29 +1,30 @@
-package by.academy.project.hotel.dto;
+package by.academy.project.hotel.dto.requests;
 
 import by.academy.project.hotel.entities.room.RoomCategory;
 import by.academy.project.hotel.entities.room.RoomStatus;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
 
-@Builder
 @Data
-@Accessors(chain = true)
-@NoArgsConstructor
-@AllArgsConstructor
-public class RoomResponse {
+@Builder
+public class RoomRequest {
 
-    private Long id;
+    @NotBlank
     private String number;
+
+    @NotNull
     private BigDecimal price;
+
+    @NotNull
     private RoomCategory roomCategory;
+
+    @NotNull
     private Boolean isBooked;
+
+    @NotNull
     private RoomStatus roomStatus;
-    private List<BookingResponse> bookings;
 }
