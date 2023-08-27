@@ -47,4 +47,7 @@ public class Room {
 
     @ManyToMany(mappedBy = ROOMS_FOR_MANY)
     private List<Booking> bookings;
+
+    @Transient
+    private String description;
 }

@@ -8,6 +8,7 @@ import by.academy.project.hotel.entities.room.RoomCategory;
 import by.academy.project.hotel.mappers.BookingMapper;
 import by.academy.project.hotel.mappers.RoomMapper;
 import by.academy.project.hotel.repositories.room.RoomRepository;
+import by.academy.project.hotel.services.DescriptionService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import static by.academy.project.hotel.util.Constants.ERROR_MESSAGE_BY_ROOM;
 public class RoomServiceImpl implements RoomService {
 
     private final RoomRepository roomRepository;
+    private final DescriptionService descriptionService;
     private final RoomMapper roomMapper;
     private final BookingMapper bookingMapper;
 
@@ -58,7 +60,8 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomResponse findRoomByID(Long id) {
         Optional<Room> optionalRoom = roomRepository.findById(id);
-        return optionalRoom.map(room -> roomMapper.buildRoomResponse(room, bookingMapper))
+        return optionalRoom.map(room -> room.setDescription(descriptionService.getDescription(room.getRoomCategory())))
+                .map(room -> roomMapper.buildRoomResponse(room, bookingMapper))
                 .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_ROOM + id));
     }
 
@@ -70,14 +73,16 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomResponse findRoomByNumber(String number) {
         Optional<Room> optionalRoom = roomRepository.findRoomByNumber(number);
-        return optionalRoom.map(room -> roomMapper.buildRoomResponse(room, bookingMapper))
+        return optionalRoom.map(room -> room.setDescription(descriptionService.getDescription(room.getRoomCategory())))
+                .map(room -> roomMapper.buildRoomResponse(room, bookingMapper))
                 .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_ROOM + number));
     }
 
     @Override
     public List<RoomResponse> findRoomsByRoomCategory(RoomCategory category) {
         List<Room> rooms = roomRepository.findRoomsByRoomCategory(category);
-        if (rooms.size() != 0) {
+        if (!rooms.isEmpty()) {
+            rooms.forEach(room -> room.setDescription(descriptionService.getDescription(room.getRoomCategory())));
             return roomMapper.buildRoomsResponse(rooms, bookingMapper);
         } else {
             throw new EntityNotFoundException(ERROR_MESSAGE_BY_ROOM + category);

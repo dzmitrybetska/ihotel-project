@@ -25,4 +25,5 @@ public class RoomResponse {
     private Boolean isBooked;
     private RoomStatus roomStatus;
     private List<BookingResponse> bookings;
+    private String description;
 }

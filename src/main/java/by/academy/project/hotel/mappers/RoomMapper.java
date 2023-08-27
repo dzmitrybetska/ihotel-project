@@ -49,6 +49,7 @@ public final class RoomMapper {
                 .roomCategory(room.getRoomCategory())
                 .isBooked(room.getIsBooked())
                 .roomStatus(room.getRoomStatus())
+                .description(room.getDescription())
                 .build();
     }
 
@@ -67,6 +68,7 @@ public final class RoomMapper {
                 .isBooked(room.getIsBooked())
                 .roomStatus(room.getRoomStatus())
                 .bookings(bookingMapper.buildBookingsResponseForRoom(room.getBookings()))
+                .description(room.getDescription())
                 .build();
     }
 }

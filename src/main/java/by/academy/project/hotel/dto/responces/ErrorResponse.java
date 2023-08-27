@@ -12,8 +12,8 @@ import java.util.List;
 @Builder
 public class ErrorResponse {
 
-    private int countOfErrors;
-    private List<Error> errors;
-    private LocalDateTime time;
-    private HttpStatus status;
+    private final int countOfErrors;
+    private final List<Error> errors;
+    private final LocalDateTime time;
+    private final HttpStatus status;
 }

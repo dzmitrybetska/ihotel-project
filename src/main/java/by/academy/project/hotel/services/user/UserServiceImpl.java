@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponse> findUsersByNameAndSurname(String name, String surname) {
         List<User> users = userRepository.findUsersByNameAndSurname(name, surname);
-        if (users.size() != 0) {
+        if (!users.isEmpty()) {
             return userMapper.buildUsersDto(users, bookingMapper);
         } else {
             throw new EntityNotFoundException(ERROR_MESSAGE_BY_USER + name + " " + surname);
