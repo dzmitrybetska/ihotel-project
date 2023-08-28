@@ -37,7 +37,7 @@ public class User {
     @Column(name = LOGIN, nullable = false, unique = true, length = 8)
     private String login;
 
-    @Column(name = PASSWORD, nullable = false, length = 50)
+    @Column(name = PASSWORD, nullable = false, length = 100)
     private String password;
 
     @OneToOne(cascade = ALL)
