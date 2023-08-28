@@ -5,7 +5,6 @@ import by.academy.project.hotel.dto.responces.RoomResponse;
 import by.academy.project.hotel.entities.room.RoomCategory;
 import by.academy.project.hotel.services.room.RoomService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -33,17 +32,17 @@ public class RoomController {
     }
 
     @PutMapping(value = "/room/{id}")
-    public RoomResponse update(@PathVariable @Min(1) Long id, @Valid @RequestBody RoomRequest roomRequest) {
+    public RoomResponse update(@PathVariable Long id, @Valid @RequestBody RoomRequest roomRequest) {
         return roomService.update(id, roomRequest);
     }
 
     @DeleteMapping(value = "/room/{id}")
-    public boolean delete(@PathVariable @Min(1) Long id) {
+    public boolean delete(@PathVariable Long id) {
         return roomService.delete(id);
     }
 
     @GetMapping(value = "/room/{id}")
-    public RoomResponse findRoomByID(@PathVariable @Min(1) Long id) {
+    public RoomResponse findRoomByID(@PathVariable Long id) {
         return roomService.findRoomByID(id);
     }
 

@@ -15,16 +15,12 @@ public class RoomRequest {
 
     @NotBlank
     private String number;
-
     @NotNull
     private BigDecimal price;
-
     @NotNull
     private RoomCategory roomCategory;
-
     @NotNull
     private Boolean isBooked;
-
     @NotNull
     private RoomStatus roomStatus;
 }

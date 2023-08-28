@@ -39,7 +39,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse update(Long id, UserRequest userRequest) {
         Optional<User> optionalUser = userRepository.findById(id);
-        return optionalUser.map(user -> userMapper.updateUser(user, userRequest)).map(userRepository::save).map(user -> userMapper.buildUserDto(user, bookingMapper)).orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + id));
+        return optionalUser.map(user -> userMapper.updateUser(user, userRequest))
+                .map(userRepository::save)
+                .map(user -> userMapper.buildUserDto(user, bookingMapper))
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + id));
     }
 
     @Override

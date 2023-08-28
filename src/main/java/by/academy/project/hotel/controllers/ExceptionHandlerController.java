@@ -77,13 +77,15 @@ public class ExceptionHandlerController {
     }
 
     private List<ValidationError> buildValidationErrors(MethodArgumentNotValidException exception) {
-        return exception.getBindingResult().getFieldErrors().stream()
+        return exception.getBindingResult().getFieldErrors()
+                .stream()
                 .map(fieldError -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()))
                 .toList();
     }
 
     private List<ValidationError> buildValidationErrors(ConstraintViolationException exception) {
-        return exception.getConstraintViolations().stream()
+        return exception.getConstraintViolations()
+                .stream()
                 .map(violation -> new ValidationError(violation.getPropertyPath().toString(), violation.getMessage()))
                 .toList();
     }
