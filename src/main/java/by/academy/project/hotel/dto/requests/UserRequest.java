@@ -23,7 +23,7 @@ public class UserRequest {
     @NotBlank
     private String login;
 
-    @Size(min = 8, max = 20)
+    @Size(min = 8, max = 50)
     @NotBlank
     private String password;
 

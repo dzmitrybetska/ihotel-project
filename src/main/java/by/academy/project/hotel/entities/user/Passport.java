@@ -1,10 +1,13 @@
 package by.academy.project.hotel.entities.user;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import static by.academy.project.hotel.util.DatabaseColumns.*;
+import static by.academy.project.hotel.utils.DatabaseColumns.*;
 import static jakarta.persistence.EnumType.STRING;
 
 @Builder

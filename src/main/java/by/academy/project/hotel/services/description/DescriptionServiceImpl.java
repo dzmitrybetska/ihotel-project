@@ -1,4 +1,4 @@
-package by.academy.project.hotel.services;
+package by.academy.project.hotel.services.description;
 
 import by.academy.project.hotel.entities.room.RoomCategory;
 import by.academy.project.hotel.feingClients.DescriptionClient;

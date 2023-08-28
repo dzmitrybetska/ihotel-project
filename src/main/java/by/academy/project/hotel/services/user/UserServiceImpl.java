@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static by.academy.project.hotel.util.Constants.ERROR_MESSAGE_BY_USER;
+import static by.academy.project.hotel.utils.Constants.ERROR_MESSAGE_BY_USER;
 
 @Service
 @RequiredArgsConstructor
@@ -39,10 +39,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse update(Long id, UserRequest userRequest) {
         Optional<User> optionalUser = userRepository.findById(id);
-        return optionalUser.map(user -> userMapper.updateUser(user, userRequest))
-                .map(userRepository::save)
-                .map(user -> userMapper.buildUserDto(user, bookingMapper))
-                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + id));
+        return optionalUser.map(user -> userMapper.updateUser(user, userRequest)).map(userRepository::save).map(user -> userMapper.buildUserDto(user, bookingMapper)).orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + id));
     }
 
     @Override
@@ -55,8 +52,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse findUserByID(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
-        return optionalUser.map(user -> userMapper.buildUserDto(user, bookingMapper))
-                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + id));
+        return optionalUser.map(user -> userMapper.buildUserDto(user, bookingMapper)).orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + id));
     }
 
     @Override
@@ -67,8 +63,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse findUserByLogin(String login) {
         Optional<User> optionalUser = userRepository.findUserByLogin(login);
-        return optionalUser.map(user -> userMapper.buildUserDto(user, bookingMapper))
-                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + login));
+        return optionalUser.map(user -> userMapper.buildUserDto(user, bookingMapper)).orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + login));
     }
 
     @Override

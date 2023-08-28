@@ -1,7 +1,7 @@
 package by.academy.project.hotel.controllers;
 
-import by.academy.project.hotel.errors.Error;
 import by.academy.project.hotel.dto.responces.ErrorResponse;
+import by.academy.project.hotel.errors.Error;
 import by.academy.project.hotel.errors.ValidationError;
 import by.academy.project.hotel.exceptions.BookingNotCreatedException;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static by.academy.project.hotel.util.Constants.EXCEPTION;
+import static by.academy.project.hotel.utils.Constants.EXCEPTION;
 
 @Slf4j
 @RestControllerAdvice
@@ -40,7 +40,7 @@ public class ExceptionHandlerController {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ErrorResponse handleConstraintValidationException(ConstraintViolationException exception){
+    public ErrorResponse handleConstraintValidationException(ConstraintViolationException exception) {
         log.warn(EXCEPTION, exception.getMessage());
         return buildErrorResponse(exception);
     }

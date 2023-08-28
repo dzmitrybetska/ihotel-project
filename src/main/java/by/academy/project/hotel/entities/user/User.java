@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 
 import java.util.List;
 
-import static by.academy.project.hotel.util.DatabaseColumns.*;
+import static by.academy.project.hotel.utils.DatabaseColumns.*;
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.EnumType.STRING;
 
@@ -37,7 +37,7 @@ public class User {
     @Column(name = LOGIN, nullable = false, unique = true, length = 8)
     private String login;
 
-    @Column(name = PASSWORD, nullable = false, length = 20)
+    @Column(name = PASSWORD, nullable = false, length = 50)
     private String password;
 
     @OneToOne(cascade = ALL)

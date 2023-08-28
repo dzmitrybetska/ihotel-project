@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import static by.academy.project.hotel.util.DatabaseColumns.*;
+import static by.academy.project.hotel.utils.DatabaseColumns.*;
 import static jakarta.persistence.EnumType.STRING;
 
 @Builder

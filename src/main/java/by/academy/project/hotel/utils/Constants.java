@@ -1,4 +1,4 @@
-package by.academy.project.hotel.util;
+package by.academy.project.hotel.utils;
 
 public final class Constants {
 

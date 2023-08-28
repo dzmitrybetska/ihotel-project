@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static by.academy.project.hotel.util.DatabaseColumns.*;
+import static by.academy.project.hotel.utils.DatabaseColumns.*;
 import static jakarta.persistence.EnumType.STRING;
 
 @Builder

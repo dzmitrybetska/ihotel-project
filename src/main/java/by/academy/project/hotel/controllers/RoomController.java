@@ -1,9 +1,7 @@
 package by.academy.project.hotel.controllers;
 
 import by.academy.project.hotel.dto.requests.RoomRequest;
-import by.academy.project.hotel.dto.requests.UserRequest;
 import by.academy.project.hotel.dto.responces.RoomResponse;
-import by.academy.project.hotel.dto.responces.UserResponse;
 import by.academy.project.hotel.entities.room.RoomCategory;
 import by.academy.project.hotel.services.room.RoomService;
 import jakarta.validation.Valid;

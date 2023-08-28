@@ -8,7 +8,7 @@ import by.academy.project.hotel.entities.room.RoomCategory;
 import by.academy.project.hotel.mappers.BookingMapper;
 import by.academy.project.hotel.mappers.RoomMapper;
 import by.academy.project.hotel.repositories.room.RoomRepository;
-import by.academy.project.hotel.services.DescriptionService;
+import by.academy.project.hotel.services.description.DescriptionService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static by.academy.project.hotel.util.Constants.ERROR_MESSAGE_BY_ROOM;
+import static by.academy.project.hotel.utils.Constants.ERROR_MESSAGE_BY_ROOM;
 
 @Service
 @RequiredArgsConstructor

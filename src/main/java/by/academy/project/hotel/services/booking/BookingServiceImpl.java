@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static by.academy.project.hotel.util.Constants.ERROR_MESSAGE_CREATING_BOOKING;
-import static by.academy.project.hotel.util.Constants.ERROR_MESSAGE_SEARCHING_BOOKING;
+import static by.academy.project.hotel.utils.Constants.ERROR_MESSAGE_CREATING_BOOKING;
+import static by.academy.project.hotel.utils.Constants.ERROR_MESSAGE_SEARCHING_BOOKING;
 
 @Service
 @RequiredArgsConstructor

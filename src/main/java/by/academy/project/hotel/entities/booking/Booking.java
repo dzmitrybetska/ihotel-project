@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 import java.time.LocalDate;
 import java.util.List;
 
-import static by.academy.project.hotel.util.DatabaseColumns.*;
+import static by.academy.project.hotel.utils.DatabaseColumns.*;
 import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.EnumType.STRING;
