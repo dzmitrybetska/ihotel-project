@@ -30,7 +30,7 @@ public class BookingServiceImpl implements BookingService {
     private final RoomService roomService;
 
     @Override
-    public BookingResponse create(BookingRequest bookingRequest) {
+    public BookingResponse book(BookingRequest bookingRequest) {
         Booking booking = bookingMapper.buildBooking(bookingRequest);
         Optional<User> optionalUser = userService.findUserByIDForBooking(bookingRequest.getUserId());
         List<Room> rooms = roomService.findRoomsByIdForBooking(bookingRequest.getIdsRooms());

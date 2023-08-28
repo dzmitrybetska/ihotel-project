@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BookingService {
 
-    BookingResponse create(BookingRequest bookingRequest);
+    BookingResponse book(BookingRequest bookingRequest);
 
     List<BookingResponse> read();
 

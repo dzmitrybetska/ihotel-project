@@ -20,8 +20,8 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping(value = "/booking")
-    public BookingResponse create(@Valid @RequestBody BookingRequest bookingRequest) {
-        return bookingService.create(bookingRequest);
+    public BookingResponse book(@Valid @RequestBody BookingRequest bookingRequest) {
+        return bookingService.book(bookingRequest);
     }
 
     @GetMapping(value = "/bookings")
