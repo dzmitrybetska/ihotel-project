@@ -24,27 +24,29 @@ import static by.academy.project.hotel.utils.Constants.ERROR_MESSAGE_SEARCHING_B
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
-    private final BookingRepository bookingRepository;
-    private final BookingMapper bookingMapper;
     private final UserService userService;
     private final RoomService roomService;
+    private final BookingRepository bookingRepository;
+    private final BookingMapper bookingMapper;
 
     @Override
     public BookingResponse book(BookingRequest bookingRequest) {
-        Booking booking = bookingMapper.buildBooking(bookingRequest);
-        Optional<User> optionalUser = userService.findUserByIDForBooking(bookingRequest.getUserId());
+        Booking booking = bookingMapper.mapToBooking(bookingRequest);
+        Optional<User> optionalUser = userService.findUserByIdForBooking(bookingRequest.getUserId());
         List<Room> rooms = roomService.findRoomsByIdForBooking(bookingRequest.getIdsRooms());
         if (optionalUser.isPresent() && !rooms.isEmpty()) {
             booking.setUser(optionalUser.get())
                     .setRooms(rooms);
-            return bookingMapper.buildBookingResponse(bookingRepository.save(booking));
-        } else throw new BookingNotCreatedException(ERROR_MESSAGE_CREATING_BOOKING);
+            return bookingMapper.mapToBookingResponse(bookingRepository.save(booking));
+        } else {
+            throw new BookingNotCreatedException(ERROR_MESSAGE_CREATING_BOOKING);
+        }
     }
 
     @Override
     public List<BookingResponse> read() {
         List<Booking> bookings = bookingRepository.findAll();
-        return bookingMapper.buildBookingsResponse(bookings);
+        return bookingMapper.mapToBookingsResponse(bookings);
     }
 
     @Override
@@ -53,7 +55,7 @@ public class BookingServiceImpl implements BookingService {
         return optionalBooking.map(booking -> bookingMapper.updateBooking(booking, bookingRequest))
                 .map(booking -> booking.setRooms(roomService.findRoomsByIdForBooking(bookingRequest.getIdsRooms())))
                 .map(bookingRepository::save)
-                .map(bookingMapper::buildBookingResponse)
+                .map(bookingMapper::mapToBookingResponse)
                 .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_SEARCHING_BOOKING + id));
     }
 
@@ -67,7 +69,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponse findBookingByID(Long id) {
         Optional<Booking> optionalBooking = bookingRepository.findById(id);
-        return optionalBooking.map(bookingMapper::buildBookingResponse)
+        return optionalBooking.map(bookingMapper::mapToBookingResponse)
                 .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_SEARCHING_BOOKING + id));
     }
 }

@@ -1,9 +1,9 @@
 package by.academy.project.hotel.utils;
 
-public final class DatabaseColumns {
+import lombok.experimental.UtilityClass;
 
-    private DatabaseColumns() {
-    }
+@UtilityClass
+public final class DatabaseColumns {
 
     /**
      * Room columns and table

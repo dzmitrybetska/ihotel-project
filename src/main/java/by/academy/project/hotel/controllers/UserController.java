@@ -49,7 +49,7 @@ public class UserController {
         return userService.findUserByLogin(login);
     }
 
-    @GetMapping(value = "/user/{name}, {surname}")
+    @GetMapping(value = "/user/{name}/{surname}")
     public List<UserResponse> findUsersByNameAndSurname(@PathVariable @NotBlank String name, @PathVariable @NotBlank String surname) {
         return userService.findUsersByNameAndSurname(name, surname);
     }

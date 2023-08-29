@@ -7,7 +7,6 @@ import by.academy.project.hotel.exceptions.BookingNotCreatedException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static by.academy.project.hotel.utils.Constants.EXCEPTION;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @Slf4j
 @RestControllerAdvice
@@ -49,7 +49,7 @@ public class ExceptionHandlerController {
         return ErrorResponse.builder()
                 .countOfErrors(1)
                 .errors(buildErrors(exception))
-                .status(HttpStatus.BAD_REQUEST)
+                .status(BAD_REQUEST)
                 .time(LocalDateTime.now())
                 .build();
     }
@@ -58,7 +58,7 @@ public class ExceptionHandlerController {
         return ErrorResponse.builder()
                 .countOfErrors(exception.getFieldErrorCount())
                 .time(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST)
+                .status(BAD_REQUEST)
                 .errors(List.copyOf(buildValidationErrors(exception)))
                 .build();
     }
@@ -67,7 +67,7 @@ public class ExceptionHandlerController {
         return ErrorResponse.builder()
                 .countOfErrors(exception.getConstraintViolations().size())
                 .errors(List.copyOf(buildValidationErrors(exception)))
-                .status(HttpStatus.BAD_REQUEST)
+                .status(BAD_REQUEST)
                 .time(LocalDateTime.now())
                 .build();
     }

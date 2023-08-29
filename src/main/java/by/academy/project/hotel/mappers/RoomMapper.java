@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public final class RoomMapper {
 
-    public Room buildRoom(RoomRequest roomRequest) {
+    public Room mapToRoom(RoomRequest roomRequest) {
         return Room.builder()
                 .number(roomRequest.getNumber())
                 .price(roomRequest.getPrice())
@@ -31,17 +31,30 @@ public final class RoomMapper {
         return room;
     }
 
-    public RoomResponse buildRoomResponse(Room room, BookingMapper bookingMapper) {
-        return room.getBookings() != null ? buildRoomResponseWithBookings(room, bookingMapper) : buildRoomResponseWithoutBookings(room);
+    public RoomResponse mapToRoomResponse(Room room, BookingMapper bookingMapper) {
+        return room.getBookings() != null ? mapToRoomResponseWithBookings(room, bookingMapper) : mapToRoomResponseWithoutBookings(room);
     }
 
-    public List<RoomResponse> buildRoomsResponse(List<Room> rooms, BookingMapper bookingMapper) {
+    public List<RoomResponse> mapToRoomsResponse(List<Room> rooms, BookingMapper bookingMapper) {
         return rooms.stream()
-                .map(room -> buildRoomResponse(room, bookingMapper))
+                .map(room -> mapToRoomResponse(room, bookingMapper))
                 .toList();
     }
 
-    public RoomResponse buildRoomResponseWithoutBookings(Room room) {
+    private RoomResponse mapToRoomResponseWithBookings(Room room, BookingMapper bookingMapper) {
+        return RoomResponse.builder()
+                .id(room.getId())
+                .number(room.getNumber())
+                .price(room.getPrice())
+                .roomCategory(room.getRoomCategory())
+                .isBooked(room.getIsBooked())
+                .roomStatus(room.getRoomStatus())
+                .bookings(bookingMapper.mapToBookingsResponseForRoom(room.getBookings()))
+                .description(room.getDescription())
+                .build();
+    }
+
+    private RoomResponse mapToRoomResponseWithoutBookings(Room room) {
         return RoomResponse.builder()
                 .id(room.getId())
                 .number(room.getNumber())
@@ -53,23 +66,10 @@ public final class RoomMapper {
                 .build();
     }
 
-    public List<RoomResponse> buildRoomsResponseForBooking(List<Room> rooms) {
+    public List<RoomResponse> mapToRoomsResponseForBooking(List<Room> rooms) {
         return rooms.stream()
-                .map(this::buildRoomResponseWithoutBookings)
+                .map(this::mapToRoomResponseWithoutBookings)
                 .toList();
-    }
-
-    private RoomResponse buildRoomResponseWithBookings(Room room, BookingMapper bookingMapper) {
-        return RoomResponse.builder()
-                .id(room.getId())
-                .number(room.getNumber())
-                .price(room.getPrice())
-                .roomCategory(room.getRoomCategory())
-                .isBooked(room.getIsBooked())
-                .roomStatus(room.getRoomStatus())
-                .bookings(bookingMapper.buildBookingsResponseForRoom(room.getBookings()))
-                .description(room.getDescription())
-                .build();
     }
 }
 

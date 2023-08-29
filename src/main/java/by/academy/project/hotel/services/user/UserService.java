@@ -20,7 +20,7 @@ public interface UserService {
 
     UserResponse findUserByID(Long id);
 
-    Optional<User> findUserByIDForBooking(Long id);
+    Optional<User> findUserByIdForBooking(Long id);
 
     UserResponse findUserByLogin(String login);
 

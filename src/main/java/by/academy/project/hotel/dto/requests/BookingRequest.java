@@ -14,15 +14,15 @@ public class BookingRequest {
 
     @NotNull
     private Long userId;
-    @Size(min = 1, max = 3)
     @NotEmpty
+    @Size(min = 1, max = 3)
     private List<Long> idsRooms;
     @NotNull
     private Rate rate;
+    @NotNull
     @FutureOrPresent
-    @NotNull
     private LocalDate arrival;
-    @Future
     @NotNull
+    @Future
     private LocalDate departure;
 }

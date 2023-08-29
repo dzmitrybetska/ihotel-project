@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public final class UserMapper {
 
-    public User buildUser(UserRequest userRequest) {
+    public User mapToUser(UserRequest userRequest) {
         return User.builder()
                 .name(userRequest.getName())
                 .surname((userRequest.getSurname()))
@@ -41,11 +41,11 @@ public final class UserMapper {
         return user;
     }
 
-    public UserResponse buildUserDto(User user, BookingMapper bookingMapper) {
-        return user.getBookings() != null ? buildUserDtoWithBookings(user, bookingMapper) : buildUserDtoWithoutBookings(user);
+    public UserResponse mapToUserDto(User user, BookingMapper bookingMapper) {
+        return user.getBookings() != null ? mapToUserDtoWithBookings(user, bookingMapper) : mapToUserDtoWithoutBookings(user);
     }
 
-    public UserResponse buildUserDtoWithoutBookings(User user) {
+    public UserResponse mapToUserDtoWithoutBookings(User user) {
         return UserResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -60,13 +60,13 @@ public final class UserMapper {
                 .build();
     }
 
-    public List<UserResponse> buildUsersDto(List<User> users, BookingMapper bookingMapper) {
+    public List<UserResponse> mapToUsersDto(List<User> users, BookingMapper bookingMapper) {
         return users.stream()
-                .map(user -> buildUserDto(user, bookingMapper))
+                .map(user -> mapToUserDto(user, bookingMapper))
                 .toList();
     }
 
-    private UserResponse buildUserDtoWithBookings(User user, BookingMapper bookingMapper) {
+    private UserResponse mapToUserDtoWithBookings(User user, BookingMapper bookingMapper) {
         return UserResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -78,7 +78,7 @@ public final class UserMapper {
                 .phone(user.getPhone())
                 .role(user.getRole())
                 .addresses(user.getAddresses())
-                .bookings(bookingMapper.buildBookingsResponseForUser(user.getBookings()))
+                .bookings(bookingMapper.mapToBookingsResponseForUser(user.getBookings()))
                 .build();
     }
 }

@@ -19,21 +19,21 @@ import static by.academy.project.hotel.utils.Constants.ERROR_MESSAGE_BY_USER;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final BookingMapper bookingMapper;
+    private final UserRepository userRepository;
 
     @Override
     public UserResponse create(UserRequest userRequest) {
-        User user = userMapper.buildUser(userRequest);
+        User user = userMapper.mapToUser(userRequest);
         userRepository.save(user);
-        return userMapper.buildUserDto(user, bookingMapper);
+        return userMapper.mapToUserDto(user, bookingMapper);
     }
 
     @Override
     public List<UserResponse> read() {
         List<User> users = userRepository.findAll();
-        return userMapper.buildUsersDto(users, bookingMapper);
+        return userMapper.mapToUsersDto(users, bookingMapper);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalUser = userRepository.findById(id);
         return optionalUser.map(user -> userMapper.updateUser(user, userRequest))
                 .map(userRepository::save)
-                .map(user -> userMapper.buildUserDto(user, bookingMapper))
+                .map(user -> userMapper.mapToUserDto(user, bookingMapper))
                 .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + id));
     }
 
@@ -55,25 +55,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse findUserByID(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
-        return optionalUser.map(user -> userMapper.buildUserDto(user, bookingMapper)).orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + id));
+        return optionalUser.map(user -> userMapper.mapToUserDto(user, bookingMapper)).orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + id));
     }
 
     @Override
-    public Optional<User> findUserByIDForBooking(Long id) {
+    public Optional<User> findUserByIdForBooking(Long id) {
         return userRepository.findById(id);
     }
 
     @Override
     public UserResponse findUserByLogin(String login) {
         Optional<User> optionalUser = userRepository.findUserByLogin(login);
-        return optionalUser.map(user -> userMapper.buildUserDto(user, bookingMapper)).orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + login));
+        return optionalUser.map(user -> userMapper.mapToUserDto(user, bookingMapper)).orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + login));
     }
 
     @Override
     public List<UserResponse> findUsersByNameAndSurname(String name, String surname) {
         List<User> users = userRepository.findUsersByNameAndSurname(name, surname);
         if (!users.isEmpty()) {
-            return userMapper.buildUsersDto(users, bookingMapper);
+            return userMapper.mapToUsersDto(users, bookingMapper);
         } else {
             throw new EntityNotFoundException(ERROR_MESSAGE_BY_USER + name + " " + surname);
         }
