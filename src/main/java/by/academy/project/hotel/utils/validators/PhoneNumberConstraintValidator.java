@@ -4,7 +4,7 @@ import by.academy.project.hotel.utils.annotations.PhoneNumber;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class PhoneConstraintValidator implements ConstraintValidator<PhoneNumber, String> {
+public class PhoneNumberConstraintValidator implements ConstraintValidator<PhoneNumber, String> {
 
     @Override
     public void initialize(PhoneNumber constraintAnnotation) {

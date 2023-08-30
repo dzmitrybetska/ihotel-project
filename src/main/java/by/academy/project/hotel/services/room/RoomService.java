@@ -16,7 +16,7 @@ public interface RoomService {
 
     RoomResponse update(Long id, RoomRequest roomRequest);
 
-    boolean delete(Long id);
+    void delete(Long id);
 
     RoomResponse findRoomByID(Long id);
 

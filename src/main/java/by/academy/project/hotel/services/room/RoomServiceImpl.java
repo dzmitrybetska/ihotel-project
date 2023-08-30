@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static by.academy.project.hotel.utils.Constants.ERROR_MESSAGE_BY_ROOM;
+import static by.academy.project.hotel.utils.Constants.ROOM_NOT_FOUND_BY_ID;
+import static by.academy.project.hotel.utils.Constants.ROOM_NOT_FOUND_BY_NUMBER;
+import static java.lang.String.format;
 
 @Service
 @RequiredArgsConstructor
@@ -44,25 +46,25 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomResponse update(Long id, RoomRequest roomRequest) {
         Optional<Room> optionalRoom = roomRepository.findById(id);
-        return optionalRoom.map(room -> roomMapper.updateRoom(room, roomRequest))
+        return optionalRoom
+                .map(room -> roomMapper.updateRoom(room, roomRequest))
                 .map(roomRepository::save)
                 .map(room -> roomMapper.mapToRoomResponse(room, bookingMapper))
-                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_ROOM + id));
+                .orElseThrow(() -> new EntityNotFoundException(format(ROOM_NOT_FOUND_BY_ID, id)));
     }
 
     @Override
-    public boolean delete(Long id) {
-        Optional<Room> optionalRoom = roomRepository.findById(id);
-        optionalRoom.ifPresent(roomRepository::delete);
-        return optionalRoom.isPresent();
+    public void delete(Long id) {
+        roomRepository.deleteById(id);
     }
 
     @Override
     public RoomResponse findRoomByID(Long id) {
         Optional<Room> optionalRoom = roomRepository.findById(id);
-        return optionalRoom.map(room -> room.setDescription(descriptionService.getDescription(room.getRoomCategory())))
+        return optionalRoom
+                .map(room -> room.setDescription(descriptionService.getDescription(room.getRoomCategory())))
                 .map(room -> roomMapper.mapToRoomResponse(room, bookingMapper))
-                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_ROOM + id));
+                .orElseThrow(() -> new EntityNotFoundException(format(ROOM_NOT_FOUND_BY_ID, id)));
     }
 
     @Override
@@ -73,9 +75,10 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomResponse findRoomByNumber(String number) {
         Optional<Room> optionalRoom = roomRepository.findRoomByNumber(number);
-        return optionalRoom.map(room -> room.setDescription(descriptionService.getDescription(room.getRoomCategory())))
+        return optionalRoom
+                .map(room -> room.setDescription(descriptionService.getDescription(room.getRoomCategory())))
                 .map(room -> roomMapper.mapToRoomResponse(room, bookingMapper))
-                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_ROOM + number));
+                .orElseThrow(() -> new EntityNotFoundException(format(ROOM_NOT_FOUND_BY_NUMBER, number)));
     }
 
     @Override
@@ -85,7 +88,7 @@ public class RoomServiceImpl implements RoomService {
             rooms.forEach(room -> room.setDescription(descriptionService.getDescription(room.getRoomCategory())));
             return roomMapper.mapToRoomsResponse(rooms, bookingMapper);
         } else {
-            throw new EntityNotFoundException(ERROR_MESSAGE_BY_ROOM + category);
+            throw new EntityNotFoundException(ROOM_NOT_FOUND_BY_ID + category);
         }
     }
 }

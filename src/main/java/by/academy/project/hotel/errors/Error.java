@@ -1,12 +1,14 @@
 package by.academy.project.hotel.errors;
 
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-@Getter
-@RequiredArgsConstructor
-public class Error {
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
-    private final String message;
+public record Error(@JsonInclude(NON_EMPTY) String fieldName, String message) {
+
+    public Error(String message) {
+        this("", message);
+    }
 }
+

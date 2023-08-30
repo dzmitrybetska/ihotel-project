@@ -24,18 +24,18 @@ public class Address {
     private String zipcode;
 
     @Enumerated(STRING)
-    @Column(name = COUNTRY, nullable = false, length = 30)
+    @Column(name = COUNTRY, nullable = false)
     private Country country;
 
-    @Column(name = CITY, nullable = false, length = 30)
+    @Column(name = CITY, nullable = false)
     private String city;
 
-    @Column(name = STREET, nullable = false, length = 30)
+    @Column(name = STREET, nullable = false)
     private String street;
 
-    @Column(name = HOUSE_NUMBER, nullable = false, length = 4)
+    @Column(name = HOUSE_NUMBER, nullable = false)
     private String houseNumber;
 
-    @Column(name = FLAT_NUMBER, nullable = false, length = 4)
+    @Column(name = FLAT_NUMBER, nullable = false)
     private String flatNumber;
 }

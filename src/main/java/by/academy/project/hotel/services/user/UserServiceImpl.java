@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static by.academy.project.hotel.utils.Constants.ERROR_MESSAGE_BY_USER;
+import static by.academy.project.hotel.utils.Constants.USER_NOT_FOUND_BY_ID;
+import static by.academy.project.hotel.utils.Constants.USER_NOT_FOUND_BY_LOGIN;
+import static java.lang.String.format;
 
 @Service
 @RequiredArgsConstructor
@@ -39,23 +41,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse update(Long id, UserRequest userRequest) {
         Optional<User> optionalUser = userRepository.findById(id);
-        return optionalUser.map(user -> userMapper.updateUser(user, userRequest))
+        return optionalUser
+                .map(user -> userMapper.updateUser(user, userRequest))
                 .map(userRepository::save)
                 .map(user -> userMapper.mapToUserDto(user, bookingMapper))
-                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + id));
+                .orElseThrow(() -> new EntityNotFoundException(format(USER_NOT_FOUND_BY_ID, id)));
     }
 
     @Override
-    public boolean delete(Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        optionalUser.ifPresent(userRepository::delete);
-        return optionalUser.isPresent();
+    public void delete(Long id) {
+        userRepository.deleteById(id);
     }
 
     @Override
     public UserResponse findUserByID(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
-        return optionalUser.map(user -> userMapper.mapToUserDto(user, bookingMapper)).orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + id));
+        return optionalUser
+                .map(user -> userMapper.mapToUserDto(user, bookingMapper))
+                .orElseThrow(() -> new EntityNotFoundException(format(USER_NOT_FOUND_BY_ID, id)));
     }
 
     @Override
@@ -66,7 +69,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse findUserByLogin(String login) {
         Optional<User> optionalUser = userRepository.findUserByLogin(login);
-        return optionalUser.map(user -> userMapper.mapToUserDto(user, bookingMapper)).orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_BY_USER + login));
+        return optionalUser
+                .map(user -> userMapper.mapToUserDto(user, bookingMapper))
+                .orElseThrow(() -> new EntityNotFoundException(format(USER_NOT_FOUND_BY_LOGIN, login)));
     }
 
     @Override
@@ -75,7 +80,7 @@ public class UserServiceImpl implements UserService {
         if (!users.isEmpty()) {
             return userMapper.mapToUsersDto(users, bookingMapper);
         } else {
-            throw new EntityNotFoundException(ERROR_MESSAGE_BY_USER + name + " " + surname);
+            throw new EntityNotFoundException(USER_NOT_FOUND_BY_ID + name + " " + surname);
         }
     }
 }

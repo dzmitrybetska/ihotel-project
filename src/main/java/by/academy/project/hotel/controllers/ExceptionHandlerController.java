@@ -2,7 +2,6 @@ package by.academy.project.hotel.controllers;
 
 import by.academy.project.hotel.dto.responces.ErrorResponse;
 import by.academy.project.hotel.errors.Error;
-import by.academy.project.hotel.errors.ValidationError;
 import by.academy.project.hotel.exceptions.BookingNotCreatedException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -47,7 +46,6 @@ public class ExceptionHandlerController {
 
     private ErrorResponse buildErrorResponse(RuntimeException exception) {
         return ErrorResponse.builder()
-                .countOfErrors(1)
                 .errors(buildErrors(exception))
                 .status(BAD_REQUEST)
                 .time(LocalDateTime.now())
@@ -56,16 +54,16 @@ public class ExceptionHandlerController {
 
     private ErrorResponse buildErrorResponse(MethodArgumentNotValidException exception) {
         return ErrorResponse.builder()
-                .countOfErrors(exception.getFieldErrorCount())
+                .errorCount(exception.getFieldErrorCount())
                 .time(LocalDateTime.now())
                 .status(BAD_REQUEST)
-                .errors(List.copyOf(buildValidationErrors(exception)))
+                .errors(buildValidationErrors(exception))
                 .build();
     }
 
     private ErrorResponse buildErrorResponse(ConstraintViolationException exception) {
         return ErrorResponse.builder()
-                .countOfErrors(exception.getConstraintViolations().size())
+                .errorCount(exception.getConstraintViolations().size())
                 .errors(List.copyOf(buildValidationErrors(exception)))
                 .status(BAD_REQUEST)
                 .time(LocalDateTime.now())
@@ -76,17 +74,17 @@ public class ExceptionHandlerController {
         return List.of(new Error(exception.getMessage()));
     }
 
-    private List<ValidationError> buildValidationErrors(MethodArgumentNotValidException exception) {
+    private List<Error> buildValidationErrors(MethodArgumentNotValidException exception) {
         return exception.getBindingResult().getFieldErrors()
                 .stream()
-                .map(fieldError -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()))
+                .map(fieldError -> new Error(fieldError.getField(), fieldError.getDefaultMessage()))
                 .toList();
     }
 
-    private List<ValidationError> buildValidationErrors(ConstraintViolationException exception) {
+    private List<Error> buildValidationErrors(ConstraintViolationException exception) {
         return exception.getConstraintViolations()
                 .stream()
-                .map(violation -> new ValidationError(violation.getPropertyPath().toString(), violation.getMessage()))
+                .map(violation -> new Error(violation.getPropertyPath().toString(), violation.getMessage()))
                 .toList();
     }
 }

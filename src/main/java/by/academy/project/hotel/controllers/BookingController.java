@@ -32,7 +32,12 @@ public class BookingController {
     }
 
     @DeleteMapping(value = "/booking/{id}")
-    public boolean delete(@PathVariable Long id) {
-        return bookingService.delete(id);
+    public void delete(@PathVariable Long id) {
+        bookingService.delete(id);
+    }
+
+    @GetMapping(value = "/booking/{id}")
+    public BookingResponse findBookingByID(@PathVariable Long id) {
+        return bookingService.findBookingByID(id);
     }
 }

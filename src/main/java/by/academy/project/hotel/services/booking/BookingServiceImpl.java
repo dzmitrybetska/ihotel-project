@@ -17,8 +17,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static by.academy.project.hotel.utils.Constants.BOOKING_NOT_FOUND_BY_ID;
 import static by.academy.project.hotel.utils.Constants.ERROR_MESSAGE_CREATING_BOOKING;
-import static by.academy.project.hotel.utils.Constants.ERROR_MESSAGE_SEARCHING_BOOKING;
+import static java.lang.String.format;
 
 @Service
 @RequiredArgsConstructor
@@ -52,24 +53,24 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponse update(Long id, BookingRequest bookingRequest) {
         Optional<Booking> optionalBooking = bookingRepository.findById(id);
-        return optionalBooking.map(booking -> bookingMapper.updateBooking(booking, bookingRequest))
+        return optionalBooking
+                .map(booking -> bookingMapper.updateBooking(booking, bookingRequest))
                 .map(booking -> booking.setRooms(roomService.findRoomsByIdForBooking(bookingRequest.getIdsRooms())))
                 .map(bookingRepository::save)
                 .map(bookingMapper::mapToBookingResponse)
-                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_SEARCHING_BOOKING + id));
+                .orElseThrow(() -> new EntityNotFoundException(format(BOOKING_NOT_FOUND_BY_ID, id)));
     }
 
     @Override
-    public boolean delete(Long id) {
-        Optional<Booking> optionalBooking = bookingRepository.findById(id);
-        optionalBooking.ifPresent(bookingRepository::delete);
-        return optionalBooking.isPresent();
+    public void delete(Long id) {
+        bookingRepository.deleteById(id);
     }
 
     @Override
     public BookingResponse findBookingByID(Long id) {
         Optional<Booking> optionalBooking = bookingRepository.findById(id);
-        return optionalBooking.map(bookingMapper::mapToBookingResponse)
-                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE_SEARCHING_BOOKING + id));
+        return optionalBooking
+                .map(bookingMapper::mapToBookingResponse)
+                .orElseThrow(() -> new EntityNotFoundException(format(BOOKING_NOT_FOUND_BY_ID, id)));
     }
 }

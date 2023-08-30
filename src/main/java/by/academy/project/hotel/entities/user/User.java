@@ -34,20 +34,20 @@ public class User {
     @Column(name = SURNAME, nullable = false, length = 32)
     private String surname;
 
-    @Column(name = LOGIN, nullable = false, unique = true, length = 8)
+    @Column(name = LOGIN, nullable = false, unique = true)
     private String login;
 
-    @Column(name = PASSWORD, nullable = false, length = 100)
+    @Column(name = PASSWORD, nullable = false, length = 50)
     private String password;
 
     @OneToOne(cascade = ALL)
-    @JoinColumn(name = ID_PASSPORT, nullable = false, unique = true)
+    @JoinColumn(name = ID_PASSPORT, nullable = false)
     private Passport passport;
 
-    @Column(name = EMAIL, nullable = false, unique = true, length = 20)
+    @Column(name = EMAIL, nullable = false, unique = true)
     private String email;
 
-    @Column(name = PHONE, nullable = false, length = 15)
+    @Column(name = PHONE, nullable = false, length = 12)
     private String phone;
 
     @Enumerated(STRING)

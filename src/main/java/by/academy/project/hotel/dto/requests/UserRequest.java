@@ -19,14 +19,13 @@ public class UserRequest {
     @NotBlank
     private String surname;
     @NotBlank
-    @Size(min = 5, max = 8)
+    @Size(min = 5)
     private String login;
     @NotBlank
-    @Size(min = 8, max = 100)
+    @Size(min = 8, max = 50)
     private String password;
     @NotNull
     private Passport passport;
-    @Size(max = 20)
     @Email
     private String email;
     @NotBlank
