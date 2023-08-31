@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static by.academy.project.hotel.utils.Constants.BOOKING_NOT_FOUND_BY_ID;
 import static by.academy.project.hotel.utils.Constants.ERROR_MESSAGE_CREATING_BOOKING;
@@ -47,15 +48,17 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingResponse> read() {
         List<Booking> bookings = bookingRepository.findAll();
-        return bookingMapper.mapToBookingsResponse(bookings);
+        return bookings.stream()
+                .map(bookingMapper::mapToBookingResponse)
+                .toList();
     }
 
     @Override
     public BookingResponse update(Long id, BookingRequest bookingRequest) {
         Optional<Booking> optionalBooking = bookingRepository.findById(id);
         return optionalBooking
-                .map(booking -> bookingMapper.updateBooking(booking, bookingRequest))
-                .map(booking -> booking.setRooms(roomService.findRoomsByIdForBooking(bookingRequest.getIdsRooms())))
+                .map(((Function<Booking, Booking>) (booking -> bookingMapper.updateBooking(bookingRequest, booking)))
+                        .andThen(booking -> booking.setRooms(roomService.findRoomsByIdForBooking(bookingRequest.getIdsRooms()))))
                 .map(bookingRepository::save)
                 .map(bookingMapper::mapToBookingResponse)
                 .orElseThrow(() -> new EntityNotFoundException(format(BOOKING_NOT_FOUND_BY_ID, id)));

@@ -5,7 +5,6 @@ import by.academy.project.hotel.dto.requests.RoomRequest;
 import by.academy.project.hotel.dto.responces.RoomResponse;
 import by.academy.project.hotel.entities.room.Room;
 import by.academy.project.hotel.entities.room.RoomCategory;
-import by.academy.project.hotel.mappers.BookingMapper;
 import by.academy.project.hotel.mappers.RoomMapper;
 import by.academy.project.hotel.repositories.room.RoomRepository;
 import by.academy.project.hotel.services.description.DescriptionService;
@@ -27,20 +26,21 @@ public class RoomServiceImpl implements RoomService {
     private final DescriptionService descriptionService;
     private final RoomRepository roomRepository;
     private final RoomMapper roomMapper;
-    private final BookingMapper bookingMapper;
 
     @Override
     public RoomResponse add(RoomRequest roomRequest) {
         Room room = roomMapper.mapToRoom(roomRequest);
         roomRepository.save(room);
-        return roomMapper.mapToRoomResponse(room, bookingMapper);
+        return roomMapper.mapToRoomResponse(room);
 
     }
 
     @Override
     public List<RoomResponse> read() {
         List<Room> rooms = roomRepository.findAll();
-        return roomMapper.mapToRoomsResponse(rooms, bookingMapper);
+        return rooms.stream()
+                .map(roomMapper::mapToRoomResponse)
+                .toList();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class RoomServiceImpl implements RoomService {
         return optionalRoom
                 .map(room -> roomMapper.updateRoom(room, roomRequest))
                 .map(roomRepository::save)
-                .map(room -> roomMapper.mapToRoomResponse(room, bookingMapper))
+                .map(roomMapper::mapToRoomResponse)
                 .orElseThrow(() -> new EntityNotFoundException(format(ROOM_NOT_FOUND_BY_ID, id)));
     }
 
@@ -63,7 +63,7 @@ public class RoomServiceImpl implements RoomService {
         Optional<Room> optionalRoom = roomRepository.findById(id);
         return optionalRoom
                 .map(room -> room.setDescription(descriptionService.getDescription(room.getRoomCategory())))
-                .map(room -> roomMapper.mapToRoomResponse(room, bookingMapper))
+                .map(roomMapper::mapToRoomResponse)
                 .orElseThrow(() -> new EntityNotFoundException(format(ROOM_NOT_FOUND_BY_ID, id)));
     }
 
@@ -77,18 +77,16 @@ public class RoomServiceImpl implements RoomService {
         Optional<Room> optionalRoom = roomRepository.findRoomByNumber(number);
         return optionalRoom
                 .map(room -> room.setDescription(descriptionService.getDescription(room.getRoomCategory())))
-                .map(room -> roomMapper.mapToRoomResponse(room, bookingMapper))
+                .map(roomMapper::mapToRoomResponse)
                 .orElseThrow(() -> new EntityNotFoundException(format(ROOM_NOT_FOUND_BY_NUMBER, number)));
     }
 
     @Override
     public List<RoomResponse> findRoomsByRoomCategory(RoomCategory category) {
         List<Room> rooms = roomRepository.findRoomsByRoomCategory(category);
-        if (!rooms.isEmpty()) {
-            rooms.forEach(room -> room.setDescription(descriptionService.getDescription(room.getRoomCategory())));
-            return roomMapper.mapToRoomsResponse(rooms, bookingMapper);
-        } else {
-            throw new EntityNotFoundException(ROOM_NOT_FOUND_BY_ID + category);
-        }
+        return rooms.stream()
+                .map(roomMapper::mapToRoomResponse)
+                .map(roomResponse -> roomResponse.setDescription(descriptionService.getDescription(roomResponse.getRoomCategory())))
+                .toList();
     }
 }

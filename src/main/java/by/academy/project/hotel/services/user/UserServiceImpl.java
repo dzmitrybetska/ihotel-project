@@ -3,7 +3,6 @@ package by.academy.project.hotel.services.user;
 import by.academy.project.hotel.dto.requests.UserRequest;
 import by.academy.project.hotel.dto.responces.UserResponse;
 import by.academy.project.hotel.entities.user.User;
-import by.academy.project.hotel.mappers.BookingMapper;
 import by.academy.project.hotel.mappers.UserMapper;
 import by.academy.project.hotel.repositories.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,20 +21,22 @@ import static java.lang.String.format;
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
-    private final BookingMapper bookingMapper;
     private final UserRepository userRepository;
 
     @Override
     public UserResponse create(UserRequest userRequest) {
         User user = userMapper.mapToUser(userRequest);
         userRepository.save(user);
-        return userMapper.mapToUserDto(user, bookingMapper);
+        return userMapper.mapToUserResponse(user);
     }
 
     @Override
     public List<UserResponse> read() {
         List<User> users = userRepository.findAll();
-        return userMapper.mapToUsersDto(users, bookingMapper);
+        return users.stream()
+                .map(userMapper::mapToUserResponse)
+                .toList();
+
     }
 
     @Override
@@ -44,7 +45,7 @@ public class UserServiceImpl implements UserService {
         return optionalUser
                 .map(user -> userMapper.updateUser(user, userRequest))
                 .map(userRepository::save)
-                .map(user -> userMapper.mapToUserDto(user, bookingMapper))
+                .map(userMapper::mapToUserResponse)
                 .orElseThrow(() -> new EntityNotFoundException(format(USER_NOT_FOUND_BY_ID, id)));
     }
 
@@ -57,7 +58,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse findUserByID(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         return optionalUser
-                .map(user -> userMapper.mapToUserDto(user, bookingMapper))
+                .map(userMapper::mapToUserResponse)
                 .orElseThrow(() -> new EntityNotFoundException(format(USER_NOT_FOUND_BY_ID, id)));
     }
 
@@ -70,17 +71,15 @@ public class UserServiceImpl implements UserService {
     public UserResponse findUserByLogin(String login) {
         Optional<User> optionalUser = userRepository.findUserByLogin(login);
         return optionalUser
-                .map(user -> userMapper.mapToUserDto(user, bookingMapper))
+                .map(userMapper::mapToUserResponse)
                 .orElseThrow(() -> new EntityNotFoundException(format(USER_NOT_FOUND_BY_LOGIN, login)));
     }
 
     @Override
     public List<UserResponse> findUsersByNameAndSurname(String name, String surname) {
         List<User> users = userRepository.findUsersByNameAndSurname(name, surname);
-        if (!users.isEmpty()) {
-            return userMapper.mapToUsersDto(users, bookingMapper);
-        } else {
-            throw new EntityNotFoundException(USER_NOT_FOUND_BY_ID + name + " " + surname);
-        }
+        return users.stream()
+                .map(userMapper::mapToUserResponse)
+                .toList();
     }
 }

@@ -3,78 +3,21 @@ package by.academy.project.hotel.mappers;
 import by.academy.project.hotel.dto.requests.BookingRequest;
 import by.academy.project.hotel.dto.responces.BookingResponse;
 import by.academy.project.hotel.entities.booking.Booking;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
-import java.util.List;
+import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 
-@Component
-@RequiredArgsConstructor
-public class BookingMapper {
+@Mapper(uses = {UserMapper.class, RoomMapper.class}, componentModel = "spring", nullValuePropertyMappingStrategy = IGNORE)
+public interface BookingMapper {
 
-    private final UserMapper userMapper;
-    private final RoomMapper roomMapper;
+    @Mapping(source = "userId", target = "user", ignore = true)
+    @Mapping(source = "idsRooms", target = "rooms", ignore = true)
+    Booking mapToBooking(BookingRequest bookingRequest);
 
-    public Booking mapToBooking(BookingRequest bookingRequest) {
-        return Booking.builder()
-                .rate(bookingRequest.getRate())
-                .arrival(bookingRequest.getArrival())
-                .departure(bookingRequest.getDeparture())
-                .build();
-    }
+    @Mapping(source = "booking.user", target = "userResponse")
+    BookingResponse mapToBookingResponse(Booking booking);
 
-    public Booking updateBooking(Booking booking, BookingRequest bookingRequest) {
-        return booking.setRate(bookingRequest.getRate())
-                .setArrival(bookingRequest.getArrival())
-                .setDeparture(bookingRequest.getDeparture());
-    }
-
-    public BookingResponse mapToBookingResponse(Booking booking) {
-        return BookingResponse.builder()
-                .id(booking.getId())
-                .userResponse(userMapper.mapToUserDtoWithoutBookings(booking.getUser()))
-                .rooms(roomMapper.mapToRoomsResponseForBooking(booking.getRooms()))
-                .rate(booking.getRate())
-                .arrival(booking.getArrival())
-                .departure(booking.getDeparture())
-                .build();
-    }
-
-    public List<BookingResponse> mapToBookingsResponse(List<Booking> bookings) {
-        return bookings.stream()
-                .map(this::mapToBookingResponse)
-                .toList();
-    }
-
-    public List<BookingResponse> mapToBookingsResponseForUser(List<Booking> bookings) {
-        return bookings.stream()
-                .map(this::mapToBookingResponseForUser)
-                .toList();
-    }
-
-    public List<BookingResponse> mapToBookingsResponseForRoom(List<Booking> bookings) {
-        return bookings.stream()
-                .map(this::mapToBookingResponseForRoom)
-                .toList();
-    }
-
-    private BookingResponse mapToBookingResponseForUser(Booking booking) {
-        return BookingResponse.builder()
-                .id(booking.getId())
-                .rooms(roomMapper.mapToRoomsResponseForBooking(booking.getRooms()))
-                .rate(booking.getRate())
-                .arrival(booking.getArrival())
-                .departure(booking.getDeparture())
-                .build();
-    }
-
-    private BookingResponse mapToBookingResponseForRoom(Booking booking) {
-        return BookingResponse.builder()
-                .id(booking.getId())
-                .userResponse(userMapper.mapToUserDtoWithoutBookings(booking.getUser()))
-                .rate(booking.getRate())
-                .arrival(booking.getArrival())
-                .departure(booking.getDeparture())
-                .build();
-    }
+    Booking updateBooking(BookingRequest bookingRequest, @MappingTarget Booking booking);
 }

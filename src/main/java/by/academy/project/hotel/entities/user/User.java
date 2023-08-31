@@ -47,7 +47,7 @@ public class User {
     @Column(name = EMAIL, nullable = false, unique = true)
     private String email;
 
-    @Column(name = PHONE, nullable = false, length = 12)
+    @Column(name = PHONE, nullable = false, length = 13)
     private String phone;
 
     @Enumerated(STRING)
