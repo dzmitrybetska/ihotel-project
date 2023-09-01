@@ -32,17 +32,17 @@ public class RoomController {
     }
 
     @PutMapping(value = "/room/{id}")
-    public RoomResponse update(@PathVariable Long id, @Valid @RequestBody RoomRequest roomRequest) {
+    public RoomResponse update(@PathVariable @NotNull Long id, @Valid @RequestBody RoomRequest roomRequest) {
         return roomService.update(id, roomRequest);
     }
 
     @DeleteMapping(value = "/room/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable @NotNull Long id) {
         roomService.delete(id);
     }
 
     @GetMapping(value = "/room/{id}")
-    public RoomResponse findRoomByID(@PathVariable Long id) {
+    public RoomResponse findRoomByID(@PathVariable @NotNull Long id) {
         return roomService.findRoomByID(id);
     }
 

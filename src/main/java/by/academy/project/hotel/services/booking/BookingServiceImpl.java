@@ -28,8 +28,8 @@ public class BookingServiceImpl implements BookingService {
 
     private final UserService userService;
     private final RoomService roomService;
-    private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
+    private final BookingRepository bookingRepository;
 
     @Override
     public BookingResponse book(BookingRequest bookingRequest) {
@@ -37,8 +37,7 @@ public class BookingServiceImpl implements BookingService {
         Optional<User> optionalUser = userService.findUserByIdForBooking(bookingRequest.getUserId());
         List<Room> rooms = roomService.findRoomsByIdForBooking(bookingRequest.getIdsRooms());
         if (optionalUser.isPresent() && !rooms.isEmpty()) {
-            booking.setUser(optionalUser.get())
-                    .setRooms(rooms);
+            booking.setUser(optionalUser.get()).setRooms(rooms);
             return bookingMapper.mapToBookingResponse(bookingRepository.save(booking));
         } else {
             throw new BookingNotCreatedException(ERROR_MESSAGE_CREATING_BOOKING);
@@ -59,8 +58,8 @@ public class BookingServiceImpl implements BookingService {
         return optionalBooking
                 .map(((Function<Booking, Booking>) (booking -> bookingMapper.updateBooking(bookingRequest, booking)))
                         .andThen(booking -> booking.setRooms(roomService.findRoomsByIdForBooking(bookingRequest.getIdsRooms()))))
-                .map(bookingRepository::save)
-                .map(bookingMapper::mapToBookingResponse)
+                .map(((Function<Booking, Booking>) (bookingRepository::save))
+                        .andThen(bookingMapper::mapToBookingResponse))
                 .orElseThrow(() -> new EntityNotFoundException(format(BOOKING_NOT_FOUND_BY_ID, id)));
     }
 

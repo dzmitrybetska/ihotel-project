@@ -24,8 +24,8 @@ import static java.lang.String.format;
 public class RoomServiceImpl implements RoomService {
 
     private final DescriptionService descriptionService;
-    private final RoomRepository roomRepository;
     private final RoomMapper roomMapper;
+    private final RoomRepository roomRepository;
 
     @Override
     public RoomResponse add(RoomRequest roomRequest) {

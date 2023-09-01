@@ -40,7 +40,7 @@ public class User {
     @Column(name = PASSWORD, nullable = false, length = 50)
     private String password;
 
-    @OneToOne(cascade = ALL)
+    @OneToOne(cascade = ALL, orphanRemoval = true)
     @JoinColumn(name = ID_PASSPORT, nullable = false)
     private Passport passport;
 

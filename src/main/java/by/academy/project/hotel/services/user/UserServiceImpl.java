@@ -36,7 +36,6 @@ public class UserServiceImpl implements UserService {
         return users.stream()
                 .map(userMapper::mapToUserResponse)
                 .toList();
-
     }
 
     @Override
