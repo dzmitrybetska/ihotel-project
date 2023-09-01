@@ -4,6 +4,7 @@ import by.academy.project.hotel.dto.requests.BookingRequest;
 import by.academy.project.hotel.dto.responces.BookingResponse;
 import by.academy.project.hotel.services.booking.BookingService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,17 +28,17 @@ public class BookingController {
     }
 
     @PutMapping(value = "/booking/{id}")
-    public BookingResponse update(@PathVariable Long id, @Valid @RequestBody BookingRequest bookingRequest) {
+    public BookingResponse update(@PathVariable @NotNull Long id, @Valid @RequestBody BookingRequest bookingRequest) {
         return bookingService.update(id, bookingRequest);
     }
 
     @DeleteMapping(value = "/booking/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable @NotNull Long id) {
         bookingService.delete(id);
     }
 
     @GetMapping(value = "/booking/{id}")
-    public BookingResponse findBookingByID(@PathVariable Long id) {
+    public BookingResponse findBookingByID(@PathVariable @NotNull Long id) {
         return bookingService.findBookingByID(id);
     }
 }

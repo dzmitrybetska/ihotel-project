@@ -3,7 +3,7 @@ package by.academy.project.hotel.dto.requests;
 import by.academy.project.hotel.entities.user.Address;
 import by.academy.project.hotel.entities.user.Passport;
 import by.academy.project.hotel.entities.user.Role;
-import by.academy.project.hotel.utils.annotations.PhoneNumber;
+import by.academy.project.hotel.validations.annotations.PhoneNumber;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;

@@ -7,14 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 
 import static by.academy.project.hotel.utils.DatabaseColumns.*;
 import static jakarta.persistence.EnumType.STRING;
 
 @Builder
 @Data
-@Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable

@@ -1,6 +1,6 @@
-package by.academy.project.hotel.utils.annotations;
+package by.academy.project.hotel.validations.annotations;
 
-import by.academy.project.hotel.utils.validators.PhoneNumberConstraintValidator;
+import by.academy.project.hotel.validations.validators.PhoneNumberConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

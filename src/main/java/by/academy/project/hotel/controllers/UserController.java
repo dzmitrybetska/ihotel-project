@@ -5,6 +5,7 @@ import by.academy.project.hotel.dto.responces.UserResponse;
 import by.academy.project.hotel.services.user.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,17 +31,17 @@ public class UserController {
     }
 
     @PutMapping(value = "/user/{id}")
-    public UserResponse update(@PathVariable Long id, @Valid @RequestBody UserRequest userRequest) {
+    public UserResponse update(@PathVariable @NotNull Long id, @Valid @RequestBody UserRequest userRequest) {
         return userService.update(id, userRequest);
     }
 
     @DeleteMapping(value = "/user/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable @NotNull Long id) {
         userService.delete(id);
     }
 
     @GetMapping(value = "/user/{id}")
-    public UserResponse findUserByID(@PathVariable Long id) {
+    public UserResponse findUserByID(@PathVariable @NotNull Long id) {
         return userService.findUserByID(id);
     }
 

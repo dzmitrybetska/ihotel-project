@@ -1,6 +1,8 @@
 spring:
   application:
     name: hotel
+  main:
+    allow-circular-references: true
   cloud:
     config:
       enabled: true

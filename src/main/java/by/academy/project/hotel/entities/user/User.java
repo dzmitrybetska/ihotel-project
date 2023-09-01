@@ -40,14 +40,14 @@ public class User {
     @Column(name = PASSWORD, nullable = false, length = 50)
     private String password;
 
-    @OneToOne(cascade = ALL)
+    @OneToOne(cascade = ALL, orphanRemoval = true)
     @JoinColumn(name = ID_PASSPORT, nullable = false)
     private Passport passport;
 
     @Column(name = EMAIL, nullable = false, unique = true)
     private String email;
 
-    @Column(name = PHONE, nullable = false, length = 12)
+    @Column(name = PHONE, nullable = false, length = 13)
     private String phone;
 
     @Enumerated(STRING)
