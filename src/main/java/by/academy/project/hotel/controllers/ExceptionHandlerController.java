@@ -64,7 +64,7 @@ public class ExceptionHandlerController {
     private ErrorResponse buildErrorResponse(ConstraintViolationException exception) {
         return ErrorResponse.builder()
                 .errorCount(exception.getConstraintViolations().size())
-                .errors(List.copyOf(buildValidationErrors(exception)))
+                .errors(buildValidationErrors(exception))
                 .status(BAD_REQUEST)
                 .time(LocalDateTime.now())
                 .build();

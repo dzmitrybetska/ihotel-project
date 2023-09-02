@@ -1,5 +1,6 @@
 package by.academy.project.hotel.controllers;
 
+import by.academy.project.hotel.aspects.SkipLogging;
 import by.academy.project.hotel.dto.requests.UserRequest;
 import by.academy.project.hotel.dto.responces.UserResponse;
 import by.academy.project.hotel.services.user.UserService;
@@ -25,6 +26,7 @@ public class UserController {
         return userService.create(userRequest);
     }
 
+    @SkipLogging
     @GetMapping(value = "/users")
     public List<UserResponse> read() {
         return userService.read();

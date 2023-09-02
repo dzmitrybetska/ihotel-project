@@ -1,5 +1,6 @@
 package by.academy.project.hotel.controllers;
 
+import by.academy.project.hotel.aspects.SkipLogging;
 import by.academy.project.hotel.dto.requests.BookingRequest;
 import by.academy.project.hotel.dto.responces.BookingResponse;
 import by.academy.project.hotel.services.booking.BookingService;
@@ -22,6 +23,7 @@ public class BookingController {
         return bookingService.book(bookingRequest);
     }
 
+    @SkipLogging
     @GetMapping(value = "/bookings")
     public List<BookingResponse> read() {
         return bookingService.read();

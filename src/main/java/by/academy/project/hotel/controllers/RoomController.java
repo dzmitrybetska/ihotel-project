@@ -1,5 +1,6 @@
 package by.academy.project.hotel.controllers;
 
+import by.academy.project.hotel.aspects.SkipLogging;
 import by.academy.project.hotel.dto.requests.RoomRequest;
 import by.academy.project.hotel.dto.responces.RoomResponse;
 import by.academy.project.hotel.entities.room.RoomCategory;
@@ -26,6 +27,7 @@ public class RoomController {
         return roomService.add(roomRequest);
     }
 
+    @SkipLogging
     @GetMapping(value = "/rooms")
     public List<RoomResponse> read() {
         return roomService.read();

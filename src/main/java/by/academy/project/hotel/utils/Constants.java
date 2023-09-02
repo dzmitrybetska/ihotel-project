@@ -15,4 +15,11 @@ public final class Constants {
     public static final String ERROR_MESSAGE_CREATING_BOOKING = "Booking not created! Invalid user or room id!";
     public static final String BOOKING_NOT_FOUND_BY_ID = "Booking is not found by id: %s";
     public static final String EXCEPTION = "Exception: {}";
+
+    /**
+     * patterns for logging
+     */
+    public static final String REQUEST_LOG_PATTERN = "{}:{}->{}";
+    public static final String RESPONSE_LOG_PATTERN = "{}:{}->{}, response: {}";
+    public static final String EMPTY = "";
 }
