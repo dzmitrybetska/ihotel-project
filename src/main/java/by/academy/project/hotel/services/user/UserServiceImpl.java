@@ -26,8 +26,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse create(UserRequest userRequest) {
         User user = userMapper.mapToUser(userRequest);
-        userRepository.save(user);
-        return userMapper.mapToUserResponse(user);
+        return userMapper.mapToUserResponse(userRepository.save(user));
     }
 
     @Override
