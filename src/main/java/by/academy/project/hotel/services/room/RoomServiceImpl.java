@@ -30,9 +30,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomResponse add(RoomRequest roomRequest) {
         Room room = roomMapper.mapToRoom(roomRequest);
-        roomRepository.save(room);
-        return roomMapper.mapToRoomResponse(room);
-
+        return roomMapper.mapToRoomResponse(roomRepository.save(room));
     }
 
     @Override
