@@ -19,7 +19,7 @@ public final class Constants {
     /**
      * patterns for logging
      */
-    public static final String REQUEST_LOG_PATTERN = "{}:{}->{}";
+    public static final String REQUEST_LOG_PATTERN = "{}:{}: Body: {} ->{}";
     public static final String RESPONSE_LOG_PATTERN = "{}:{}->{}, response: {}";
     public static final String EMPTY = "";
 }

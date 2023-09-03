@@ -27,17 +27,20 @@ public class LoggingControllerAspect {
     @Before("pointCut()")
     public void logRequest(JoinPoint joinPoint) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String shortString1 = joinPoint.getSignature().toShortString();
+        String method = request.getMethod();
         String requestURI = request.getRequestURI();
-        log.info(REQUEST_LOG_PATTERN, request.getMethod(), requestURI, shortString1);
+        Object[] args = joinPoint.getArgs();
+        String shortString = joinPoint.getSignature().toShortString();
+        log.info(REQUEST_LOG_PATTERN, method, requestURI, args, shortString);
     }
 
     @AfterReturning(pointcut = "pointCut()", returning = "response")
     public void logResponse(JoinPoint joinPoint, Object response) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String shortString1 = joinPoint.getSignature().toShortString();
+        String method = request.getMethod();
         String requestURI = request.getRequestURI();
-        log.info(RESPONSE_LOG_PATTERN, request.getMethod(), requestURI, shortString1, Optional.ofNullable(response)
+        String shortString = joinPoint.getSignature().toShortString();
+        log.info(RESPONSE_LOG_PATTERN, method, requestURI, shortString, Optional.ofNullable(response)
                 .orElse(EMPTY));
     }
 }
