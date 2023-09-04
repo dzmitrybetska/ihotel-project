@@ -8,14 +8,14 @@ import by.academy.project.hotel.mappers.UserMapper;
 import by.academy.project.hotel.repositories.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,16 +27,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Testing methods of the UserService")
 public class UserServiceTest {
 
-    @InjectMocks
     private UserServiceImpl userService;
     @Mock
     private UserRepository userRepository;
-    @Spy
-    private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+    @Autowired
+    private UserMapper userMapper;
     private static User testUser;
     private static UserRequest testUserRequest;
     private static UserResponse testUserResponse;
@@ -92,6 +92,11 @@ public class UserServiceTest {
                 .password("435635183e")
                 .role(GUEST)
                 .build();
+    }
+
+    @BeforeEach
+    void init() {
+        userService = new UserServiceImpl(userMapper, userRepository);
     }
 
     @Test
