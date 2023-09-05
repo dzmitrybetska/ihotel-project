@@ -11,9 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.Optional;
-
 import static by.academy.project.hotel.utils.Constants.*;
+import static java.util.Optional.ofNullable;
 
 @Slf4j
 @Aspect
@@ -40,7 +39,8 @@ public class LoggingControllerAspect {
         String method = request.getMethod();
         String requestURI = request.getRequestURI();
         String shortString = joinPoint.getSignature().toShortString();
-        log.info(RESPONSE_LOG_PATTERN, method, requestURI, shortString, Optional.ofNullable(response)
-                .orElse(EMPTY));
+        log.info(RESPONSE_LOG_PATTERN, method, requestURI, shortString,
+                ofNullable(response)
+                        .orElse(EMPTY));
     }
 }
