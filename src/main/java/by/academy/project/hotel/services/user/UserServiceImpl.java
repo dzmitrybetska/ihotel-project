@@ -8,6 +8,7 @@ import by.academy.project.hotel.repositories.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,12 +25,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public UserResponse create(UserRequest userRequest) {
         User user = userMapper.mapToUser(userRequest);
-        return userMapper.mapToUserResponse(userRepository.save(user));
+        User savedUser = userRepository.save(user);
+        return userMapper.mapToUserResponse(savedUser);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserResponse> read() {
         List<User> users = userRepository.findAll();
         return users.stream()
@@ -38,6 +42,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserResponse update(Long id, UserRequest userRequest) {
         Optional<User> optionalUser = userRepository.findById(id);
         return optionalUser
@@ -48,11 +53,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         userRepository.deleteById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserResponse findUserByID(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         return optionalUser
@@ -66,6 +73,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserResponse findUserByLogin(String login) {
         Optional<User> optionalUser = userRepository.findUserByLogin(login);
         return optionalUser
@@ -74,6 +82,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserResponse> findUsersByNameAndSurname(String name, String surname) {
         List<User> users = userRepository.findUsersByNameAndSurname(name, surname);
         return users.stream()

@@ -13,6 +13,7 @@ import by.academy.project.hotel.services.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
 
     @Override
+    @Transactional
     public BookingResponse book(BookingRequest bookingRequest) {
         Booking booking = bookingMapper.mapToBooking(bookingRequest);
         Optional<User> optionalUser = userService.findUserByIdForBooking(bookingRequest.getUserId());
@@ -45,6 +47,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingResponse> read() {
         List<Booking> bookings = bookingRepository.findAll();
         return bookings.stream()
@@ -53,26 +56,35 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingResponse update(Long id, BookingRequest bookingRequest) {
         Optional<Booking> optionalBooking = bookingRepository.findById(id);
         return optionalBooking
                 .map(((Function<Booking, Booking>) (booking -> bookingMapper.updateBooking(bookingRequest, booking)))
-                        .andThen(booking -> booking.setRooms(roomService.findRoomsByIdForBooking(bookingRequest.getIdsRooms()))))
+                        .andThen(booking -> changeRoomList(bookingRequest, booking)))
                 .map(((Function<Booking, Booking>) (bookingRepository::save))
                         .andThen(bookingMapper::mapToBookingResponse))
                 .orElseThrow(() -> new EntityNotFoundException(format(BOOKING_NOT_FOUND_BY_ID, id)));
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         bookingRepository.deleteById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookingResponse findBookingByID(Long id) {
         Optional<Booking> optionalBooking = bookingRepository.findById(id);
         return optionalBooking
                 .map(bookingMapper::mapToBookingResponse)
                 .orElseThrow(() -> new EntityNotFoundException(format(BOOKING_NOT_FOUND_BY_ID, id)));
+    }
+
+    private Booking changeRoomList(BookingRequest bookingRequest, Booking booking) {
+        List<Long> idsRooms = bookingRequest.getIdsRooms();
+        List<Room> rooms = roomService.findRoomsByIdForBooking(idsRooms);
+        return booking.setRooms(rooms);
     }
 }

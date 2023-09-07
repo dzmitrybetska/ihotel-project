@@ -40,7 +40,7 @@ public class User {
     @Column(name = PASSWORD, nullable = false, length = 50)
     private String password;
 
-    @OneToOne(cascade = ALL, orphanRemoval = true)
+    @OneToOne(cascade = ALL)
     @JoinColumn(name = ID_PASSPORT, nullable = false)
     private Passport passport;
 
@@ -55,7 +55,7 @@ public class User {
     private Role role;
 
     @Column(name = ADDRESS, nullable = false)
-    @ElementCollection()
+    @ElementCollection
     @CollectionTable(name = ADDRESSES, joinColumns = @JoinColumn(name = USER_ID_FOR_JOIN_COLUMN))
     private List<Address> addresses;
 

@@ -4,8 +4,10 @@ import by.academy.project.hotel.dto.responces.ErrorResponse;
 import by.academy.project.hotel.errors.Error;
 import by.academy.project.hotel.exceptions.BookingNotCreatedException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -77,14 +79,22 @@ public class ExceptionHandlerController {
     private List<Error> buildValidationErrors(MethodArgumentNotValidException exception) {
         return exception.getBindingResult().getFieldErrors()
                 .stream()
-                .map(fieldError -> new Error(fieldError.getField(), fieldError.getDefaultMessage()))
+                .map(this::getError)
                 .toList();
     }
 
     private List<Error> buildValidationErrors(ConstraintViolationException exception) {
         return exception.getConstraintViolations()
                 .stream()
-                .map(violation -> new Error(violation.getPropertyPath().toString(), violation.getMessage()))
+                .map(this::getError)
                 .toList();
+    }
+
+    private Error getError(FieldError fieldError) {
+        return new Error(fieldError.getField(), fieldError.getDefaultMessage());
+    }
+
+    private Error getError(ConstraintViolation<?> violation) {
+        return new Error(violation.getPropertyPath().toString(), violation.getMessage());
     }
 }

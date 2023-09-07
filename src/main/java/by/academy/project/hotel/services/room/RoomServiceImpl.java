@@ -11,6 +11,7 @@ import by.academy.project.hotel.services.description.DescriptionService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,12 +29,15 @@ public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
 
     @Override
+    @Transactional
     public RoomResponse add(RoomRequest roomRequest) {
         Room room = roomMapper.mapToRoom(roomRequest);
-        return roomMapper.mapToRoomResponse(roomRepository.save(room));
+        Room savedRoom = roomRepository.save(room);
+        return roomMapper.mapToRoomResponse(savedRoom);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RoomResponse> read() {
         List<Room> rooms = roomRepository.findAll();
         return rooms.stream()
@@ -42,6 +46,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    @Transactional
     public RoomResponse update(Long id, RoomRequest roomRequest) {
         Optional<Room> optionalRoom = roomRepository.findById(id);
         return optionalRoom
@@ -52,16 +57,18 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         roomRepository.deleteById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public RoomResponse findRoomByID(Long id) {
         Optional<Room> optionalRoom = roomRepository.findById(id);
         return optionalRoom
-                .map(room -> room.setDescription(descriptionService.getDescription(room.getRoomCategory())))
                 .map(roomMapper::mapToRoomResponse)
+                .map(this::addRoomDescription)
                 .orElseThrow(() -> new EntityNotFoundException(format(ROOM_NOT_FOUND_BY_ID, id)));
     }
 
@@ -71,20 +78,27 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public RoomResponse findRoomByNumber(String number) {
         Optional<Room> optionalRoom = roomRepository.findRoomByNumber(number);
         return optionalRoom
-                .map(room -> room.setDescription(descriptionService.getDescription(room.getRoomCategory())))
                 .map(roomMapper::mapToRoomResponse)
+                .map(this::addRoomDescription)
                 .orElseThrow(() -> new EntityNotFoundException(format(ROOM_NOT_FOUND_BY_NUMBER, number)));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RoomResponse> findRoomsByRoomCategory(RoomCategory category) {
         List<Room> rooms = roomRepository.findRoomsByRoomCategory(category);
         return rooms.stream()
                 .map(roomMapper::mapToRoomResponse)
-                .map(roomResponse -> roomResponse.setDescription(descriptionService.getDescription(roomResponse.getRoomCategory())))
+                .map(this::addRoomDescription)
                 .toList();
+    }
+
+    private RoomResponse addRoomDescription(RoomResponse roomResponse) {
+        String roomDescription = descriptionService.getDescription(roomResponse.getRoomCategory());
+        return roomResponse.setDescription(roomDescription);
     }
 }
