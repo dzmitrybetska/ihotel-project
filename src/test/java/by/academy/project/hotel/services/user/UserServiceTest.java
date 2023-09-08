@@ -1,18 +1,17 @@
 package by.academy.project.hotel.services.user;
 
+import by.academy.project.hotel.arguments.*;
 import by.academy.project.hotel.dto.requests.UserRequest;
 import by.academy.project.hotel.dto.responces.UserResponse;
-import by.academy.project.hotel.entities.user.Role;
 import by.academy.project.hotel.entities.user.User;
 import by.academy.project.hotel.mappers.UserMapper;
 import by.academy.project.hotel.repositories.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static by.academy.project.hotel.entities.user.Role.ADMIN;
-import static by.academy.project.hotel.entities.user.Role.GUEST;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -33,133 +31,86 @@ import static org.mockito.Mockito.when;
 @DisplayName("Testing methods of the UserService")
 public class UserServiceTest {
 
-    @InjectMocks
     private UserServiceImpl userService;
     @Mock
     private UserRepository userRepository;
     @Autowired
     private UserMapper userMapper;
-    private static User testUser;
-    private static UserRequest testUserRequest;
-    private static UserResponse testUserResponse;
-    private static User userForUpdate;
-    private static UserRequest userRequestForUpdate;
-    private static UserResponse userResponseForUpdate;
-
-    @BeforeAll
-    static void beforeAll() {
-        testUser = User.builder()
-                .id(12L)
-                .name("Dmitry")
-                .surname("Betska")
-                .login("baxset")
-                .password("tyrew123werty")
-                .role(Role.GUEST)
-                .build();
-        testUserRequest = UserRequest.builder()
-                .name("Dmitry")
-                .surname("Betska")
-                .login("baxset")
-                .password("tyrew123werty")
-                .role(Role.GUEST)
-                .build();
-        testUserResponse = UserResponse.builder()
-                .id(12L)
-                .name("Dmitry")
-                .surname("Betska")
-                .login("baxset")
-                .password("tyrew123werty")
-                .role(Role.GUEST)
-                .build();
-        userForUpdate = User.builder()
-                .id(2L)
-                .name("Iryna")
-                .surname("Betska")
-                .login("ira88ira")
-                .password("wer432234ret")
-                .role(ADMIN)
-                .build();
-        userRequestForUpdate = UserRequest.builder()
-                .name("Eva")
-                .surname("Betska")
-                .login("eVa2016")
-                .password("435635183e")
-                .role(GUEST)
-                .build();
-        userResponseForUpdate = UserResponse.builder()
-                .id(2L)
-                .name("Eva")
-                .surname("Betska")
-                .login("eVa2016")
-                .password("435635183e")
-                .role(GUEST)
-                .build();
-    }
 
     @BeforeEach
     void init() {
         userService = new UserServiceImpl(userMapper, userRepository);
     }
 
-    @Test
-    void createUserTest() {
-        when(userRepository.save(any(User.class))).thenReturn(testUser);
-        UserResponse userResponse = userService.create(testUserRequest);
-        assertEquals(testUserResponse, userResponse);
+    @ParameterizedTest
+    @ArgumentsSource(UserCreateArguments.class)
+    void createUserTest(UserRequest userRequest, User user, UserResponse userResponse) {
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        UserResponse actualUserResponse = userService.create(userRequest);
+        assertEquals(userResponse, actualUserResponse);
     }
 
-    @Test
-    void readUsersTest() {
-        when(userRepository.findAll()).thenReturn(List.of(testUser));
+    @ParameterizedTest
+    @ArgumentsSource(UserGetArguments.class)
+    void readUsersTest(User user, UserResponse userResponse) {
+        when(userRepository.findAll()).thenReturn(List.of(user));
         List<UserResponse> userResponseList = userService.read();
-        assertEquals(Collections.singletonList(testUserResponse), userResponseList);
+        assertEquals(Collections.singletonList(userResponse), userResponseList);
     }
 
-    @Test
-    void updateTest() {
-        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userForUpdate));
-        when(userRepository.save(any(User.class))).thenReturn(userForUpdate);
-        UserResponse userResponse = userService.update(2L, userRequestForUpdate);
-        assertSame(userResponseForUpdate.getName(), userResponse.getName());
-        assertEquals(userResponseForUpdate, userResponse);
+    @ParameterizedTest
+    @ArgumentsSource(UserUpdateArguments.class)
+    void updateTest(UserRequest userRequest, User user, UserResponse userResponse) {
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        UserResponse actualUserResponse = userService.update(user.getId(), userRequest);
+        assertEquals(userResponse, actualUserResponse);
     }
 
-    @Test
-    void updateExpectedException() {
+    @ParameterizedTest
+    @ArgumentsSource(UserInvalidArgumentsForUpdate.class)
+    void updateExpectedException(Long id, UserRequest userRequest) {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> userService.update(testUser.getId(), testUserRequest));
+        assertThrows(EntityNotFoundException.class, () -> userService.update(id, userRequest));
     }
 
-    @Test
-    void findUserByIDTest() {
-        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(testUser));
-        UserResponse userResponse = userService.findUserByID(testUser.getId());
-        assertEquals(testUserResponse, userResponse);
+    @ParameterizedTest
+    @ArgumentsSource(UserGetArguments.class)
+    void findUserByIDTest(User user, UserResponse userResponse) {
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
+        UserResponse actualUserResponse = userService.findUserByID(user.getId());
+        assertEquals(userResponse, actualUserResponse);
     }
 
-    @Test
-    void findUserByIDExpectedException() {
+
+    @ParameterizedTest
+    @ArgumentsSource(UserInvalidArguments.class)
+    void findUserByIDExpectedException(User user) {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> userService.findUserByID(testUser.getId()));
+        assertThrows(EntityNotFoundException.class, () -> userService.findUserByID(user.getId()));
     }
 
-    @Test
-    void findUserByLoginTest() {
-        when(userRepository.findUserByLogin(any(String.class))).thenReturn(Optional.of(testUser));
-        UserResponse userResponse = userService.findUserByLogin(testUser.getLogin());
-        assertEquals(testUserResponse, userResponse);
+    @ParameterizedTest
+    @ArgumentsSource(UserGetArguments.class)
+    void findUserByLoginTest(User user, UserResponse userResponse) {
+        when(userRepository.findUserByLogin(any(String.class))).thenReturn(Optional.of(user));
+        UserResponse actualUserResponse = userService.findUserByLogin(user.getLogin());
+        assertEquals(userResponse, actualUserResponse);
     }
 
-    @Test
-    void getUserByLoginExpectedException() {
+    @ParameterizedTest
+    @ArgumentsSource(UserInvalidArguments.class)
+    void getUserByLoginExpectedException(User user) {
         when(userRepository.findUserByLogin(any(String.class))).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> userService.findUserByLogin(testUser.getLogin()));
+        assertThrows(EntityNotFoundException.class, () -> userService.findUserByLogin(user.getLogin()));
     }
 
-    @Test
-    void findUsersByNameAndSurname() {
-        when(userRepository.findUsersByNameAndSurname(any(String.class), any(String.class))).thenReturn(List.of(testUser));
-        List<UserResponse> userResponseList = userService.findUsersByNameAndSurname(testUser.getName(), testUser.getSurname());
-        assertEquals(Collections.singletonList(testUserResponse), userResponseList);
+    @ParameterizedTest
+    @ArgumentsSource(UserGetArguments.class)
+    void findUsersByNameAndSurname(User user, UserResponse userResponse) {
+        when(userRepository.findUsersByNameAndSurname(any(String.class), any(String.class))).thenReturn(List.of(user));
+        List<UserResponse> actualUserResponse = userService.findUsersByNameAndSurname(user.getName(), user.getSurname());
+        assertEquals(Collections.singletonList(userResponse), actualUserResponse);
     }
 }
+
