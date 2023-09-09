@@ -18,7 +18,7 @@ public class RoomInvalidArguments implements ArgumentsProvider {
             .build();
 
     @Override
-    public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
+    public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
         return Stream.of(
                 Arguments.of(ROOM)
         );

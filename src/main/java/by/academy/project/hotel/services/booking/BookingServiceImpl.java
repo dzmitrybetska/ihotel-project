@@ -5,14 +5,12 @@ import by.academy.project.hotel.dto.responces.BookingResponse;
 import by.academy.project.hotel.entities.booking.Booking;
 import by.academy.project.hotel.entities.room.Room;
 import by.academy.project.hotel.entities.user.User;
-import by.academy.project.hotel.exceptions.BookingNotCreatedException;
 import by.academy.project.hotel.mappers.BookingMapper;
 import by.academy.project.hotel.repositories.booking.BookingRepository;
 import by.academy.project.hotel.services.room.RoomService;
 import by.academy.project.hotel.services.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +19,6 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import static by.academy.project.hotel.utils.Constants.BOOKING_NOT_FOUND_BY_ID;
-import static by.academy.project.hotel.utils.Constants.ERROR_MESSAGE_CREATING_BOOKING;
 import static java.lang.String.format;
 
 @Service
@@ -39,12 +36,9 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingMapper.mapToBooking(bookingRequest);
         Optional<User> optionalUser = userService.findUserByIdForBooking(bookingRequest.getUserId());
         List<Room> rooms = roomService.findRoomsByIdForBooking(bookingRequest.getIdsRooms());
-        if (optionalUser.isPresent() && !rooms.isEmpty()) {
-            booking.setUser(optionalUser.get()).setRooms(rooms);
-            return bookingMapper.mapToBookingResponse(bookingRepository.save(booking));
-        } else {
-            throw new BookingNotCreatedException(ERROR_MESSAGE_CREATING_BOOKING);
-        }
+        optionalUser.ifPresent(user -> booking.setUser(user).setRooms(rooms));
+        Booking savedBooking = bookingRepository.save(booking);
+        return bookingMapper.mapToBookingResponse(savedBooking);
     }
 
     @Override
@@ -76,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public BookingResponse findBookingByID(Long id) {
+    public BookingResponse findBookingById(Long id) {
         Optional<Booking> optionalBooking = bookingRepository.findById(id);
         return optionalBooking
                 .map(bookingMapper::mapToBookingResponse)

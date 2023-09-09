@@ -30,6 +30,7 @@ public class UserUpdateArguments implements ArgumentsProvider {
             .email("iryna.betska@gmail.com")
             .phone("234567623435")
             .role(MANAGER)
+            .addresses(List.of())
             .build();
 
     public static final UserRequest USER_REQUEST = UserRequest.builder()

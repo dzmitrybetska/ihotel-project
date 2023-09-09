@@ -18,7 +18,7 @@ public interface UserService {
 
     void delete(Long id);
 
-    UserResponse findUserByID(Long id);
+    UserResponse findUserById(Long id);
 
     Optional<User> findUserByIdForBooking(Long id);
 

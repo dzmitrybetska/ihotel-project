@@ -41,6 +41,6 @@ public class BookingController {
 
     @GetMapping(value = "/booking/{id}")
     public BookingResponse findBookingByID(@PathVariable @NotNull Long id) {
-        return bookingService.findBookingByID(id);
+        return bookingService.findBookingById(id);
     }
 }

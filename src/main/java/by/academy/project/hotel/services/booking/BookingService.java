@@ -15,5 +15,5 @@ public interface BookingService {
 
     void delete(Long id);
 
-    BookingResponse findBookingByID(Long id);
+    BookingResponse findBookingById(Long id);
 }

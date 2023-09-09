@@ -44,7 +44,7 @@ public class UserController {
 
     @GetMapping(value = "/user/{id}")
     public UserResponse findUserByID(@PathVariable @NotNull Long id) {
-        return userService.findUserByID(id);
+        return userService.findUserById(id);
     }
 
     @GetMapping(value = "/userByLogin/{login}")

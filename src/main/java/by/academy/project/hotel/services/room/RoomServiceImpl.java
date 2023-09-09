@@ -65,7 +65,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     @Transactional(readOnly = true)
-    public RoomResponse findRoomByID(Long id) {
+    public RoomResponse findRoomById(Long id) {
         Optional<Room> optionalRoom = roomRepository.findById(id);
         return optionalRoom
                 .map(roomMapper::mapToRoomResponse)

@@ -45,7 +45,7 @@ public class RoomController {
 
     @GetMapping(value = "/room/{id}")
     public RoomResponse findRoomByID(@PathVariable @NotNull Long id) {
-        return roomService.findRoomByID(id);
+        return roomService.findRoomById(id);
     }
 
     @GetMapping(value = "/roomByNumber/{number}")

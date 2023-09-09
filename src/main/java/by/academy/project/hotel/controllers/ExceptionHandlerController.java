@@ -2,7 +2,6 @@ package by.academy.project.hotel.controllers;
 
 import by.academy.project.hotel.dto.responces.ErrorResponse;
 import by.academy.project.hotel.errors.Error;
-import by.academy.project.hotel.exceptions.BookingNotCreatedException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -28,12 +27,6 @@ public class ExceptionHandlerController {
         return buildErrorResponse(exception);
     }
 
-    @ExceptionHandler(BookingNotCreatedException.class)
-    public ErrorResponse handleBookingNotCreatedException(BookingNotCreatedException exception) {
-        log.warn(EXCEPTION, exception.getMessage());
-        return buildErrorResponse(exception);
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse handleValidationException(MethodArgumentNotValidException exception) {
         log.warn(EXCEPTION, exception.getMessage());
@@ -46,7 +39,7 @@ public class ExceptionHandlerController {
         return buildErrorResponse(exception);
     }
 
-    private ErrorResponse buildErrorResponse(RuntimeException exception) {
+    private ErrorResponse buildErrorResponse(EntityNotFoundException exception) {
         return ErrorResponse.builder()
                 .errors(buildErrors(exception))
                 .status(BAD_REQUEST)
@@ -72,7 +65,7 @@ public class ExceptionHandlerController {
                 .build();
     }
 
-    private List<Error> buildErrors(RuntimeException exception) {
+    private List<Error> buildErrors(EntityNotFoundException exception) {
         return List.of(new Error(exception.getMessage()));
     }
 

@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserResponse findUserByID(Long id) {
+    public UserResponse findUserById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         return optionalUser
                 .map(userMapper::mapToUserResponse)

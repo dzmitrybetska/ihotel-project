@@ -25,7 +25,7 @@ public class RoomUpdateArguments implements ArgumentsProvider {
             .roomStatus(SERVICED)
             .build();
 
-    public static final Room ROOM = Room.builder()
+    public static final Room ROOM_FOR_UPDATE = Room.builder()
             .id(2L)
             .number("2")
             .price(valueOf(155))
@@ -46,7 +46,7 @@ public class RoomUpdateArguments implements ArgumentsProvider {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
         return Stream.of(
-                Arguments.of(ROOM_REQUEST, ROOM, ROOM_RESPONSE)
+                Arguments.of(ROOM_REQUEST, ROOM_FOR_UPDATE, ROOM_RESPONSE)
         );
     }
 }

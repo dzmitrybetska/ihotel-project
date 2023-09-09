@@ -45,7 +45,8 @@ public class UserServiceTest {
     @ParameterizedTest
     @ArgumentsSource(UserCreateArguments.class)
     void createUserTest(UserRequest userRequest, User user, UserResponse userResponse) {
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.save(any(User.class)))
+                .thenReturn(user);
         UserResponse actualUserResponse = userService.create(userRequest);
         assertEquals(userResponse, actualUserResponse);
     }
@@ -53,15 +54,17 @@ public class UserServiceTest {
     @ParameterizedTest
     @ArgumentsSource(UserGetArguments.class)
     void readUsersTest(User user, UserResponse userResponse) {
-        when(userRepository.findAll()).thenReturn(List.of(user));
+        when(userRepository.findAll())
+                .thenReturn(List.of(user));
         List<UserResponse> userResponseList = userService.read();
         assertEquals(Collections.singletonList(userResponse), userResponseList);
     }
 
     @ParameterizedTest
     @ArgumentsSource(UserUpdateArguments.class)
-    void updateTest(UserRequest userRequest, User user, UserResponse userResponse) {
-        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
+    void updateUserTest(UserRequest userRequest, User user, UserResponse userResponse) {
+        when(userRepository.findById(any(Long.class)))
+                .thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(user);
         UserResponse actualUserResponse = userService.update(user.getId(), userRequest);
         assertEquals(userResponse, actualUserResponse);
@@ -69,30 +72,34 @@ public class UserServiceTest {
 
     @ParameterizedTest
     @ArgumentsSource(UserUpdateInvalidArguments.class)
-    void updateExpectedException(User user, UserRequest userRequest) {
-        when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+    void updateUserExpectedException(User user, UserRequest userRequest) {
+        when(userRepository.findById(any(Long.class)))
+                .thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> userService.update(user.getId(), userRequest));
     }
 
     @ParameterizedTest
     @ArgumentsSource(UserGetArguments.class)
     void findUserByIdTest(User user, UserResponse userResponse) {
-        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
-        UserResponse actualUserResponse = userService.findUserByID(user.getId());
+        when(userRepository.findById(any(Long.class)))
+                .thenReturn(Optional.of(user));
+        UserResponse actualUserResponse = userService.findUserById(user.getId());
         assertEquals(userResponse, actualUserResponse);
     }
 
     @ParameterizedTest
     @ArgumentsSource(UserInvalidArguments.class)
     void findUserByIdExpectedException(User user) {
-        when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> userService.findUserByID(user.getId()));
+        when(userRepository.findById(any(Long.class)))
+                .thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> userService.findUserById(user.getId()));
     }
 
     @ParameterizedTest
     @ArgumentsSource(UserGetArguments.class)
     void findUserByLoginTest(User user, UserResponse userResponse) {
-        when(userRepository.findUserByLogin(any(String.class))).thenReturn(Optional.of(user));
+        when(userRepository.findUserByLogin(any(String.class)))
+                .thenReturn(Optional.of(user));
         UserResponse actualUserResponse = userService.findUserByLogin(user.getLogin());
         assertEquals(userResponse, actualUserResponse);
     }
@@ -100,14 +107,16 @@ public class UserServiceTest {
     @ParameterizedTest
     @ArgumentsSource(UserInvalidArguments.class)
     void getUserByLoginExpectedException(User user) {
-        when(userRepository.findUserByLogin(any(String.class))).thenReturn(Optional.empty());
+        when(userRepository.findUserByLogin(any(String.class)))
+                .thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> userService.findUserByLogin(user.getLogin()));
     }
 
     @ParameterizedTest
     @ArgumentsSource(UserGetArguments.class)
     void findUsersByNameAndSurname(User user, UserResponse userResponse) {
-        when(userRepository.findUsersByNameAndSurname(any(String.class), any(String.class))).thenReturn(List.of(user));
+        when(userRepository.findUsersByNameAndSurname(any(String.class), any(String.class)))
+                .thenReturn(List.of(user));
         List<UserResponse> actualUserResponse = userService.findUsersByNameAndSurname(user.getName(), user.getSurname());
         assertEquals(Collections.singletonList(userResponse), actualUserResponse);
     }
