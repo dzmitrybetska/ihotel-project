@@ -1,9 +1,6 @@
 package by.academy.project.hotel.services.user;
 
-import by.academy.project.hotel.arguments.user.UserCreateArguments;
-import by.academy.project.hotel.arguments.user.UserGetArguments;
-import by.academy.project.hotel.arguments.user.UserInvalidArguments;
-import by.academy.project.hotel.arguments.user.UserUpdateArguments;
+import by.academy.project.hotel.arguments.user.*;
 import by.academy.project.hotel.dto.requests.UserRequest;
 import by.academy.project.hotel.dto.responces.UserResponse;
 import by.academy.project.hotel.entities.user.User;
@@ -71,7 +68,7 @@ public class UserServiceTest {
     }
 
     @ParameterizedTest
-    @ArgumentsSource(UserInvalidArguments.class)
+    @ArgumentsSource(UserUpdateInvalidArguments.class)
     void updateExpectedException(User user, UserRequest userRequest) {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> userService.update(user.getId(), userRequest));

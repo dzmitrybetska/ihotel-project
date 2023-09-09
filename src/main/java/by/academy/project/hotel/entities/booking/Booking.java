@@ -32,7 +32,7 @@ public class Booking {
     @Column(name = BOOKING_ID)
     private Long id;
 
-    @ManyToOne(cascade = PERSIST)
+    @ManyToOne(cascade = PERSIST, optional = false)
     @JoinColumn(name = USER_ID_FOR_JOIN_COLUMN, nullable = false)
     private User user;
 

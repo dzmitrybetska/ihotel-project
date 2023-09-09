@@ -7,7 +7,6 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import java.util.stream.Stream;
 
-import static by.academy.project.hotel.arguments.room.RoomUpdateArguments.ROOM_REQUEST;
 import static by.academy.project.hotel.entities.room.RoomCategory.DELUX;
 
 public class RoomInvalidArguments implements ArgumentsProvider {
@@ -19,9 +18,9 @@ public class RoomInvalidArguments implements ArgumentsProvider {
             .build();
 
     @Override
-    public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+    public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
         return Stream.of(
-                Arguments.of(ROOM, ROOM_REQUEST)
+                Arguments.of(ROOM)
         );
     }
 }

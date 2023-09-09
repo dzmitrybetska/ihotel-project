@@ -30,7 +30,6 @@ public class RoomAddArguments implements ArgumentsProvider {
             .roomCategory(STANDART)
             .isBooked(false)
             .roomStatus(SERVICED)
-            .description(STANDART.name())
             .build();
 
     public static final RoomResponse ROOM_RESPONSE = RoomResponse.builder()
@@ -40,7 +39,6 @@ public class RoomAddArguments implements ArgumentsProvider {
             .roomCategory(STANDART)
             .isBooked(false)
             .roomStatus(SERVICED)
-            .description(STANDART.name())
             .build();
 
     @Override

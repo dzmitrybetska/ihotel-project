@@ -1,9 +1,6 @@
 package by.academy.project.hotel.services.room;
 
-import by.academy.project.hotel.arguments.room.RoomAddArguments;
-import by.academy.project.hotel.arguments.room.RoomGetArguments;
-import by.academy.project.hotel.arguments.room.RoomInvalidArguments;
-import by.academy.project.hotel.arguments.room.RoomUpdateArguments;
+import by.academy.project.hotel.arguments.room.*;
 import by.academy.project.hotel.dto.requests.RoomRequest;
 import by.academy.project.hotel.dto.responces.RoomResponse;
 import by.academy.project.hotel.entities.room.Room;
@@ -52,7 +49,8 @@ public class RoomServiceTest {
     @ParameterizedTest
     @ArgumentsSource(RoomAddArguments.class)
     void addRoomTest(RoomRequest roomRequest, Room room, RoomResponse roomResponse) {
-        when(roomRepository.save(any(Room.class))).thenReturn(room);
+        when(roomRepository.save(any(Room.class)))
+                .thenReturn(room);
         RoomResponse actualRoomResponse = roomService.add(roomRequest);
         assertEquals(roomResponse, actualRoomResponse);
     }
@@ -60,7 +58,10 @@ public class RoomServiceTest {
     @ParameterizedTest
     @ArgumentsSource(RoomGetArguments.class)
     void readRoomsTest(Room room, RoomResponse roomResponse) {
-        when(roomRepository.findAll()).thenReturn(List.of(room));
+        when(descriptionService.getDescription(any(RoomCategory.class)))
+                .thenReturn(room.getRoomCategory().name());
+        when(roomRepository.findAll())
+                .thenReturn(List.of(room));
         List<RoomResponse> actualRooms = roomService.read();
         assertEquals(Collections.singletonList(roomResponse), actualRooms);
     }
@@ -68,23 +69,27 @@ public class RoomServiceTest {
     @ParameterizedTest
     @ArgumentsSource(RoomUpdateArguments.class)
     void updateRoomTest(RoomRequest roomRequest, Room room, RoomResponse roomResponse) {
-        when(roomRepository.findById(any(Long.class))).thenReturn(Optional.of(room));
-        when(roomRepository.save(any(Room.class))).thenReturn(room);
+        when(roomRepository.findById(any(Long.class)))
+                .thenReturn(Optional.of(room));
+        when(roomRepository.save(any(Room.class)))
+                .thenReturn(room);
         RoomResponse actualRoomResponse = roomService.update(room.getId(), roomRequest);
         assertEquals(roomResponse, actualRoomResponse);
     }
 
     @ParameterizedTest
-    @ArgumentsSource(RoomInvalidArguments.class)
+    @ArgumentsSource(RoomUpdateInvalidArguments.class)
     void updateExpectedException(Room room, RoomRequest roomRequest) {
-        when(roomRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+        when(roomRepository.findById(any(Long.class)))
+                .thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> roomService.update(room.getId(), roomRequest));
     }
 
     @ParameterizedTest
     @ArgumentsSource(RoomGetArguments.class)
     void findRoomByIdTest(Room room, RoomResponse roomResponse) {
-        when(descriptionService.getDescription(any(RoomCategory.class))).thenReturn(room.getRoomCategory().name());
+        when(descriptionService.getDescription(any(RoomCategory.class)))
+                .thenReturn(room.getRoomCategory().name());
         when(roomRepository.findById(any(Long.class))).thenReturn(Optional.of(room));
         RoomResponse actualRoomResponse = roomService.findRoomByID(room.getId());
         assertEquals(roomResponse, actualRoomResponse);
@@ -93,14 +98,16 @@ public class RoomServiceTest {
     @ParameterizedTest
     @ArgumentsSource(RoomInvalidArguments.class)
     void findRoomByIdExpectedException(Room room) {
-        when(roomRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+        when(roomRepository.findById(any(Long.class)))
+                .thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> roomService.findRoomByID(room.getId()));
     }
 
     @ParameterizedTest
     @ArgumentsSource(RoomGetArguments.class)
     void findRoomByNumber(Room room, RoomResponse roomResponse) {
-        when(descriptionService.getDescription(any(RoomCategory.class))).thenReturn(room.getRoomCategory().name());
+        when(descriptionService.getDescription(any(RoomCategory.class)))
+                .thenReturn(room.getRoomCategory().name());
         when(roomRepository.findRoomByNumber(any(String.class))).thenReturn(Optional.of(room));
         RoomResponse actualRoomResponse = roomService.findRoomByNumber(room.getNumber());
         assertEquals(roomResponse, actualRoomResponse);
@@ -109,14 +116,16 @@ public class RoomServiceTest {
     @ParameterizedTest
     @ArgumentsSource(RoomInvalidArguments.class)
     void findRoomByNumberExpectedException(Room room) {
-        when(roomRepository.findRoomByNumber(any(String.class))).thenReturn(Optional.empty());
+        when(roomRepository.findRoomByNumber(any(String.class)))
+                .thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> roomService.findRoomByNumber(room.getNumber()));
     }
 
     @ParameterizedTest
     @ArgumentsSource(RoomGetArguments.class)
     void findRoomsByRoomCategory(Room room, RoomResponse roomResponse) {
-        when(descriptionService.getDescription(any(RoomCategory.class))).thenReturn(room.getRoomCategory().name());
+        when(descriptionService.getDescription(any(RoomCategory.class)))
+                .thenReturn(room.getRoomCategory().name());
         when(roomRepository.findRoomsByRoomCategory(any(RoomCategory.class))).thenReturn(List.of(room));
         List<RoomResponse> actualRooms = roomService.findRoomsByRoomCategory(room.getRoomCategory());
         assertEquals(Collections.singletonList(roomResponse), actualRooms);
