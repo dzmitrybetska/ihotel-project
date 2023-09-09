@@ -12,6 +12,7 @@ import by.academy.project.hotel.services.room.RoomService;
 import by.academy.project.hotel.services.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

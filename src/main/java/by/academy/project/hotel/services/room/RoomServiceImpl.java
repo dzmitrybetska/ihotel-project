@@ -42,6 +42,7 @@ public class RoomServiceImpl implements RoomService {
         List<Room> rooms = roomRepository.findAll();
         return rooms.stream()
                 .map(roomMapper::mapToRoomResponse)
+                .map(this::addRoomDescription)
                 .toList();
     }
 
