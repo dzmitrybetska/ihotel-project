@@ -1,6 +1,9 @@
 package by.academy.project.hotel.services.user;
 
-import by.academy.project.hotel.arguments.*;
+import by.academy.project.hotel.arguments.user.UserCreateArguments;
+import by.academy.project.hotel.arguments.user.UserGetArguments;
+import by.academy.project.hotel.arguments.user.UserInvalidArguments;
+import by.academy.project.hotel.arguments.user.UserUpdateArguments;
 import by.academy.project.hotel.dto.requests.UserRequest;
 import by.academy.project.hotel.dto.responces.UserResponse;
 import by.academy.project.hotel.entities.user.User;
@@ -32,10 +35,10 @@ import static org.mockito.Mockito.when;
 public class UserServiceTest {
 
     private UserServiceImpl userService;
-    @Mock
-    private UserRepository userRepository;
     @Autowired
     private UserMapper userMapper;
+    @Mock
+    private UserRepository userRepository;
 
     @BeforeEach
     void init() {
@@ -68,24 +71,23 @@ public class UserServiceTest {
     }
 
     @ParameterizedTest
-    @ArgumentsSource(UserInvalidArgumentsForUpdate.class)
-    void updateExpectedException(Long id, UserRequest userRequest) {
+    @ArgumentsSource(UserInvalidArguments.class)
+    void updateExpectedException(User user, UserRequest userRequest) {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> userService.update(id, userRequest));
+        assertThrows(EntityNotFoundException.class, () -> userService.update(user.getId(), userRequest));
     }
 
     @ParameterizedTest
     @ArgumentsSource(UserGetArguments.class)
-    void findUserByIDTest(User user, UserResponse userResponse) {
+    void findUserByIdTest(User user, UserResponse userResponse) {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
         UserResponse actualUserResponse = userService.findUserByID(user.getId());
         assertEquals(userResponse, actualUserResponse);
     }
 
-
     @ParameterizedTest
     @ArgumentsSource(UserInvalidArguments.class)
-    void findUserByIDExpectedException(User user) {
+    void findUserByIdExpectedException(User user) {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> userService.findUserByID(user.getId()));
     }

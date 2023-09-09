@@ -1,4 +1,4 @@
-package by.academy.project.hotel.arguments;
+package by.academy.project.hotel.arguments.user;
 
 import by.academy.project.hotel.dto.requests.UserRequest;
 import by.academy.project.hotel.dto.responces.UserResponse;
@@ -20,7 +20,7 @@ import static by.academy.project.hotel.entities.user.Role.MANAGER;
 
 public class UserUpdateArguments implements ArgumentsProvider {
 
-    public static final User user = User.builder()
+    public static final User USER = User.builder()
             .id(2L)
             .name("Iryna")
             .surname("Betska")
@@ -32,7 +32,7 @@ public class UserUpdateArguments implements ArgumentsProvider {
             .role(MANAGER)
             .build();
 
-    public static final UserRequest userRequest = UserRequest.builder()
+    public static final UserRequest USER_REQUEST = UserRequest.builder()
             .name("Eva")
             .surname("Betska")
             .login("eVa2016")
@@ -43,7 +43,7 @@ public class UserUpdateArguments implements ArgumentsProvider {
             .role(ADMIN)
             .build();
 
-    public static final UserResponse userResponse = UserResponse.builder()
+    public static final UserResponse USER_RESPONSE = UserResponse.builder()
             .id(2L)
             .name("Eva")
             .surname("Betska")
@@ -59,13 +59,13 @@ public class UserUpdateArguments implements ArgumentsProvider {
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
         List<Address> addresses = new ArrayList<>();
         addresses.add(new Address("43-234", POLAND, "Torun", "Dluga", "12", "45"));
-        user.setAddresses(addresses);
+        USER.setAddresses(addresses);
         List<Address> addressesForUpdate = new ArrayList<>();
         addressesForUpdate.add(new Address("43-234", POLAND, "Warszawa", "Krotka", "23", "18"));
-        userRequest.setAddresses(addressesForUpdate);
-        userResponse.setAddresses(addressesForUpdate);
+        USER_REQUEST.setAddresses(addressesForUpdate);
+        USER_RESPONSE.setAddresses(addressesForUpdate);
         return Stream.of(
-                Arguments.of(userRequest, user, userResponse)
+                Arguments.of(USER_REQUEST, USER, USER_RESPONSE)
         );
     }
 }
