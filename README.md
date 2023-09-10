@@ -58,17 +58,6 @@ The project was developed using:
 
 ## Demonstration of some project possibilities
 
-Page reduction implemented.
-
-java
-@GetMapping(value = "/persons/{pageNumber}/{pageSize}/{sort}")
-public List<PersonResponse> getPersons(@PathVariable Integer pageNumber,
-@PathVariable Integer pageSize,
-@PathVariable String sort) {
-Page<PersonResponse> data = personService.getPersons(pageNumber, pageSize, sort) ;
-return data.getContent();
-}
-
 Through logging of controllers implemented.
 java
     
