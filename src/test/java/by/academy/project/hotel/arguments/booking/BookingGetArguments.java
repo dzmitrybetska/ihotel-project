@@ -10,6 +10,7 @@ import static by.academy.project.hotel.arguments.booking.BookingBookArguments.BO
 import static by.academy.project.hotel.arguments.booking.BookingBookArguments.BOOKING_RESPONSE;
 
 public class BookingGetArguments implements ArgumentsProvider {
+
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
         return Stream.of(

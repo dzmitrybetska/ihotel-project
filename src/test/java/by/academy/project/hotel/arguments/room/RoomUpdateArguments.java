@@ -21,7 +21,7 @@ public class RoomUpdateArguments implements ArgumentsProvider {
             .number("2")
             .price(valueOf(199))
             .roomCategory(SUPERIOR)
-            .isBooked(false)
+            .isBooked(true)
             .roomStatus(SERVICED)
             .build();
 
@@ -39,7 +39,7 @@ public class RoomUpdateArguments implements ArgumentsProvider {
             .number("2")
             .price(valueOf(199))
             .roomCategory(SUPERIOR)
-            .isBooked(false)
+            .isBooked(true)
             .roomStatus(SERVICED)
             .build();
 

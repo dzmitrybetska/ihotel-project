@@ -35,8 +35,8 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponse book(BookingRequest bookingRequest) {
         Booking booking = bookingMapper.mapToBooking(bookingRequest);
         Optional<User> optionalUser = userService.findUserByIdForBooking(bookingRequest.getUserId());
-        List<Room> rooms = roomService.findRoomsByIdForBooking(bookingRequest.getIdsRooms());
-        optionalUser.ifPresent(user -> booking.setUser(user).setRooms(rooms));
+        changeListOfBookingRooms(bookingRequest, booking);
+        optionalUser.ifPresent(booking::setUser);
         Booking savedBooking = bookingRepository.save(booking);
         return bookingMapper.mapToBookingResponse(savedBooking);
     }
@@ -56,7 +56,7 @@ public class BookingServiceImpl implements BookingService {
         Optional<Booking> optionalBooking = bookingRepository.findById(id);
         return optionalBooking
                 .map(((Function<Booking, Booking>) (booking -> bookingMapper.updateBooking(bookingRequest, booking)))
-                        .andThen(booking -> changeRoomList(bookingRequest, booking)))
+                        .andThen(booking -> changeListOfBookingRooms(bookingRequest, booking)))
                 .map(((Function<Booking, Booking>) (bookingRepository::save))
                         .andThen(bookingMapper::mapToBookingResponse))
                 .orElseThrow(() -> new EntityNotFoundException(format(BOOKING_NOT_FOUND_BY_ID, id)));
@@ -77,9 +77,10 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new EntityNotFoundException(format(BOOKING_NOT_FOUND_BY_ID, id)));
     }
 
-    private Booking changeRoomList(BookingRequest bookingRequest, Booking booking) {
+    private Booking changeListOfBookingRooms(BookingRequest bookingRequest, Booking booking) {
         List<Long> idsRooms = bookingRequest.getIdsRooms();
         List<Room> rooms = roomService.findRoomsByIdForBooking(idsRooms);
+        rooms.forEach(room -> room.setIsBooked(true));
         return booking.setRooms(rooms);
     }
 }
