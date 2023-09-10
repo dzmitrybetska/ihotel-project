@@ -1,44 +1,86 @@
 package by.academy.project.hotel.services.booking;
 
-import by.academy.project.hotel.dto.BookingDto;
+import by.academy.project.hotel.dto.requests.BookingRequest;
+import by.academy.project.hotel.dto.responces.BookingResponse;
 import by.academy.project.hotel.entities.booking.Booking;
-import by.academy.project.hotel.exceptions.BookingNotCreatedException;
-import by.academy.project.hotel.exceptions.NotFoundBookingException;
+import by.academy.project.hotel.entities.room.Room;
+import by.academy.project.hotel.entities.user.User;
 import by.academy.project.hotel.mappers.BookingMapper;
 import by.academy.project.hotel.repositories.booking.BookingRepository;
-import by.academy.project.hotel.repositories.booking.BookingRepositoryImpl;
+import by.academy.project.hotel.services.room.RoomService;
+import by.academy.project.hotel.services.user.UserService;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
-import static by.academy.project.hotel.util.configuration.Constants.ERROR_MESSAGE_CREATING_BOOKING;
-import static by.academy.project.hotel.util.configuration.Constants.ERROR_MESSAGE_SEARCHING_BOOKING;
+import static by.academy.project.hotel.utils.Constants.BOOKING_NOT_FOUND_BY_ID;
+import static java.lang.String.format;
 
+@Service
+@RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
-    private final BookingRepository bookingRepository = BookingRepositoryImpl.getInstance();
-    private final BookingMapper bookingMapper = BookingMapper.getInstance();
+    private final UserService userService;
+    private final RoomService roomService;
+    private final BookingMapper bookingMapper;
+    private final BookingRepository bookingRepository;
 
     @Override
-    public BookingDto create(BookingDto bookingDto, Long userId, List<Long> roomsId) {
-        Optional<Booking> optionalBooking = bookingRepository.add(bookingDto, userId, roomsId);
-        return optionalBooking.map(bookingMapper::buildBookingDto).orElseThrow(() -> new BookingNotCreatedException(ERROR_MESSAGE_CREATING_BOOKING));
+    @Transactional
+    public BookingResponse book(BookingRequest bookingRequest) {
+        Booking booking = bookingMapper.mapToBooking(bookingRequest);
+        Optional<User> optionalUser = userService.findUserByIdForBooking(bookingRequest.getUserId());
+        changeListOfBookingRooms(bookingRequest, booking);
+        optionalUser.ifPresent(booking::setUser);
+        Booking savedBooking = bookingRepository.save(booking);
+        return bookingMapper.mapToBookingResponse(savedBooking);
     }
 
     @Override
-    public List<BookingDto> read() {
-        return bookingMapper.buildBookingsDto(bookingRepository.read());
+    @Transactional(readOnly = true)
+    public List<BookingResponse> read() {
+        List<Booking> bookings = bookingRepository.findAll();
+        return bookings.stream()
+                .map(bookingMapper::mapToBookingResponse)
+                .toList();
     }
 
     @Override
-    public BookingDto update(BookingDto bookingDto) throws NotFoundBookingException {
-        Optional<Booking> optionalBooking = bookingRepository.update(bookingDto);
-        return optionalBooking.map(bookingMapper::buildBookingDto).orElseThrow(() -> new NotFoundBookingException(ERROR_MESSAGE_SEARCHING_BOOKING));
+    @Transactional
+    public BookingResponse update(Long id, BookingRequest bookingRequest) {
+        Optional<Booking> optionalBooking = bookingRepository.findById(id);
+        return optionalBooking
+                .map(((Function<Booking, Booking>) (booking -> bookingMapper.updateBooking(bookingRequest, booking)))
+                        .andThen(booking -> changeListOfBookingRooms(bookingRequest, booking)))
+                .map(((Function<Booking, Booking>) (bookingRepository::save))
+                        .andThen(bookingMapper::mapToBookingResponse))
+                .orElseThrow(() -> new EntityNotFoundException(format(BOOKING_NOT_FOUND_BY_ID, id)));
     }
 
     @Override
-    public boolean delete(Long id) {
-        Optional<Booking> optionalBooking = bookingRepository.delete(id);
-        return optionalBooking.isPresent();
+    @Transactional
+    public void delete(Long id) {
+        bookingRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BookingResponse findBookingById(Long id) {
+        Optional<Booking> optionalBooking = bookingRepository.findById(id);
+        return optionalBooking
+                .map(bookingMapper::mapToBookingResponse)
+                .orElseThrow(() -> new EntityNotFoundException(format(BOOKING_NOT_FOUND_BY_ID, id)));
+    }
+
+    private Booking changeListOfBookingRooms(BookingRequest bookingRequest, Booking booking) {
+        List<Long> idsRooms = bookingRequest.getIdsRooms();
+        List<Room> rooms = roomService.findRoomsByIdForBooking(idsRooms);
+        rooms.forEach(room -> room.setIsBooked(true));
+        return booking.setRooms(rooms);
     }
 }

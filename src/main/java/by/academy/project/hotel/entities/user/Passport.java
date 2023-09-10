@@ -1,19 +1,16 @@
 package by.academy.project.hotel.entities.user;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 
-import javax.persistence.*;
-
-import static by.academy.project.hotel.util.configuration.DatabaseColumns.*;
-import static javax.persistence.EnumType.STRING;
+import static by.academy.project.hotel.utils.DatabaseColumns.*;
+import static jakarta.persistence.EnumType.STRING;
 
 @Builder
 @Data
-@Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -24,9 +21,6 @@ public class Passport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = ID)
     private Long id;
-
-    @OneToOne(mappedBy = PASSPORT)
-    private User user;
 
     @Column(name = PASSPORT_SERIES, nullable = false)
     private String passportSeries;

@@ -1,16 +1,19 @@
 package by.academy.project.hotel.services.booking;
 
-import by.academy.project.hotel.dto.BookingDto;
+import by.academy.project.hotel.dto.requests.BookingRequest;
+import by.academy.project.hotel.dto.responces.BookingResponse;
 
 import java.util.List;
 
 public interface BookingService {
 
-    BookingDto create(BookingDto bookingDto, Long userId, List<Long> roomsId);
+    BookingResponse book(BookingRequest bookingRequest);
 
-    List<BookingDto> read();
+    List<BookingResponse> read();
 
-    BookingDto update(BookingDto bookingDto);
+    BookingResponse update(Long id, BookingRequest bookingRequest);
 
-    boolean delete(Long id);
+    void delete(Long id);
+
+    BookingResponse findBookingById(Long id);
 }

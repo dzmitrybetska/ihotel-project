@@ -1,18 +1,18 @@
 package by.academy.project.hotel.entities.user;
 
 import by.academy.project.hotel.entities.booking.Booking;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
-import static by.academy.project.hotel.util.configuration.DatabaseColumns.*;
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.EnumType.STRING;
+import static by.academy.project.hotel.utils.DatabaseColumns.*;
+import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.EnumType.STRING;
 
 @Builder
 @Data
@@ -34,20 +34,20 @@ public class User {
     @Column(name = SURNAME, nullable = false, length = 32)
     private String surname;
 
-    @Column(name = LOGIN, unique = true, length = 20)
+    @Column(name = LOGIN, nullable = false, unique = true)
     private String login;
 
-    @Column(name = PASSWORD, length = 20)
+    @Column(name = PASSWORD, nullable = false, length = 50)
     private String password;
 
     @OneToOne(cascade = ALL)
-    @JoinColumn(name = ID_PASSPORT, nullable = false, unique = true)
+    @JoinColumn(name = ID_PASSPORT, nullable = false)
     private Passport passport;
 
-    @Column(name = EMAIL, nullable = false, unique = true, length = 20)
+    @Column(name = EMAIL, nullable = false, unique = true)
     private String email;
 
-    @Column(name = PHONE, nullable = false, length = 20)
+    @Column(name = PHONE, nullable = false, length = 13)
     private String phone;
 
     @Enumerated(STRING)
@@ -55,10 +55,10 @@ public class User {
     private Role role;
 
     @Column(name = ADDRESS, nullable = false)
-    @ElementCollection()
+    @ElementCollection
     @CollectionTable(name = ADDRESSES, joinColumns = @JoinColumn(name = USER_ID_FOR_JOIN_COLUMN))
-    private Set<Address> addresses;
+    private List<Address> addresses;
 
     @OneToMany(mappedBy = USER, cascade = ALL, orphanRemoval = true)
-    private Set<Booking> bookings;
+    private List<Booking> bookings;
 }

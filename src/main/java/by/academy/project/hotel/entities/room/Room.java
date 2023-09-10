@@ -1,18 +1,18 @@
 package by.academy.project.hotel.entities.room;
 
 import by.academy.project.hotel.entities.booking.Booking;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.List;
 
-import static by.academy.project.hotel.util.configuration.DatabaseColumns.*;
-import static javax.persistence.EnumType.STRING;
+import static by.academy.project.hotel.utils.DatabaseColumns.*;
+import static jakarta.persistence.EnumType.STRING;
 
 @Builder
 @Data
@@ -46,5 +46,5 @@ public class Room {
     private RoomStatus roomStatus;
 
     @ManyToMany(mappedBy = ROOMS_FOR_MANY)
-    private Set<Booking> bookings;
+    private List<Booking> bookings;
 }

@@ -1,21 +1,18 @@
 package by.academy.project.hotel.entities.user;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Enumerated;
-
-import static by.academy.project.hotel.util.configuration.DatabaseColumns.*;
-import static javax.persistence.EnumType.STRING;
+import static by.academy.project.hotel.utils.DatabaseColumns.*;
+import static jakarta.persistence.EnumType.STRING;
 
 @Builder
 @Data
-@Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
@@ -25,18 +22,18 @@ public class Address {
     private String zipcode;
 
     @Enumerated(STRING)
-    @Column(name = COUNTRY, nullable = false, length = 30)
+    @Column(name = COUNTRY, nullable = false)
     private Country country;
 
-    @Column(name = CITY, nullable = false, length = 30)
+    @Column(name = CITY, nullable = false)
     private String city;
 
-    @Column(name = STREET, nullable = false, length = 30)
+    @Column(name = STREET, nullable = false)
     private String street;
 
-    @Column(name = HOUSE_NUMBER, nullable = false, length = 4)
+    @Column(name = HOUSE_NUMBER, nullable = false)
     private String houseNumber;
 
-    @Column(name = FLAT_NUMBER, nullable = false, length = 4)
+    @Column(name = FLAT_NUMBER, nullable = false)
     private String flatNumber;
 }

@@ -1,87 +1,35 @@
 package by.academy.project.hotel.mappers;
 
-import by.academy.project.hotel.dto.BookingDto;
+import by.academy.project.hotel.dto.requests.BookingRequest;
+import by.academy.project.hotel.dto.responces.BookingResponse;
 import by.academy.project.hotel.entities.booking.Booking;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 
-public class BookingMapper {
+@Mapper(uses = {UserMapper.class, RoomMapper.class}, componentModel = "spring", nullValuePropertyMappingStrategy = IGNORE)
+public interface BookingMapper {
 
-    private static BookingMapper instance;
+    @Mapping(source = "userId", target = "user", ignore = true)
+    @Mapping(source = "idsRooms", target = "rooms", ignore = true)
+    Booking mapToBooking(BookingRequest bookingRequest);
 
-    private BookingMapper() {
-    }
+    @Mapping(source = "user", target = "userResponse", qualifiedByName = "mapToUserResponseForBooking")
+    @Mapping(source = "rooms", target = "rooms", qualifiedByName = "mapToRoomResponseForBooking")
+    BookingResponse mapToBookingResponse(Booking booking);
 
-    public static BookingMapper getInstance() {
-        if (instance == null) {
-            instance = new BookingMapper();
-        }
-        return instance;
-    }
+    @Named("mapToBookingResponseForUser")
+    @Mapping(target = "userResponse", ignore = true)
+    @Mapping(source = "rooms", target = "rooms", qualifiedByName = "mapToRoomResponseForBooking")
+    BookingResponse mapToBookingResponseForUser(Booking booking);
 
-    public Booking buildBooking(BookingDto bookingDto) {
-        return Booking.builder()
-                .id(bookingDto.getId())
-                .rate(bookingDto.getRate())
-                .arrival(bookingDto.getArrival())
-                .departure(bookingDto.getDeparture())
-                .build();
-    }
+    @Named("mapToBookingResponseForRoom")
+    @Mapping(target = "rooms", ignore = true)
+    @Mapping(source = "user", target = "userResponse", qualifiedByName = "mapToUserResponseForBooking")
+    BookingResponse mapToBookingResponseForRoom(Booking booking);
 
-    public void updateBooking(Booking booking, BookingDto bookingDto) {
-        booking.setRate(bookingDto.getRate())
-                .setArrival(bookingDto.getArrival())
-                .setDeparture(bookingDto.getDeparture());
-    }
-
-    public BookingDto buildBookingDto(Booking booking) {
-        return BookingDto.builder()
-                .id(booking.getId())
-                .userDto(UserMapper.getInstance().buildUserDtoWithoutBookings(booking.getUser()))
-                .rooms(RoomMapper.getInstance().buildRoomsDtoForBooking(booking.getRooms()))
-                .rate(booking.getRate())
-                .arrival(booking.getArrival())
-                .departure(booking.getDeparture())
-                .build();
-    }
-
-    public List<BookingDto> buildBookingsDto(List<Booking> bookings) {
-        return bookings.stream()
-                .map(this::buildBookingDto)
-                .collect(Collectors.toList());
-    }
-
-    public Set<BookingDto> buildBookingsDtoForUser(Set<Booking> bookings) {
-        return bookings.stream()
-                .map(this::buildBookingDtoForUser)
-                .collect(Collectors.toSet());
-    }
-
-    public Set<BookingDto> buildBookingsDtoForRoom(Set<Booking> bookings) {
-        return bookings.stream()
-                .map(this::buildBookingDtoForRoom)
-                .collect(Collectors.toSet());
-    }
-
-    private BookingDto buildBookingDtoForUser(Booking booking) {
-        return BookingDto.builder()
-                .id(booking.getId())
-                .rooms(RoomMapper.getInstance().buildRoomsDtoForBooking(booking.getRooms()))
-                .rate(booking.getRate())
-                .arrival(booking.getArrival())
-                .departure(booking.getDeparture())
-                .build();
-    }
-
-    private BookingDto buildBookingDtoForRoom(Booking booking) {
-        return BookingDto.builder()
-                .id(booking.getId())
-                .userDto(UserMapper.getInstance().buildUserDtoWithoutBookings(booking.getUser()))
-                .rate(booking.getRate())
-                .arrival(booking.getArrival())
-                .departure(booking.getDeparture())
-                .build();
-    }
+    Booking updateBooking(BookingRequest bookingRequest, @MappingTarget Booking booking);
 }

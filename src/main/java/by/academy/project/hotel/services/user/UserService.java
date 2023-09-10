@@ -1,23 +1,28 @@
 package by.academy.project.hotel.services.user;
 
 
-import by.academy.project.hotel.dto.UserDto;
+import by.academy.project.hotel.dto.requests.UserRequest;
+import by.academy.project.hotel.dto.responces.UserResponse;
+import by.academy.project.hotel.entities.user.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
 
-    UserDto create(UserDto userDto);
+    UserResponse create(UserRequest userRequest);
 
-    List<UserDto> read();
+    List<UserResponse> read();
 
-    UserDto update(UserDto userDto);
+    UserResponse update(Long id, UserRequest userRequest);
 
-    boolean delete(Long id);
+    void delete(Long id);
 
-    UserDto getByID(Long id);
+    UserResponse findUserById(Long id);
 
-    UserDto getUserByLogin(String login);
+    Optional<User> findUserByIdForBooking(Long id);
 
-    List<UserDto> findUser(String name, String surname);
+    UserResponse findUserByLogin(String login);
+
+    List<UserResponse> findUsersByNameAndSurname(String name, String surname);
 }

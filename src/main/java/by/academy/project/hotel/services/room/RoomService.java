@@ -1,24 +1,28 @@
 package by.academy.project.hotel.services.room;
 
 
-import by.academy.project.hotel.dto.RoomDto;
+import by.academy.project.hotel.dto.requests.RoomRequest;
+import by.academy.project.hotel.dto.responces.RoomResponse;
+import by.academy.project.hotel.entities.room.Room;
 import by.academy.project.hotel.entities.room.RoomCategory;
 
 import java.util.List;
 
 public interface RoomService {
 
-    RoomDto add(RoomDto roomDto);
+    RoomResponse add(RoomRequest roomRequest);
 
-    List<RoomDto> read();
+    List<RoomResponse> read();
 
-    RoomDto update(RoomDto roomDto);
+    RoomResponse update(Long id, RoomRequest roomRequest);
 
-    boolean delete(Long id);
+    void delete(Long id);
 
-    RoomDto getByID(Long id);
+    RoomResponse findRoomById(Long id);
 
-    RoomDto getRoomByNumber(String number);
+    List<Room> findRoomsByIdForBooking(List<Long> list);
 
-    List<RoomDto> searchRoomsByCategory(RoomCategory category);
+    RoomResponse findRoomByNumber(String number);
+
+    List<RoomResponse> findRoomsByRoomCategory(RoomCategory category);
 }

@@ -1,75 +1,92 @@
 package by.academy.project.hotel.services.user;
 
-import by.academy.project.hotel.dto.UserDto;
+import by.academy.project.hotel.dto.requests.UserRequest;
+import by.academy.project.hotel.dto.responces.UserResponse;
 import by.academy.project.hotel.entities.user.User;
-import by.academy.project.hotel.exceptions.NotFoundUserException;
-import by.academy.project.hotel.exceptions.UserNotCreatedException;
 import by.academy.project.hotel.mappers.UserMapper;
 import by.academy.project.hotel.repositories.user.UserRepository;
-import by.academy.project.hotel.repositories.user.UserRepositoryImpl;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-import static by.academy.project.hotel.util.configuration.Constants.ERROR_MESSAGE_BY_USER;
-import static by.academy.project.hotel.util.configuration.Constants.USER_CREATION_ERROR_MESSAGE;
+import static by.academy.project.hotel.utils.Constants.USER_NOT_FOUND_BY_ID;
+import static by.academy.project.hotel.utils.Constants.USER_NOT_FOUND_BY_LOGIN;
+import static java.lang.String.format;
 
+@Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    private final UserMapper userMapper;
     private final UserRepository userRepository;
-    private final UserMapper userMapper = UserMapper.getInstance();
 
-    public UserServiceImpl() {
-        userRepository = UserRepositoryImpl.getInstance();
-    }
-
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    @Override
+    @Transactional
+    public UserResponse create(UserRequest userRequest) {
+        User user = userMapper.mapToUser(userRequest);
+        User savedUser = userRepository.save(user);
+        return userMapper.mapToUserResponse(savedUser);
     }
 
     @Override
-    public UserDto create(UserDto userDto) {
-        Optional<User> optionalUser = userRepository.add(userDto);
-        return optionalUser.map(userMapper::buildUserDto).orElseThrow(() -> new UserNotCreatedException(USER_CREATION_ERROR_MESSAGE));
+    @Transactional(readOnly = true)
+    public List<UserResponse> read() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(userMapper::mapToUserResponse)
+                .toList();
     }
 
     @Override
-    public List<UserDto> read() {
-        List<User> users = userRepository.read();
-        return userMapper.buildUsersDto(users);
+    @Transactional
+    public UserResponse update(Long id, UserRequest userRequest) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        return optionalUser
+                .map(user -> userMapper.updateUser(user, userRequest))
+                .map(userRepository::save)
+                .map(userMapper::mapToUserResponse)
+                .orElseThrow(() -> new EntityNotFoundException(format(USER_NOT_FOUND_BY_ID, id)));
     }
 
     @Override
-    public UserDto update(UserDto userDto) {
-        Optional<User> optionalUser = userRepository.update(userDto);
-        return optionalUser.map(userMapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
+    @Transactional
+    public void delete(Long id) {
+        userRepository.deleteById(id);
     }
 
     @Override
-    public boolean delete(Long id) {
-        Optional<User> optionalUser = userRepository.delete(id);
-        return optionalUser.isPresent();
+    @Transactional(readOnly = true)
+    public UserResponse findUserById(Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        return optionalUser
+                .map(userMapper::mapToUserResponse)
+                .orElseThrow(() -> new EntityNotFoundException(format(USER_NOT_FOUND_BY_ID, id)));
     }
 
     @Override
-    public UserDto getByID(Long id) {
-        Optional<User> optionalUser = userRepository.getByID(id);
-        return optionalUser.map(userMapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
+    public Optional<User> findUserByIdForBooking(Long id) {
+        return userRepository.findById(id);
     }
 
     @Override
-    public UserDto getUserByLogin(String login) {
-        Optional<User> optionalUser = userRepository.getUserByLogin(login);
-        return optionalUser.map(userMapper::buildUserDto).orElseThrow(() -> new NotFoundUserException(ERROR_MESSAGE_BY_USER));
+    @Transactional(readOnly = true)
+    public UserResponse findUserByLogin(String login) {
+        Optional<User> optionalUser = userRepository.findUserByLogin(login);
+        return optionalUser
+                .map(userMapper::mapToUserResponse)
+                .orElseThrow(() -> new EntityNotFoundException(format(USER_NOT_FOUND_BY_LOGIN, login)));
     }
 
     @Override
-    public List<UserDto> findUser(String name, String surname) {
-        List<User> users = userRepository.findUser(name, surname);
-        if (users.size() != 0) {
-            return userMapper.buildUsersDto(users);
-        } else {
-            throw new NotFoundUserException(ERROR_MESSAGE_BY_USER);
-        }
+    @Transactional(readOnly = true)
+    public List<UserResponse> findUsersByNameAndSurname(String name, String surname) {
+        List<User> users = userRepository.findUsersByNameAndSurname(name, surname);
+        return users.stream()
+                .map(userMapper::mapToUserResponse)
+                .toList();
     }
 }
