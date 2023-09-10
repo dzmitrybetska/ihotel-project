@@ -22,7 +22,7 @@ The project developed gradually over four months of training:
 * First month - web servlet application
 * Second month - Hibernate, Hibernate query language, Criteria API.
 * The third month is a gradual transition to spring.
-* Month four - Spring Boot, Spring Data JPA, JUnit 5, Spring Security (cryptography), Spring Email, Spring Cloud
+* Month four - Spring Boot, Spring Data JPA, JUnit 5, Spring Cloud, Netflix Eureka
 
 ## Road map
 
