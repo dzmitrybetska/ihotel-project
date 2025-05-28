@@ -5,7 +5,7 @@
   <p align="center">
    Dzmitry Betska’s study project!
     <br />
-    <a <strong>Sample hotel room reservation</strong></a>
+    <a><strong>Sample hotel room reservation</strong></a>
 
   </p>
 </div>

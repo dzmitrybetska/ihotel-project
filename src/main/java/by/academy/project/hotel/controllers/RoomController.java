@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Validated
@@ -66,5 +67,10 @@ public class RoomController {
     @Operation(description = "Find rooms by category")
     public List<RoomResponse> findRoomsByRoomCategory(@PathVariable @NotNull RoomCategory category) {
         return roomService.findRoomsByRoomCategory(category);
+    }
+
+    @GetMapping(value = "/rooms/{arrival}/{departure}")
+    public List<RoomResponse> findAvailableRooms(@PathVariable LocalDate arrival, @PathVariable LocalDate departure) {
+        return roomService.findAvailableRooms(arrival, departure);
     }
 }

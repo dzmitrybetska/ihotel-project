@@ -6,6 +6,7 @@ import by.academy.project.hotel.dto.responces.RoomResponse;
 import by.academy.project.hotel.entities.room.Room;
 import by.academy.project.hotel.entities.room.RoomCategory;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -76,4 +77,6 @@ public interface RoomService {
      * @return a list of rooms of the specified category from the database
      */
     List<RoomResponse> findRoomsByRoomCategory(RoomCategory category);
+
+    List<RoomResponse> findAvailableRooms(LocalDate arrival, LocalDate departure);
 }
